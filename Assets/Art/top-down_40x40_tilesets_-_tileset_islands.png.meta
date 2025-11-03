@@ -1,0 +1,1785 @@
+fileFormatVersion: 2
+guid: 6dd69fbdeec055740ba9c0a8b622edf3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7228599410082956371
+    second: top-down_40x40_tilesets_-_tileset_islands_0
+  - first:
+      213: 1051227457010940909
+    second: top-down_40x40_tilesets_-_tileset_islands_1
+  - first:
+      213: -327522251766174010
+    second: top-down_40x40_tilesets_-_tileset_islands_2
+  - first:
+      213: -3454101225090459806
+    second: top-down_40x40_tilesets_-_tileset_islands_3
+  - first:
+      213: -3083533802176992177
+    second: top-down_40x40_tilesets_-_tileset_islands_4
+  - first:
+      213: -266907074324341908
+    second: top-down_40x40_tilesets_-_tileset_islands_5
+  - first:
+      213: -2973143223577142838
+    second: top-down_40x40_tilesets_-_tileset_islands_6
+  - first:
+      213: -6860198195983994926
+    second: top-down_40x40_tilesets_-_tileset_islands_7
+  - first:
+      213: 8042105622467524036
+    second: top-down_40x40_tilesets_-_tileset_islands_8
+  - first:
+      213: -2515284199380311981
+    second: top-down_40x40_tilesets_-_tileset_islands_9
+  - first:
+      213: 5795760655872244466
+    second: top-down_40x40_tilesets_-_tileset_islands_10
+  - first:
+      213: -8742483685285475288
+    second: top-down_40x40_tilesets_-_tileset_islands_11
+  - first:
+      213: 3620070346363064800
+    second: top-down_40x40_tilesets_-_tileset_islands_12
+  - first:
+      213: 6573206583362785308
+    second: top-down_40x40_tilesets_-_tileset_islands_13
+  - first:
+      213: -7332709971491528014
+    second: top-down_40x40_tilesets_-_tileset_islands_14
+  - first:
+      213: 1679686652122581767
+    second: top-down_40x40_tilesets_-_tileset_islands_15
+  - first:
+      213: 2404251303585961281
+    second: top-down_40x40_tilesets_-_tileset_islands_16
+  - first:
+      213: -8828226610263943188
+    second: top-down_40x40_tilesets_-_tileset_islands_17
+  - first:
+      213: -3627444436737530898
+    second: top-down_40x40_tilesets_-_tileset_islands_18
+  - first:
+      213: -3937954948009292764
+    second: top-down_40x40_tilesets_-_tileset_islands_19
+  - first:
+      213: 7126306607029731687
+    second: top-down_40x40_tilesets_-_tileset_islands_20
+  - first:
+      213: 6958775122596224815
+    second: top-down_40x40_tilesets_-_tileset_islands_21
+  - first:
+      213: 4441225481562806831
+    second: top-down_40x40_tilesets_-_tileset_islands_22
+  - first:
+      213: 10054113593261659
+    second: top-down_40x40_tilesets_-_tileset_islands_23
+  - first:
+      213: -435834033850711173
+    second: top-down_40x40_tilesets_-_tileset_islands_24
+  - first:
+      213: -6679432439976283674
+    second: top-down_40x40_tilesets_-_tileset_islands_25
+  - first:
+      213: 5593709734872655911
+    second: top-down_40x40_tilesets_-_tileset_islands_26
+  - first:
+      213: -8153176581154584122
+    second: top-down_40x40_tilesets_-_tileset_islands_27
+  - first:
+      213: 4735260160029039612
+    second: top-down_40x40_tilesets_-_tileset_islands_28
+  - first:
+      213: -3459940706998197811
+    second: top-down_40x40_tilesets_-_tileset_islands_29
+  - first:
+      213: 6302283381332840076
+    second: top-down_40x40_tilesets_-_tileset_islands_30
+  - first:
+      213: -4378741266296352606
+    second: top-down_40x40_tilesets_-_tileset_islands_31
+  - first:
+      213: 3528811191773767268
+    second: top-down_40x40_tilesets_-_tileset_islands_32
+  - first:
+      213: -5274295528290365007
+    second: top-down_40x40_tilesets_-_tileset_islands_33
+  - first:
+      213: 7863136586970603237
+    second: top-down_40x40_tilesets_-_tileset_islands_34
+  - first:
+      213: 4067907482371585108
+    second: top-down_40x40_tilesets_-_tileset_islands_35
+  - first:
+      213: 8796583613659716078
+    second: top-down_40x40_tilesets_-_tileset_islands_36
+  - first:
+      213: -6625130786791194169
+    second: top-down_40x40_tilesets_-_tileset_islands_37
+  - first:
+      213: -3023638001702702359
+    second: top-down_40x40_tilesets_-_tileset_islands_38
+  - first:
+      213: 3239054109351921827
+    second: top-down_40x40_tilesets_-_tileset_islands_39
+  - first:
+      213: -7570891171873054508
+    second: top-down_40x40_tilesets_-_tileset_islands_40
+  - first:
+      213: 4618816846620614968
+    second: top-down_40x40_tilesets_-_tileset_islands_41
+  - first:
+      213: 6572233238881881486
+    second: top-down_40x40_tilesets_-_tileset_islands_42
+  - first:
+      213: -6262268652013815046
+    second: top-down_40x40_tilesets_-_tileset_islands_43
+  - first:
+      213: -2841988634145218614
+    second: top-down_40x40_tilesets_-_tileset_islands_44
+  - first:
+      213: 1856288136232763363
+    second: top-down_40x40_tilesets_-_tileset_islands_45
+  - first:
+      213: 2919796857763567631
+    second: top-down_40x40_tilesets_-_tileset_islands_46
+  - first:
+      213: 4546212040232565828
+    second: top-down_40x40_tilesets_-_tileset_islands_47
+  - first:
+      213: 7159875827840205103
+    second: top-down_40x40_tilesets_-_tileset_islands_48
+  - first:
+      213: 3229218280219519425
+    second: top-down_40x40_tilesets_-_tileset_islands_49
+  - first:
+      213: -6307623911896287984
+    second: top-down_40x40_tilesets_-_tileset_islands_50
+  - first:
+      213: 1296798981498248331
+    second: top-down_40x40_tilesets_-_tileset_islands_51
+  - first:
+      213: -4510288208749932122
+    second: top-down_40x40_tilesets_-_tileset_islands_52
+  - first:
+      213: -862901036411623606
+    second: top-down_40x40_tilesets_-_tileset_islands_53
+  - first:
+      213: -9092121343951422874
+    second: top-down_40x40_tilesets_-_tileset_islands_54
+  - first:
+      213: -7417675662932140581
+    second: top-down_40x40_tilesets_-_tileset_islands_55
+  - first:
+      213: 5319810683411915448
+    second: top-down_40x40_tilesets_-_tileset_islands_56
+  - first:
+      213: -4985492930070023109
+    second: top-down_40x40_tilesets_-_tileset_islands_57
+  - first:
+      213: -5266902181303746064
+    second: top-down_40x40_tilesets_-_tileset_islands_58
+  - first:
+      213: -7526044477684634569
+    second: top-down_40x40_tilesets_-_tileset_islands_59
+  - first:
+      213: 5326794774822550626
+    second: top-down_40x40_tilesets_-_tileset_islands_60
+  - first:
+      213: 6040829952080170831
+    second: top-down_40x40_tilesets_-_tileset_islands_61
+  - first:
+      213: -5173507537667706246
+    second: top-down_40x40_tilesets_-_tileset_islands_62
+  - first:
+      213: -4322096427542289611
+    second: top-down_40x40_tilesets_-_tileset_islands_63
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dab3862a22bdeab90800000000000000
+      internalID: -7228599410082956371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_1
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deb36417dc5b69e00800000000000000
+      internalID: 1051227457010940909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_2
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cee07f4f38647bf0800000000000000
+      internalID: -327522251766174010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_3
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 267dd348c319010d0800000000000000
+      internalID: -3454101225090459806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_4
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4ca45c18561535d0800000000000000
+      internalID: -3083533802176992177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_5
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6bdbd61e61cb4cf0800000000000000
+      internalID: -266907074324341908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_6
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac913549df54db6d0800000000000000
+      internalID: -2973143223577142838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_7
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 304
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2df299f661eabc0a0800000000000000
+      internalID: -6860198195983994926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_8
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c53959647c4b9f60800000000000000
+      internalID: 8042105622467524036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_9
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 350a8c2e85ae71dd0800000000000000
+      internalID: -2515284199380311981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_10
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fa3378fb9dae6050800000000000000
+      internalID: 5795760655872244466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_11
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82c49eb68657ca680800000000000000
+      internalID: -8742483685285475288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_12
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e155e0dcc21d3230800000000000000
+      internalID: 3620070346363064800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_13
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c10199caf88b83b50800000000000000
+      internalID: 6573206583362785308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_14
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b2684c912bfc3a90800000000000000
+      internalID: -7332709971491528014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_15
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 261
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70b4bb95c127f4710800000000000000
+      internalID: 1679686652122581767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_16
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 145d20582dd9d5120800000000000000
+      internalID: 2404251303585961281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_17
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce711920ca6db7580800000000000000
+      internalID: -8828226610263943188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_18
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee3eac9f08ab8adc0800000000000000
+      internalID: -3627444436737530898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_19
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42c0a66c6d29959c0800000000000000
+      internalID: -3937954948009292764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_20
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 761c6803a1ab5e260800000000000000
+      internalID: 7126306607029731687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_21
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f5c26da19829060800000000000000
+      internalID: 6958775122596224815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_22
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2ad6fb7b0762ad30800000000000000
+      internalID: 4441225481562806831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_23
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 218
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5ef14db928b32000800000000000000
+      internalID: 10054113593261659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_24
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b738d4f514b93f9f0800000000000000
+      internalID: -435834033850711173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_25
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e13ef1c593ed43a0800000000000000
+      internalID: -6679432439976283674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_26
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 728aabbfd59d0ad40800000000000000
+      internalID: 5593709734872655911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_27
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c94f39c8191ade80800000000000000
+      internalID: -8153176581154584122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_28
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfb179de60607b140800000000000000
+      internalID: 4735260160029039612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_29
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc1657f2242dbffc0800000000000000
+      internalID: -3459940706998197811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_30
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8e013a2855367750800000000000000
+      internalID: 6302283381332840076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_31
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 175
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a0df0394069b33c0800000000000000
+      internalID: -4378741266296352606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_32
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 466291d151bd8f030800000000000000
+      internalID: 3528811191773767268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_33
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b152d35920fdc6b0800000000000000
+      internalID: -5274295528290365007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_34
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ee92cea0197f1d60800000000000000
+      internalID: 7863136586970603237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_35
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45479e17d4c147830800000000000000
+      internalID: 4067907482371585108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_36
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee99539b03eb31a70800000000000000
+      internalID: 8796583613659716078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_37
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c18ece96aece04a0800000000000000
+      internalID: -6625130786791194169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_38
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e27323e141e906d0800000000000000
+      internalID: -3023638001702702359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_39
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 132
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a8c03c1d8e63fc20800000000000000
+      internalID: 3239054109351921827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_40
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d0ad5b679acee690800000000000000
+      internalID: -7570891171873054508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_41
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83169615375591040800000000000000
+      internalID: 4618816846620614968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_42
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8dc1904f43453b50800000000000000
+      internalID: 6572233238881881486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_43
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afaf6a407d3f719a0800000000000000
+      internalID: -6262268652013815046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_44
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acf931e056a3f88d0800000000000000
+      internalID: -2841988634145218614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_45
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3effce0993cd2c910800000000000000
+      internalID: 1856288136232763363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_46
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f089c4bb5c3358820800000000000000
+      internalID: 2919796857763567631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_47
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 89
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44c7aa383c3671f30800000000000000
+      internalID: 4546212040232565828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_48
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f21425a712dfc5360800000000000000
+      internalID: 7159875827840205103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_49
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9aeaeaaec70dc20800000000000000
+      internalID: 3229218280219519425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_50
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01579aaa871d678a0800000000000000
+      internalID: -6307623911896287984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_51
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8c9a4d8dc72ff110800000000000000
+      internalID: 1296798981498248331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_52
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a1d3da45cc3861c0800000000000000
+      internalID: -4510288208749932122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_53
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a476e58441c5604f0800000000000000
+      internalID: -862901036411623606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_54
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66a370f4fcb42d180800000000000000
+      internalID: -9092121343951422874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_55
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 46
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd9edbf84f1f0990800000000000000
+      internalID: -7417675662932140581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_56
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b2681981a3c3d940800000000000000
+      internalID: 5319810683411915448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_57
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3474f82898ffcab0800000000000000
+      internalID: -4985492930070023109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_58
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f109a01f5438e6b0800000000000000
+      internalID: -5266902181303746064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_59
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73c21d71c6e1e8790800000000000000
+      internalID: -7526044477684634569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_60
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26c74b800a39ce940800000000000000
+      internalID: 5326794774822550626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_61
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4f4742f5d655d350800000000000000
+      internalID: 6040829952080170831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_62
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a72b28e0e420438b0800000000000000
+      internalID: -5173507537667706246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: top-down_40x40_tilesets_-_tileset_islands_63
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 3
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5336b57d234d404c0800000000000000
+      internalID: -4322096427542289611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: da869e7260567d54f9ead542307228cc
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: True
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":true,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      top-down_40x40_tilesets_-_tileset_islands_0: -7228599410082956371
+      top-down_40x40_tilesets_-_tileset_islands_1: 1051227457010940909
+      top-down_40x40_tilesets_-_tileset_islands_10: 5795760655872244466
+      top-down_40x40_tilesets_-_tileset_islands_11: -8742483685285475288
+      top-down_40x40_tilesets_-_tileset_islands_12: 3620070346363064800
+      top-down_40x40_tilesets_-_tileset_islands_13: 6573206583362785308
+      top-down_40x40_tilesets_-_tileset_islands_14: -7332709971491528014
+      top-down_40x40_tilesets_-_tileset_islands_15: 1679686652122581767
+      top-down_40x40_tilesets_-_tileset_islands_16: 2404251303585961281
+      top-down_40x40_tilesets_-_tileset_islands_17: -8828226610263943188
+      top-down_40x40_tilesets_-_tileset_islands_18: -3627444436737530898
+      top-down_40x40_tilesets_-_tileset_islands_19: -3937954948009292764
+      top-down_40x40_tilesets_-_tileset_islands_2: -327522251766174010
+      top-down_40x40_tilesets_-_tileset_islands_20: 7126306607029731687
+      top-down_40x40_tilesets_-_tileset_islands_21: 6958775122596224815
+      top-down_40x40_tilesets_-_tileset_islands_22: 4441225481562806831
+      top-down_40x40_tilesets_-_tileset_islands_23: 10054113593261659
+      top-down_40x40_tilesets_-_tileset_islands_24: -435834033850711173
+      top-down_40x40_tilesets_-_tileset_islands_25: -6679432439976283674
+      top-down_40x40_tilesets_-_tileset_islands_26: 5593709734872655911
+      top-down_40x40_tilesets_-_tileset_islands_27: -8153176581154584122
+      top-down_40x40_tilesets_-_tileset_islands_28: 4735260160029039612
+      top-down_40x40_tilesets_-_tileset_islands_29: -3459940706998197811
+      top-down_40x40_tilesets_-_tileset_islands_3: -3454101225090459806
+      top-down_40x40_tilesets_-_tileset_islands_30: 6302283381332840076
+      top-down_40x40_tilesets_-_tileset_islands_31: -4378741266296352606
+      top-down_40x40_tilesets_-_tileset_islands_32: 3528811191773767268
+      top-down_40x40_tilesets_-_tileset_islands_33: -5274295528290365007
+      top-down_40x40_tilesets_-_tileset_islands_34: 7863136586970603237
+      top-down_40x40_tilesets_-_tileset_islands_35: 4067907482371585108
+      top-down_40x40_tilesets_-_tileset_islands_36: 8796583613659716078
+      top-down_40x40_tilesets_-_tileset_islands_37: -6625130786791194169
+      top-down_40x40_tilesets_-_tileset_islands_38: -3023638001702702359
+      top-down_40x40_tilesets_-_tileset_islands_39: 3239054109351921827
+      top-down_40x40_tilesets_-_tileset_islands_4: -3083533802176992177
+      top-down_40x40_tilesets_-_tileset_islands_40: -7570891171873054508
+      top-down_40x40_tilesets_-_tileset_islands_41: 4618816846620614968
+      top-down_40x40_tilesets_-_tileset_islands_42: 6572233238881881486
+      top-down_40x40_tilesets_-_tileset_islands_43: -6262268652013815046
+      top-down_40x40_tilesets_-_tileset_islands_44: -2841988634145218614
+      top-down_40x40_tilesets_-_tileset_islands_45: 1856288136232763363
+      top-down_40x40_tilesets_-_tileset_islands_46: 2919796857763567631
+      top-down_40x40_tilesets_-_tileset_islands_47: 4546212040232565828
+      top-down_40x40_tilesets_-_tileset_islands_48: 7159875827840205103
+      top-down_40x40_tilesets_-_tileset_islands_49: 3229218280219519425
+      top-down_40x40_tilesets_-_tileset_islands_5: -266907074324341908
+      top-down_40x40_tilesets_-_tileset_islands_50: -6307623911896287984
+      top-down_40x40_tilesets_-_tileset_islands_51: 1296798981498248331
+      top-down_40x40_tilesets_-_tileset_islands_52: -4510288208749932122
+      top-down_40x40_tilesets_-_tileset_islands_53: -862901036411623606
+      top-down_40x40_tilesets_-_tileset_islands_54: -9092121343951422874
+      top-down_40x40_tilesets_-_tileset_islands_55: -7417675662932140581
+      top-down_40x40_tilesets_-_tileset_islands_56: 5319810683411915448
+      top-down_40x40_tilesets_-_tileset_islands_57: -4985492930070023109
+      top-down_40x40_tilesets_-_tileset_islands_58: -5266902181303746064
+      top-down_40x40_tilesets_-_tileset_islands_59: -7526044477684634569
+      top-down_40x40_tilesets_-_tileset_islands_6: -2973143223577142838
+      top-down_40x40_tilesets_-_tileset_islands_60: 5326794774822550626
+      top-down_40x40_tilesets_-_tileset_islands_61: 6040829952080170831
+      top-down_40x40_tilesets_-_tileset_islands_62: -5173507537667706246
+      top-down_40x40_tilesets_-_tileset_islands_63: -4322096427542289611
+      top-down_40x40_tilesets_-_tileset_islands_7: -6860198195983994926
+      top-down_40x40_tilesets_-_tileset_islands_8: 8042105622467524036
+      top-down_40x40_tilesets_-_tileset_islands_9: -2515284199380311981
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
