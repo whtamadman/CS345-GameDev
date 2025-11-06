@@ -1,5 +1,6 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class Enemy : MonoBehaviour
     protected SpriteRenderer spriteRenderer;
     public int health;
     public Projectile projectile;
+    public Projectile projectile2;
     public string opponentTag;
     public static Vector3 initialLocation;
     public EnemyType type;
@@ -64,12 +66,13 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         var player = GameObject.FindWithTag("Player");
-        Debug.Log(outOfBounds.getDistance(transform.position, player.transform.position));
-        Debug.Log(rangedDistance);
         if (type == EnemyType.Ranged && outOfBounds.getDistance(transform.position, player.transform.position) <= rangedDistance)
         {
             rigidBody.linearVelocity = moveDirection * 0;
             moveDirection = Vector2.zero;
+            if(canShoot){
+                StartCoroutine(Shoot(moveDirection,shootForce));
+            }
             return;
         }
         if (currentState == State.Roam){
@@ -93,11 +96,24 @@ public class Enemy : MonoBehaviour
                 currentState = State.Chase;
             }
             if(canShoot){
-                //StartCoroutine(Shoot(moveDirection,shootForce));
+                StartCoroutine(Shoot(moveDirection,shootForce));
             }
         }
         targetPosition = outOfBounds.getCoords(targetPosition);
         moveDirection = -outOfBounds.getDirection(transform.position,targetPosition).normalized;
+    }
+    
+    protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
+    {
+        var rand = Random.Range(0, 2);
+        Projectile newBullet =(rand == 0) ?
+            Instantiate(projectile, transform.position, Quaternion.identity) :
+            Instantiate(projectile2, transform.position, Quaternion.identity);
+
+        newBullet.SetTarget(GameObject.FindWithTag(opponentTag));
+        canShoot = false;
+        yield return new WaitForSeconds(reloadTime);
+        canShoot = true;
     }
 
     private void OnDestroy()
