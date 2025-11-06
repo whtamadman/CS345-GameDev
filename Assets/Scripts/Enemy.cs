@@ -7,8 +7,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
     public int health;
-    public Projectile projectile;
-    public Projectile projectile2;
+    public Projectile[] projectiles;
     public string opponentTag;
     public static Vector3 initialLocation;
     public EnemyType type;
@@ -105,11 +104,9 @@ public class Enemy : MonoBehaviour
     
     protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
     {
-        var rand = Random.Range(0, 2);
-        Projectile newBullet =(rand == 0) ?
-            Instantiate(projectile, transform.position, Quaternion.identity) :
-            Instantiate(projectile2, transform.position, Quaternion.identity);
-
+        int rand = Random.Range(0, projectiles.Length);
+        Projectile newBullet = Instantiate(projectiles[rand], transform.position, Quaternion.identity);
+        
         newBullet.SetTarget(GameObject.FindWithTag(opponentTag));
         canShoot = false;
         yield return new WaitForSeconds(reloadTime);
