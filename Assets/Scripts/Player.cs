@@ -5,17 +5,17 @@ public class Player : Person
     private float defaultHealth;
     public static Player Instance;
     public Animator animator;
-    public AudioClip gun;
-    private AudioSource effectsAudioSource;
+    public bool invincibility;
 
     void Awake(){
         if(Instance == null){
-            Instance = this;}
+            Instance = this;
+        }
     }
 
     protected override void CustomStart(){
         defaultHealth=health;
-        effectsAudioSource = gameObject.AddComponent<AudioSource>();
+        invincibility = false;
     }
 
     protected override void Move(){
@@ -29,5 +29,4 @@ public class Player : Person
     void Update(){
         moveDirection = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")).normalized;
     }
-    
 }
