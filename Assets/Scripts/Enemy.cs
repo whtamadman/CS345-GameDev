@@ -106,8 +106,7 @@ public class Enemy : MonoBehaviour
     {
         int rand = Random.Range(0, projectiles.Length);
         Projectile newBullet = Instantiate(projectiles[rand], transform.position, Quaternion.identity);
-        
-        newBullet.SetTarget(GameObject.FindWithTag(opponentTag));
+        newBullet.SetTarget(GameObject.FindWithTag(opponentTag), this.gameObject);
         canShoot = false;
         yield return new WaitForSeconds(reloadTime);
         canShoot = true;
