@@ -5,25 +5,49 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float lifeTime = 2f;
     [SerializeField] private float speed = 10f;
+    [SerializeField] private bool isBoomerang = false;
+    [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
+    [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
 
     private Transform target;
     private Rigidbody2D rb;
     private GameObject shooter;
+    private bool isReturning = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         StartCoroutine(LifeCountdown());
+        
+        if (isBoomerang)
+        {
+            StartCoroutine(BoomerangReturn());
+        }
     }
 
     public void SetTarget(GameObject targetObject, GameObject shooterObject = null)
     {
         target = targetObject.transform;
-        shooter = shooterObject; // store shooter reference if provided
+        shooter = shooterObject;
 
         Vector2 direction = (target.position - transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void SetBoomerang(bool boomerang)
+    {
+        isBoomerang = boomerang;
+        if (isBoomerang && gameObject.activeInHierarchy)
+        {
+            StartCoroutine(BoomerangReturn());
+        }
+    }
+
+    IEnumerator BoomerangReturn()
+    {
+        yield return new WaitForSeconds(boomerangReturnDelay);
+        isReturning = true;
     }
 
     IEnumerator LifeCountdown()
@@ -36,17 +60,55 @@ public class Projectile : MonoBehaviour
     {
         if (rb != null)
         {
-            rb.linearVelocity = transform.up * speed;
+            if (isReturning && shooter != null)
+            {
+                // Return to shooter
+                Vector2 direction = (shooter.transform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.Euler(0, 0, angle);
+                rb.linearVelocity = direction * boomerangReturnSpeed;
+
+                // Check if reached shooter
+                if (Vector2.Distance(transform.position, shooter.transform.position) < 0.5f)
+                {
+                    Destroy(gameObject);
+                }
+            }
+            else
+            {
+                rb.linearVelocity = transform.up * speed;
+            }
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Don't collide with shooter
         if (shooter != null && other.gameObject == shooter)
+        {
+            // If boomerang is returning and reaches shooter, destroy it
+            if (isBoomerang && isReturning)
+            {
+                Destroy(gameObject);
+            }
             return;
+        }
 
+        // If boomerang mode, don't destroy on hit - let it return
+        if (isBoomerang && !isReturning)
+        {
+            if (other.tag == target.tag)
+            {
+                other.GetComponent<Player>()?.takeDamage();
+            }
+            return;
+        }
+
+        // Normal projectile behavior
         if (other.tag == target.tag)
-            other.GetComponent<Player>().takeDamage();
+        {
+            other.GetComponent<Player>()?.takeDamage();
+        }
         Destroy(gameObject);
     }
 }
