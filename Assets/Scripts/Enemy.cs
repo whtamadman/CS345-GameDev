@@ -19,6 +19,9 @@ public class Enemy : MonoBehaviour
     Vector3 targetPosition;
     OutOfBounds outOfBounds;
     public float rangedDistance;
+    
+    // Event for room system integration
+    public System.Action<Enemy> OnDeath;
 
     private enum State
     {
@@ -112,7 +115,27 @@ public class Enemy : MonoBehaviour
         canShoot = true;
     }
 
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+    
+    protected virtual void Die()
+    {
+        // Notify listeners that this enemy has died
+        OnDeath?.Invoke(this);
+        
+        // Destroy the enemy
+        Destroy(gameObject);
+    }
+    
     private void OnDestroy()
     {
+        // Clean up event subscriptions
+        OnDeath = null;
     }
 }
