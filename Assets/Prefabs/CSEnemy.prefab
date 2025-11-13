@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2500281116465832326}
   m_Layer: 0
   m_Name: CSEnemy
-  m_TagString: Untagged
+  m_TagString: CS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
