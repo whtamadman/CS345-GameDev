@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -13,14 +14,24 @@ public class Projectile : MonoBehaviour
     private Rigidbody2D rb;
     private GameObject shooter;
     private bool isReturning = false;
+    
+    // Static tracking for boomerangs (max 1 per shooter at a time)
+    private static Dictionary<GameObject, Projectile> activeBoomerangs = new Dictionary<GameObject, Projectile>();
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         StartCoroutine(LifeCountdown());
         
-        if (isBoomerang)
+        // Boomerang check will happen in SetTarget after shooter is set
+        // Only start coroutine for enemy boomerangs here (player boomerangs checked in SetTarget)
+        if (isBoomerang && shooter == null)
         {
+            // Shooter not set yet, will be checked in SetTarget
+        }
+        else if (isBoomerang)
+        {
+            // Enemy boomerangs don't have restrictions, start return coroutine
             StartCoroutine(BoomerangReturn());
         }
     }
@@ -33,6 +44,35 @@ public class Projectile : MonoBehaviour
         Vector2 direction = (target.position - transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+        
+        // If this is a boomerang, check if the shooter already has one active (max 1 per shooter)
+        if (isBoomerang && shooter != null)
+        {
+            // Clean up any destroyed boomerangs from the dictionary
+            var keysToRemove = new List<GameObject>();
+            foreach (var kvp in activeBoomerangs)
+            {
+                if (kvp.Value == null)
+                {
+                    keysToRemove.Add(kvp.Key);
+                }
+            }
+            foreach (var key in keysToRemove)
+            {
+                activeBoomerangs.Remove(key);
+            }
+            
+            // If the shooter already has an active boomerang, destroy this one
+            if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] != null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            
+            // Add this boomerang to the active dictionary
+            activeBoomerangs[shooter] = this;
+            StartCoroutine(BoomerangReturn());
+        }
     }
 
     public void SetBoomerang(bool boomerang)
@@ -92,6 +132,11 @@ public class Projectile : MonoBehaviour
                 // If boomerang is returning and reaches shooter, destroy it
                 if (isBoomerang && isReturning)
                 {
+                    // Remove from active dictionary
+                    if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] == this)
+                    {
+                        activeBoomerangs.Remove(shooter);
+                    }
                     Destroy(gameObject);
                 }
                 return;
@@ -123,5 +168,17 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
         // Don't destroy on collision with walls or other objects that aren't the target
+    }
+    
+    private void OnDestroy()
+    {
+        // Remove from active dictionary when destroyed
+        if (isBoomerang && shooter != null)
+        {
+            if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] == this)
+            {
+                activeBoomerangs.Remove(shooter);
+            }
+        }
     }
 }

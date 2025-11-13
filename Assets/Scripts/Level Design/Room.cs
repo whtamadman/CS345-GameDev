@@ -47,6 +47,8 @@ public class Room : MonoBehaviour
     public GameObject[] enemyPrefabs; // List of enemy prefabs to spawn from
     public int enemySpawnCount = 3; // Number of enemies to spawn
     public float spawnDelay = 1.5f; // Delay before spawning enemies (in seconds)
+    public float spawnRadius = 0.8f; // Radius around player to spawn enemies
+    public float minDistanceFromPlayer = 0.5f; // Minimum distance from player to spawn
     private bool enemiesSpawned = false; // Track if enemies have been spawned
     
     // Events
@@ -897,21 +899,46 @@ public class Room : MonoBehaviour
         // Double-check that player is actually in this room before spawning
         if (!playerInRoom) return;
         
-        enemiesSpawned = true;
+        // Get player position
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null) return; // Can't spawn without player
         
-        // Calculate spawn area (interior walkable area)
-        Vector3 roomCenter = GetCenter();
-        float spawnWidth = interiorSize.x * (grid != null ? grid.cellSize.x : 0.4f);
-        float spawnHeight = interiorSize.y * (grid != null ? grid.cellSize.y : 0.4f);
+        Vector3 playerPosition = player.transform.position;
+        enemiesSpawned = true;
         
         // Spawn the specified number of enemies
         for (int i = 0; i < enemySpawnCount; i++)
         {
-            // Random position within the room's interior (with some margin from walls)
-            float margin = 0.5f; // Keep enemies away from walls
-            float randomX = Random.Range(-spawnWidth / 2f + margin, spawnWidth / 2f - margin);
-            float randomY = Random.Range(-spawnHeight / 2f + margin, spawnHeight / 2f - margin);
-            Vector3 spawnPosition = roomCenter + new Vector3(randomX, randomY, 0);
+            Vector3 spawnPosition;
+            int attempts = 0;
+            const int maxAttempts = 50; // Prevent infinite loop
+            
+            // Try to find a spawn position near the player but not too close
+            do
+            {
+                // Random position within a circle around the player
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                // Random distance between minDistanceFromPlayer and spawnRadius
+                float distance = Random.Range(minDistanceFromPlayer, spawnRadius);
+                
+                float randomX = Mathf.Cos(angle) * distance;
+                float randomY = Mathf.Sin(angle) * distance;
+                spawnPosition = playerPosition + new Vector3(randomX, randomY, 0);
+                
+                attempts++;
+            } 
+            while (Vector3.Distance(spawnPosition, playerPosition) < minDistanceFromPlayer && attempts < maxAttempts);
+            
+            // If we couldn't find a good position after max attempts, use a position at minDistanceFromPlayer
+            if (attempts >= maxAttempts)
+            {
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                spawnPosition = playerPosition + new Vector3(
+                    Mathf.Cos(angle) * minDistanceFromPlayer,
+                    Mathf.Sin(angle) * minDistanceFromPlayer,
+                    0
+                );
+            }
             
             // Randomly select an enemy prefab from the list
             GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];

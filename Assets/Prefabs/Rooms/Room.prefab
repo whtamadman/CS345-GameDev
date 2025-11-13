@@ -70,8 +70,12 @@ MonoBehaviour:
   playerInRoom: 0
   enemyPrefabs:
   - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
+  - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
+  - {fileID: 3520070930834900833, guid: caa9b0773c1b145d892120cb7a931d82, type: 3}
   enemySpawnCount: 3
   spawnDelay: 1.5
+  spawnRadius: 3
+  minDistanceFromPlayer: 1.5
 --- !u!1839735485 &7401764260757693448
 Tilemap:
   m_ObjectHideFlags: 0
