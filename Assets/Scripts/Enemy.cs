@@ -44,6 +44,23 @@ public class Enemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         outOfBounds = GetComponent<OutOfBounds>();
+        
+        // Disable OutOfBounds component for room-based gameplay (it's designed for wrap-around worlds)
+        if (outOfBounds != null)
+        {
+            outOfBounds.enabled = false;
+        }
+        
+        // Ensure Rigidbody2D is properly set up
+        if (rigidBody != null)
+        {
+            rigidBody.WakeUp();
+            if (rigidBody.isKinematic)
+            {
+                rigidBody.isKinematic = false; // Enemies need dynamic physics to move
+            }
+        }
+        
         currentState = State.Roam;
         targetPosition = (Vector2)transform.position
                          + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
@@ -56,53 +73,77 @@ public class Enemy : MonoBehaviour
     
     void Move()
     {
-        if(moveDirection.magnitude > 0) {
+        if (rigidBody == null) return;
+        
+        if(moveDirection.magnitude > 0.01f) {
             rigidBody.linearVelocity = moveDirection * moveSpeed;
         }
         else
         {
-            rigidBody.linearVelocity -= rigidBody.linearVelocity * friction;
+            rigidBody.linearVelocity = Vector2.Lerp(rigidBody.linearVelocity, Vector2.zero, friction);
         }
-        transform.up += ((Vector3)moveDirection-transform.up)/5;
+        
+        // Only rotate if moving
+        if (moveDirection.magnitude > 0.01f)
+        {
+            transform.up = Vector3.Lerp(transform.up, (Vector3)moveDirection, Time.fixedDeltaTime * 5f);
+        }
     }
     void Update()
     {
         var player = GameObject.FindWithTag("Player");
-        if (type == EnemyType.Ranged && outOfBounds.getDistance(transform.position, player.transform.position) <= rangedDistance)
+        if (player == null) return; // No player found, can't target
+        
+        // Use simple distance calculation for room-based gameplay
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        
+        if (type == EnemyType.Ranged && distanceToPlayer <= rangedDistance)
         {
-            rigidBody.linearVelocity = moveDirection * 0;
+            rigidBody.linearVelocity = Vector2.zero;
             moveDirection = Vector2.zero;
             if(canShoot){
                 StartCoroutine(Shoot(moveDirection,shootForce));
             }
             return;
         }
+        
         if (currentState == State.Roam){
-            if(outOfBounds.getDistance(transform.position,targetPosition)<1f){
+            float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
+                
+            if(distanceToTarget < 1f){
                 targetPosition = (Vector2)transform.position + new
                     Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
             }
-            if(outOfBounds.getDistance(transform.position,player.transform.position)<chaseDist){
+            if(distanceToPlayer < chaseDist){
                 currentState = State.Chase;
             }
         }else if(currentState == State.Chase){
             targetPosition = player.transform.position;
-            if(outOfBounds.getDistance(transform.position,player.transform.position)<shootDist){
+            if(distanceToPlayer < shootDist){
                 currentState = State.Shoot;
-            }else if(outOfBounds.getDistance(transform.position,player.transform.position)>chaseDist*1.2f){
+            }else if(distanceToPlayer > chaseDist*1.2f){
                 currentState = State.Roam;
             }
         }else{
             targetPosition = player.transform.position;
-            if(outOfBounds.getDistance(transform.position,player.transform.position)>shootDist){
+            if(distanceToPlayer > shootDist){
                 currentState = State.Chase;
             }
             if(canShoot){
                 StartCoroutine(Shoot(moveDirection,shootForce));
             }
         }
-        targetPosition = outOfBounds.getCoords(targetPosition);
-        moveDirection = -outOfBounds.getDirection(transform.position,targetPosition).normalized;
+        
+        // Calculate direction directly (room-based, no wrap-around)
+        Vector3 direction = targetPosition - transform.position;
+        if (direction.magnitude > 0.1f)
+        {
+            moveDirection = direction.normalized;
+        }
+        else
+        {
+            moveDirection = Vector2.zero;
+        }
     }
     
     protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
