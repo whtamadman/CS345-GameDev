@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections;
 using System.Collections.Generic;
 
 public class Room : MonoBehaviour
@@ -41,6 +42,14 @@ public class Room : MonoBehaviour
     [Header("Room State")]
     public bool isCleared = false;
     public bool playerInRoom = false;
+    
+    [Header("Enemy Spawning")]
+    public GameObject[] enemyPrefabs; // List of enemy prefabs to spawn from
+    public int enemySpawnCount = 3; // Number of enemies to spawn
+    public float spawnDelay = 1.5f; // Delay before spawning enemies (in seconds)
+    public float spawnRadius = 0.8f; // Radius around player to spawn enemies
+    public float minDistanceFromPlayer = 0.5f; // Minimum distance from player to spawn
+    private bool enemiesSpawned = false; // Track if enemies have been spawned
     
     // Events
     public System.Action<Room> OnPlayerEntered;
@@ -456,6 +465,12 @@ public class Room : MonoBehaviour
             LockExits();
         }
         
+        // Spawn enemies if not a boss room and not already spawned
+        if (!(this is BossRoom) && !enemiesSpawned && enemyPrefabs != null && enemyPrefabs.Length > 0)
+        {
+            StartCoroutine(SpawnEnemiesAfterDelay());
+        }
+        
         // Notify systems that player entered
         OnPlayerEntered?.Invoke(this);
     }
@@ -860,6 +875,148 @@ public class Room : MonoBehaviour
                 return new Vector3Int(0 + offset.x, midY + offset.y, 0);
             default:
                 return Vector3Int.zero;
+        }
+    }
+    
+    private IEnumerator SpawnEnemiesAfterDelay()
+    {
+        // Wait for the spawn delay
+        yield return new WaitForSeconds(spawnDelay);
+        
+        // Verify player is still in this room before spawning
+        if (playerInRoom)
+        {
+            // Spawn enemies
+            SpawnEnemies();
+        }
+    }
+    
+    private void SpawnEnemies()
+    {
+        if (enemiesSpawned) return; // Prevent multiple spawns
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
+        
+        // Double-check that player is actually in this room before spawning
+        if (!playerInRoom) return;
+        
+        // Get player position
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player == null) return; // Can't spawn without player
+        
+        Vector3 playerPosition = player.transform.position;
+        enemiesSpawned = true;
+        
+        // Spawn the specified number of enemies
+        for (int i = 0; i < enemySpawnCount; i++)
+        {
+            Vector3 spawnPosition;
+            int attempts = 0;
+            const int maxAttempts = 50; // Prevent infinite loop
+            
+            // Try to find a spawn position near the player but not too close
+            do
+            {
+                // Random position within a circle around the player
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                // Random distance between minDistanceFromPlayer and spawnRadius
+                float distance = Random.Range(minDistanceFromPlayer, spawnRadius);
+                
+                float randomX = Mathf.Cos(angle) * distance;
+                float randomY = Mathf.Sin(angle) * distance;
+                spawnPosition = playerPosition + new Vector3(randomX, randomY, 0);
+                
+                attempts++;
+            } 
+            while (Vector3.Distance(spawnPosition, playerPosition) < minDistanceFromPlayer && attempts < maxAttempts);
+            
+            // If we couldn't find a good position after max attempts, use a position at minDistanceFromPlayer
+            if (attempts >= maxAttempts)
+            {
+                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+                spawnPosition = playerPosition + new Vector3(
+                    Mathf.Cos(angle) * minDistanceFromPlayer,
+                    Mathf.Sin(angle) * minDistanceFromPlayer,
+                    0
+                );
+            }
+            
+            // Randomly select an enemy prefab from the list
+            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            if (enemyPrefab != null)
+            {
+                // Instantiate enemy as child of this room
+                GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+                Enemy enemy = enemyObj.GetComponent<Enemy>();
+                
+                if (enemy != null)
+                {
+                    // Ensure enemy has proper collision setup
+                    SetupEnemyCollision(enemyObj);
+                    
+                    // Ensure enemy components are properly initialized
+                    EnsureEnemyInitialization(enemyObj);
+                    
+                    // Add to enemies list
+                    enemiesInRoom.Add(enemy);
+                    
+                    // Subscribe to death event
+                    enemy.OnDeath += OnEnemyDeath;
+                }
+            }
+        }
+    }
+    
+    private void SetupEnemyCollision(GameObject enemyObj)
+    {
+        // Ensure Rigidbody2D has proper collision detection
+        Rigidbody2D rb = enemyObj.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous; // Better collision detection
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Prevent rotation
+        }
+        
+        // Check if enemy has any non-trigger colliders for physics collision
+        Collider2D[] colliders = enemyObj.GetComponents<Collider2D>();
+        bool hasNonTriggerCollider = false;
+        
+        foreach (Collider2D col in colliders)
+        {
+            if (!col.isTrigger)
+            {
+                hasNonTriggerCollider = true;
+                break;
+            }
+        }
+        
+        // If all colliders are triggers, add a non-trigger collider for wall collision
+        if (!hasNonTriggerCollider)
+        {
+            // Add a non-trigger CircleCollider2D for physics collision with walls
+            CircleCollider2D collisionCol = enemyObj.AddComponent<CircleCollider2D>();
+            collisionCol.isTrigger = false;
+            collisionCol.radius = 0.4f; // Adjust size as needed based on enemy size
+        }
+    }
+    
+    private void EnsureEnemyInitialization(GameObject enemyObj)
+    {
+        // Disable OutOfBounds component if it exists (it interferes with room-based movement)
+        OutOfBounds outOfBounds = enemyObj.GetComponent<OutOfBounds>();
+        if (outOfBounds != null)
+        {
+            outOfBounds.enabled = false;
+        }
+        
+        // Ensure Rigidbody2D is properly set up
+        Rigidbody2D rb = enemyObj.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.WakeUp(); // Wake up the rigidbody if it's sleeping
+            if (rb.isKinematic)
+            {
+                rb.isKinematic = false; // Enemies need dynamic physics to move
+            }
         }
     }
     
