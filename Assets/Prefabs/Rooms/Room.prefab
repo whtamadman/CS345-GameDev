@@ -52,6 +52,7 @@ MonoBehaviour:
   wallTilemap: {fileID: 0}
   floorTilemap: {fileID: 0}
   autoFindGlobalTilemaps: 1
+  enableDebugLogging: 1
   globalGridName: Global_Grid
   wallTilemapName: Collision TM
   floorTilemapName: Floor TM
@@ -67,6 +68,10 @@ MonoBehaviour:
   doorsLocked: 0
   isCleared: 0
   playerInRoom: 0
+  enemyPrefabs:
+  - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
+  enemySpawnCount: 3
+  spawnDelay: 1.5
 --- !u!1839735485 &7401764260757693448
 Tilemap:
   m_ObjectHideFlags: 0

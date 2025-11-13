@@ -112,14 +112,14 @@ MonoBehaviour:
   - {fileID: 4642211910491477642, guid: b37fcd1fd47fb449eb8252e8d62ce653, type: 3}
   opponentTag: Player
   type: 0
-  moveSpeed: 5
+  moveSpeed: 1
   shootForce: 3
   reloadTime: 0.5
   friction: 0.15
   rangedDistance: 3
-  chaseDist: 15
-  roamDist: 10
-  shootDist: 10
+  chaseDist: 3
+  roamDist: 5
+  shootDist: 2
 --- !u!61 &730666939150347738
 BoxCollider2D:
   m_ObjectHideFlags: 0

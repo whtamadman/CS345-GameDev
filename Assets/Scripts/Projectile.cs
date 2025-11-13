@@ -83,32 +83,45 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Don't collide with shooter
-        if (shooter != null && other.gameObject == shooter)
+        // Don't collide with shooter or any of its colliders
+        if (shooter != null)
         {
-            // If boomerang is returning and reaches shooter, destroy it
-            if (isBoomerang && isReturning)
+            // Check if the collider belongs to the shooter or any of its children
+            if (other.gameObject == shooter || other.transform.IsChildOf(shooter.transform))
             {
-                Destroy(gameObject);
+                // If boomerang is returning and reaches shooter, destroy it
+                if (isBoomerang && isReturning)
+                {
+                    Destroy(gameObject);
+                }
+                return;
             }
-            return;
+            
+            // Also check if it's the same Enemy component (in case of multiple colliders)
+            Enemy shooterEnemy = shooter.GetComponent<Enemy>();
+            Enemy hitEnemy = other.GetComponent<Enemy>();
+            if (shooterEnemy != null && hitEnemy != null && shooterEnemy == hitEnemy)
+            {
+                return;
+            }
         }
 
         // If boomerang mode, don't destroy on hit - let it return
         if (isBoomerang && !isReturning)
         {
-            if (other.tag == target.tag)
+            if (target != null && other.tag == target.tag)
             {
                 other.GetComponent<Player>()?.takeDamage();
             }
             return;
         }
 
-        // Normal projectile behavior
-        if (other.tag == target.tag)
+        // Normal projectile behavior - only hit the target tag
+        if (target != null && other.tag == target.tag)
         {
             other.GetComponent<Player>()?.takeDamage();
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
+        // Don't destroy on collision with walls or other objects that aren't the target
     }
 }

@@ -111,14 +111,14 @@ MonoBehaviour:
   - {fileID: -7086934226340295845, guid: 5e93577c579834c58b1b3169d021379e, type: 3}
   opponentTag: Player
   type: 1
-  moveSpeed: 5
+  moveSpeed: 1
   shootForce: 3
   reloadTime: 0.5
   friction: 0.15
   rangedDistance: 3
-  chaseDist: 15
-  roamDist: 10
-  shootDist: 10
+  chaseDist: 4
+  roamDist: 5
+  shootDist: 2
 --- !u!50 &9027981668078158315
 Rigidbody2D:
   serializedVersion: 5

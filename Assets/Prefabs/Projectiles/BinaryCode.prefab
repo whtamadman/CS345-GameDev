@@ -105,7 +105,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edcbc6c9476d4adf98ea71103e983a19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  LifeTime: 5
+  lifeTime: 2
+  speed: 2
+  isBoomerang: 0
+  boomerangReturnDelay: 0.5
+  boomerangReturnSpeed: 12
 --- !u!50 &7664488370675003462
 Rigidbody2D:
   serializedVersion: 5
