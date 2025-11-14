@@ -29,4 +29,16 @@ public class Player : Person
     void Update(){
         moveDirection = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")).normalized;
     }
+
+    public void OnTriggerEnter(Collider other) {
+        if(other.gameObject.tag=="GlassBlade") {
+            
+        } else if (other.gameObject.tag=="DamageUp") {
+
+        } else if (other.gameObject.tag=="AttackRangeUp") {
+
+        } else if ((other.gameObject.tag=="CritChance")) {
+
+        }
+    }
 }
