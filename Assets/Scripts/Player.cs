@@ -29,6 +29,7 @@ public class Player : Person
     void Update(){
         moveDirection = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")).normalized;
     }
+<<<<<<< HEAD
 
     public void OnTriggerEnter(Collider other) {
         if(other.gameObject.tag=="GlassBlade") {
@@ -41,4 +42,6 @@ public class Player : Person
 
         }
     }
+=======
+>>>>>>> 8f207064568829aa8caf37bf347eea8d1a81fe65
 }
