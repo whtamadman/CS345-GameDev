@@ -3,23 +3,36 @@ using UnityEngine.Tilemaps;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum RoomType
+{
+    Normal,
+    Start,
+    Boss,
+    Item,
+    Shop,
+    Secret,
+    SuperSecret
+}
+
 public class Room : MonoBehaviour
 {
     [Header("Room Configuration")]
     public Vector2Int interiorSize = new Vector2Int(14, 10); // Walkable area
     public Vector2Int gridPos; // Position in dungeon grid
+    public RoomType roomType = RoomType.Normal; // Type of room
     
     [Header("Global Tilemap Components")]
     [SerializeField] private Grid grid;                  // Global grid (assigned at runtime)
     [SerializeField] private Tilemap wallTilemap;        // Global wall tilemap (assigned at runtime)
     [SerializeField] private Tilemap floorTilemap;       // Global floor tilemap (assigned at runtime)
+    [SerializeField] private Tilemap spawnIndicatorTilemap; // Global spawn indicator tilemap (assigned at runtime)
     
     [Header("Auto-Find Settings")]
     public bool autoFindGlobalTilemaps = true;           // Automatically find global tilemaps at runtime
-    public bool enableDebugLogging = true;              // Enable verbose debug logging (disable to reduce memory allocations)
     public string globalGridName = "Global_Grid";        // Name of global grid to find
     public string wallTilemapName = "Collision TM";      // Name of wall tilemap to find
-    public string floorTilemapName = "Floor TM";    // Name of floor tilemap to find
+    public string floorTilemapName = "Floor TM";         // Name of floor tilemap to find
+    public string spawnIndicatorTilemapName = "Spawn Indicator TM"; // Name of spawn indicator tilemap to find
     
     [Header("Tile Assets")]
     public TileBase floorTile;
@@ -32,9 +45,7 @@ public class Room : MonoBehaviour
     public bool hasEastExit = true;    // Default: all exits open
     public bool hasWestExit = true;    // Default: all exits open
     
-    [Header("Room Variant Info")]
-    [SerializeField] private string roomVariantName = "";  // Auto-generated based on exits
-    [SerializeField] private int exitCount = 0;            // Number of exits this room has
+
     
     [Header("Door State")]
     public bool doorsLocked = false;
@@ -43,13 +54,23 @@ public class Room : MonoBehaviour
     public bool isCleared = false;
     public bool playerInRoom = false;
     
+    /// <summary>
+    /// Public property to check if this room has been completed
+    /// </summary>
+    public bool IsCompleted => isCleared;
+    
     [Header("Enemy Spawning")]
     public GameObject[] enemyPrefabs; // List of enemy prefabs to spawn from
-    public int enemySpawnCount = 3; // Number of enemies to spawn
-    public float spawnDelay = 1.5f; // Delay before spawning enemies (in seconds)
-    public float spawnRadius = 0.8f; // Radius around player to spawn enemies
-    public float minDistanceFromPlayer = 0.5f; // Minimum distance from player to spawn
+    public int enemySpawnCount = 3; // Number of enemies to spawn per wave
+    public float spawnDelay = 2.0f; // Delay before spawning first wave (in seconds)
+    public float timeBetweenWaves = 5.0f; // Time between waves (in seconds)
+    [Range(1, 2)]
+    public int numberOfWaves = 1; // Number of waves (1-2)
+    public TileBase spawnIndicatorTile; // Tile to show spawn locations
+    public float spawnIndicatorDuration = 1.0f; // How long to show spawn indicators
     private bool enemiesSpawned = false; // Track if enemies have been spawned
+    private int currentWave = 0; // Current wave number
+    private bool allWavesCompleted = false; // Track if all waves are done
     
     // Events
     public System.Action<Room> OnPlayerEntered;
@@ -211,21 +232,8 @@ public class Room : MonoBehaviour
     [ContextMenu("Update Room Variant Info")]
     public void UpdateRoomVariantInfo()
     {
-        // Count exits
-        exitCount = 0;
-        if (hasNorthExit) exitCount++;
-        if (hasSouthExit) exitCount++;
-        if (hasEastExit) exitCount++;
-        if (hasWestExit) exitCount++;
-        
-        // Generate variant name
-        List<string> exits = new List<string>();
-        if (hasNorthExit) exits.Add("N");
-        if (hasSouthExit) exits.Add("S");
-        if (hasEastExit) exits.Add("E");
-        if (hasWestExit) exits.Add("W");
-        
-        roomVariantName = exits.Count > 0 ? string.Join("", exits) : "NoExits";
+        // Method kept for backward compatibility but no longer stores cached values
+        // All values are now calculated on-demand
     }
     
     // Check if this room matches a specific exit pattern
@@ -240,17 +248,24 @@ public class Room : MonoBehaviour
     // Get room variant as a readable string
     public string GetRoomVariant()
     {
-        if (string.IsNullOrEmpty(roomVariantName))
-        {
-            UpdateRoomVariantInfo();
-        }
-        return roomVariantName;
+        List<string> exits = new List<string>();
+        if (hasNorthExit) exits.Add("N");
+        if (hasSouthExit) exits.Add("S");
+        if (hasEastExit) exits.Add("E");
+        if (hasWestExit) exits.Add("W");
+        
+        return exits.Count > 0 ? string.Join("", exits) : "NoExits";
     }
     
     // Get exit count
     public int GetExitCount()
     {
-        return exitCount;
+        int count = 0;
+        if (hasNorthExit) count++;
+        if (hasSouthExit) count++;
+        if (hasEastExit) count++;
+        if (hasWestExit) count++;
+        return count;
     }
     
     // Method for dungeon generator to configure exits dynamically
@@ -341,10 +356,26 @@ public class Room : MonoBehaviour
             }
         }
         
+        // Find spawn indicator tilemap by name
+        if (spawnIndicatorTilemap == null)
+        {
+            GameObject spawnIndicatorObj = GameObject.Find(spawnIndicatorTilemapName);
+            if (spawnIndicatorObj != null)
+            {
+                spawnIndicatorTilemap = spawnIndicatorObj.GetComponent<Tilemap>();
+            }
+        }
+        
         // If auto-find failed, show helpful message
         if (grid == null || wallTilemap == null || floorTilemap == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: Could not auto-find all global tilemaps. Check names: Grid='{globalGridName}', Wall='{wallTilemapName}', Floor='{floorTilemapName}'");
+            Debug.LogWarning($"Room {gameObject.name}: Could not auto-find all global tilemaps. Check names: Grid='{globalGridName}', Wall='{wallTilemapName}', Floor='{floorTilemapName}', SpawnIndicator='{spawnIndicatorTilemapName}'");
+        }
+        
+        // Spawn indicator tilemap is optional, so just log info if missing
+        if (spawnIndicatorTilemap == null)
+        {
+            Debug.Log($"Room {gameObject.name}: Spawn indicator tilemap not found ('{spawnIndicatorTilemapName}') - spawn indicators will be disabled.");
         }
     }
     
@@ -367,6 +398,12 @@ public class Room : MonoBehaviour
         {
             Debug.LogWarning($"Room {gameObject.name}: No Floor Tilemap assigned! Please assign the global floor tilemap.");
             return;
+        }
+        
+        // Spawn indicator tilemap is optional
+        if (spawnIndicatorTilemap == null)
+        {
+            Debug.Log($"Room {gameObject.name}: No Spawn Indicator Tilemap assigned - spawn indicators will be disabled.");
         }
         
         // Global tilemap components validated successfully
@@ -437,6 +474,307 @@ public class Room : MonoBehaviour
         enemiesInRoom.AddRange(enemies);
     }
     
+    // Enemy spawning methods
+    public void SpawnEnemies()
+    {
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: No enemy prefabs assigned!");
+            return;
+        }
+        
+        if (enemySpawnCount <= 0)
+        {
+            Debug.Log($"Room {gameObject.name}: Enemy spawn count is 0, skipping enemy spawn.");
+            return;
+        }
+        
+        // Reset wave tracking
+        currentWave = 0;
+        allWavesCompleted = false;
+        
+        StartCoroutine(SpawnWaveSystem());
+    }
+    
+    private IEnumerator SpawnWaveSystem()
+    {
+        // Start with wave 1
+        currentWave = 1;
+        yield return StartCoroutine(SpawnWave(1));
+        
+        // Note: Subsequent waves will be triggered by CheckRoomClearCondition()
+        // when previous wave enemies are defeated
+    }
+    
+    private IEnumerator SpawnWave(int waveNumber)
+    {
+        Debug.Log($"Room {gameObject.name}: Starting wave {waveNumber}/{numberOfWaves}");
+        
+        // Wait for initial spawn delay (first wave) or time between waves
+        float delayTime = (waveNumber == 1) ? spawnDelay : timeBetweenWaves;
+        yield return new WaitForSeconds(delayTime);
+        
+        Vector3 roomCenter = transform.position;
+        List<Vector3> spawnPositions = GenerateSpawnPositions(enemySpawnCount, roomCenter);
+        
+        if (spawnPositions.Count == 0)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: No valid spawn positions found for wave {waveNumber}");
+            
+            // If this was the final wave, mark all waves completed
+            if (waveNumber >= numberOfWaves)
+            {
+                allWavesCompleted = true;
+                Debug.Log($"Room {gameObject.name}: All {numberOfWaves} waves completed (no enemies spawned in final wave)");
+            }
+            yield break;
+        }
+        
+        // Show spawn indicators for all enemies in this wave
+        List<Vector3Int> indicatorTilePositions = ShowSpawnIndicators(spawnPositions);
+        
+        // Wait for indicator duration
+        yield return new WaitForSeconds(spawnIndicatorDuration);
+        
+        // Remove spawn indicators
+        RemoveSpawnIndicators(indicatorTilePositions);
+        
+        // Spawn all enemies in this wave simultaneously (no delay between spawns)
+        foreach (Vector3 spawnPos in spawnPositions)
+        {
+            SpawnEnemyAtPosition(spawnPos, waveNumber);
+        }
+        
+        Debug.Log($"Room {gameObject.name}: Wave {waveNumber} spawned {spawnPositions.Count} enemies simultaneously");
+        
+        // If this was the final wave, mark all waves as completed
+        if (waveNumber >= numberOfWaves)
+        {
+            allWavesCompleted = true;
+            Debug.Log($"Room {gameObject.name}: All {numberOfWaves} waves completed");
+        }
+    }
+    
+    private List<Vector3> GenerateSpawnPositions(int count, Vector3 roomCenter)
+    {
+        List<Vector3> positions = new List<Vector3>();
+        
+        // Calculate spawn area boundaries in tile coordinates (interior of the room)
+        int halfTilesWidth = (interiorSize.x - 4) / 2; // Leave 2 tile border
+        int halfTilesHeight = (interiorSize.y - 4) / 2; // Leave 2 tile border
+        
+        // Use room center as player spawn position (where player enters the room)
+        Vector3 playerSpawnPos = roomCenter;
+        
+        int attempts = 0;
+        int maxAttempts = count * 20; // Prevent infinite loops
+        
+        while (positions.Count < count && attempts < maxAttempts)
+        {
+            attempts++;
+            
+            // Generate random tile position within room bounds
+            int tileX = Random.Range(-halfTilesWidth, halfTilesWidth + 1);
+            int tileY = Random.Range(-halfTilesHeight, halfTilesHeight + 1);
+            
+            // Convert tile position to world position (centered on tile)
+            Vector3 spawnPos = GetTileCenterWorldPosition(roomCenter, tileX, tileY);
+            
+            // Check if position is valid
+            if (IsValidSpawnPosition(spawnPos, playerSpawnPos, positions))
+            {
+                positions.Add(spawnPos);
+            }
+        }
+        
+        if (positions.Count < count)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Could only find {positions.Count} valid spawn positions out of {count} requested");
+        }
+        
+        return positions;
+    }
+    
+    private Vector3 GetTileCenterWorldPosition(Vector3 roomCenter, int tileOffsetX, int tileOffsetY)
+    {
+        if (grid != null)
+        {
+            // Calculate world position offset based on tile coordinates and grid cell size
+            float worldOffsetX = tileOffsetX * grid.cellSize.x;
+            float worldOffsetY = tileOffsetY * grid.cellSize.y;
+            
+            // Add half cell size to center on the tile
+            worldOffsetX += grid.cellSize.x * 0.5f;
+            worldOffsetY += grid.cellSize.y * 0.5f;
+            
+            return new Vector3(
+                roomCenter.x + worldOffsetX,
+                roomCenter.y + worldOffsetY,
+                roomCenter.z
+            );
+        }
+        else
+        {
+            // Fallback if no grid (assume 0.4 cell size based on your setup)
+            float cellSize = 0.4f;
+            return new Vector3(
+                roomCenter.x + (tileOffsetX + 0.5f) * cellSize,
+                roomCenter.y + (tileOffsetY + 0.5f) * cellSize,
+                roomCenter.z
+            );
+        }
+    }
+    
+    private bool IsValidSpawnPosition(Vector3 position, Vector3 playerSpawnPos, List<Vector3> existingPositions)
+    {
+        // Check distance from player spawn position (at least 1 tile away)
+        float minPlayerDistance = grid != null ? grid.cellSize.x * 1f : 0.4f; // At least 1 tile away
+        if (Vector3.Distance(position, playerSpawnPos) < minPlayerDistance)
+        {
+            return false;
+        }
+        
+        // Check distance from other spawn positions (at least 1 tile apart)
+        float minSpawnDistance = grid != null ? grid.cellSize.x : 0.4f; // At least 1 tile apart
+        foreach (Vector3 existingPos in existingPositions)
+        {
+            if (Vector3.Distance(position, existingPos) < minSpawnDistance)
+            {
+                return false;
+            }
+        }
+        
+        // Check if position is on a walkable tile (not on walls)
+        if (IsPositionOnWall(position))
+        {
+            return false;
+        }
+        
+        // Check if position is on a floor tile (ensure there's actually a floor there)
+        if (!IsPositionOnFloor(position))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private bool IsPositionOnWall(Vector3 worldPosition)
+    {
+        if (wallTilemap == null || grid == null) return false;
+        
+        // Convert world position to tile position
+        Vector3Int tilePos = grid.WorldToCell(worldPosition);
+        
+        // Check if there's a wall tile at this position
+        TileBase tileAtPosition = wallTilemap.GetTile(tilePos);
+        return tileAtPosition != null;
+    }
+    
+    private bool IsPositionOnFloor(Vector3 worldPosition)
+    {
+        if (floorTilemap == null || grid == null) return true; // Assume valid if can't check
+        
+        // Convert world position to tile position
+        Vector3Int tilePos = grid.WorldToCell(worldPosition);
+        
+        // Check if there's a floor tile at this position
+        TileBase tileAtPosition = floorTilemap.GetTile(tilePos);
+        return tileAtPosition != null;
+    }
+    
+    private void SpawnEnemyAtPosition(Vector3 position, int waveOrIndex)
+    {
+        // Choose random enemy prefab
+        GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        
+        // Instantiate enemy
+        GameObject enemyObj = Instantiate(enemyPrefab, position, Quaternion.identity, transform);
+        enemyObj.name = $"Enemy_W{currentWave}_{waveOrIndex}_{enemyPrefab.name}";
+        
+        // Get enemy component and subscribe to death event
+        Enemy enemy = enemyObj.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemiesInRoom.Add(enemy);
+            enemy.OnDeath += OnEnemyDeath;
+        }
+        else
+        {
+            Debug.LogWarning($"Spawned enemy {enemyObj.name} doesn't have Enemy component!");
+        }
+    }
+    
+    [ContextMenu("Test Spawn Enemies")]
+    public void TestSpawnEnemies()
+    {
+        SpawnEnemies();
+    }
+    
+    [ContextMenu("Test Spawn Indicators")]
+    public void TestSpawnIndicators()
+    {
+        if (spawnIndicatorTile == null)
+        {
+            Debug.LogError($"Room {gameObject.name}: No spawn indicator tile assigned!");
+            return;
+        }
+        
+        if (spawnIndicatorTilemap == null)
+        {
+            Debug.LogError($"Room {gameObject.name}: No spawn indicator tilemap found! Check tilemap setup.");
+            return;
+        }
+        
+        Vector3 roomCenter = transform.position;
+        List<Vector3> spawnPositions = GenerateSpawnPositions(enemySpawnCount, roomCenter);
+        List<Vector3Int> indicatorPositions = ShowSpawnIndicators(spawnPositions);
+        
+        Debug.Log($"Test spawning {indicatorPositions.Count} indicators at positions: {string.Join(", ", indicatorPositions)}");
+        
+        // Remove indicators after the duration
+        StartCoroutine(RemoveIndicatorsAfterDelay(indicatorPositions));
+    }
+    
+    private IEnumerator RemoveIndicatorsAfterDelay(List<Vector3Int> indicatorPositions)
+    {
+        yield return new WaitForSeconds(spawnIndicatorDuration);
+        RemoveSpawnIndicators(indicatorPositions);
+    }
+    
+    [ContextMenu("Clear All Enemies")]
+    public void ClearAllEnemies()
+    {
+        // Destroy all existing enemies
+        foreach (Enemy enemy in enemiesInRoom)
+        {
+            if (enemy != null)
+            {
+                enemy.OnDeath -= OnEnemyDeath;
+                DestroyImmediate(enemy.gameObject);
+            }
+        }
+        enemiesInRoom.Clear();
+        
+        Debug.Log($"Room {gameObject.name}: All enemies cleared");
+    }
+    
+    [ContextMenu("Debug Room Info")]
+    public void DebugRoomInfo()
+    {
+        Debug.Log($"Room {gameObject.name}: Type={roomType}, GridPos={gridPos}, ShouldSkipLocking={ShouldSkipExitLocking()}, IsCleared={isCleared}");
+    }
+    
+    public int GetEnemyCount()
+    {
+        return enemiesInRoom.Count;
+    }
+    
+    public bool HasEnemies()
+    {
+        return enemiesInRoom.Count > 0;
+    }
+    
     public virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -459,20 +797,64 @@ public class Room : MonoBehaviour
         
         playerInRoom = true;
         
-        // Lock exits if room is not cleared
-        if (!isCleared)
+        // Debug log to show room status when entered
+        if (isCleared)
+        {
+            Debug.Log($"Room {gameObject.name}: Player entered COMPLETED room - no locking or spawning will occur");
+        }
+        else
+        {
+            Debug.Log($"Room {gameObject.name}: Player entered room - Type: {roomType}, Will lock: {!ShouldSkipExitLocking()}, Will spawn: {ShouldSpawnEnemies()}");
+        }
+        
+        // Lock exits if room is not cleared, unless it's a starting room or item room
+        bool shouldLockExits = !isCleared && !ShouldSkipExitLocking();
+        Debug.Log($"Room {gameObject.name}: Door locking check - IsCleared: {isCleared}, ShouldSkipLocking: {ShouldSkipExitLocking()}, WillLock: {shouldLockExits}");
+        
+        if (shouldLockExits)
         {
             LockExits();
         }
         
-        // Spawn enemies if not a boss room and not already spawned
-        if (!(this is BossRoom) && !enemiesSpawned && enemyPrefabs != null && enemyPrefabs.Length > 0)
+        // Spawn enemies if it's a room that should have enemies, not already spawned, and not already cleared
+        if (ShouldSpawnEnemies() && !enemiesSpawned && !isCleared && enemyPrefabs != null && enemyPrefabs.Length > 0)
         {
-            StartCoroutine(SpawnEnemiesAfterDelay());
+            enemiesSpawned = true; // Mark as spawned to prevent multiple spawns
+            SpawnEnemies(); // Use the new wave system
+        }
+        else if (ShouldSpawnEnemies() && isCleared)
+        {
+            Debug.Log($"Room {gameObject.name}: Skipping enemy spawn - room already completed");
+        }
+        // If room shouldn't spawn enemies, check if it should be cleared immediately
+        else if (!ShouldSpawnEnemies() && !isCleared)
+        {
+            CheckRoomClearCondition();
         }
         
         // Notify systems that player entered
         OnPlayerEntered?.Invoke(this);
+    }
+    
+    // Check if this room type should skip exit locking
+    protected virtual bool ShouldSkipExitLocking()
+    {
+        // Starting rooms and item rooms should not lock their exits
+        // Boss rooms SHOULD lock their exits (so return false for boss rooms)
+        bool skipLocking = roomType == RoomType.Start || roomType == RoomType.Item || this is ItemRoom;
+        
+        Debug.Log($"Room {gameObject.name}: ShouldSkipExitLocking - RoomType: {roomType}, IsBossRoom: {this is BossRoom}, SkipLocking: {skipLocking}");
+        
+        return skipLocking;
+    }
+    
+    // Check if this room type should spawn enemies
+    protected virtual bool ShouldSpawnEnemies()
+    {
+        // Only normal rooms should spawn enemies via wave system
+        // Boss rooms will be handled by separate boss scripts
+        // Starting rooms, item rooms, shop rooms, and secret rooms should not spawn enemies
+        return roomType == RoomType.Normal && !(this is BossRoom) && !(this is ItemRoom);
     }
     
     public virtual void ExitRoom()
@@ -492,8 +874,86 @@ public class Room : MonoBehaviour
         isCleared = true;
         UnlockExits();
         
+        Debug.Log($"Room {gameObject.name}: Room cleared! Doors unlocked.");
+        
         // Notify systems that room is cleared
         OnRoomCleared?.Invoke(this);
+    }
+    
+    /// <summary>
+    /// Manually mark room as completed (useful for testing or special cases)
+    /// </summary>
+    [ContextMenu("Mark Room Completed")]
+    public void MarkRoomCompleted()
+    {
+        MarkCleared();
+    }
+    
+    /// <summary>
+    /// Reset room to incomplete state (useful for testing)
+    /// </summary>
+    [ContextMenu("Reset Room Completion")]
+    public void ResetRoomCompletion()
+    {
+        isCleared = false;
+        enemiesSpawned = false;
+        currentWave = 0;
+        allWavesCompleted = false;
+        enemiesInRoom.Clear();
+        
+        Debug.Log($"Room {gameObject.name}: Room completion reset - can spawn enemies again");
+    }
+    
+    /// <summary>
+    /// Manually check if room should be cleared (useful when enemies are manually deleted)
+    /// </summary>
+    [ContextMenu("Force Check Room Clear")]
+    public void ForceCheckRoomClear()
+    {
+        Debug.Log($"Room {gameObject.name}: Manual room clear check triggered");
+        CheckRoomClearCondition();
+    }
+    
+    /// <summary>
+    /// Force all waves to be marked as completed (useful for testing)
+    /// </summary>
+    [ContextMenu("Force Complete All Waves")]
+    public void ForceCompleteAllWaves()
+    {
+        allWavesCompleted = true;
+        currentWave = numberOfWaves;
+        Debug.Log($"Room {gameObject.name}: All waves force-completed, checking room clear condition");
+        CheckRoomClearCondition();
+    }
+    
+    /// <summary>
+    /// Kill all enemies in the room (useful for testing wave progression and room clearing)
+    /// </summary>
+    [ContextMenu("Kill All Enemies")]
+    public void KillAllEnemies()
+    {
+        int enemiesKilled = 0;
+        
+        // Create a copy of the list to avoid modification during iteration
+        List<Enemy> enemiesToKill = new List<Enemy>(enemiesInRoom);
+        
+        foreach (Enemy enemy in enemiesToKill)
+        {
+            if (enemy != null)
+            {
+                // Destroy the enemy GameObject
+                DestroyImmediate(enemy.gameObject);
+                enemiesKilled++;
+            }
+        }
+        
+        // Clear the list of null references
+        enemiesInRoom.RemoveAll(enemy => enemy == null);
+        
+        Debug.Log($"Room {gameObject.name}: Killed {enemiesKilled} enemies. Enemies remaining: {enemiesInRoom.Count}");
+        
+        // Check if room should progress to next wave or be cleared
+        CheckRoomClearCondition();
     }
     
     public virtual void LockExits()
@@ -509,7 +969,11 @@ public class Room : MonoBehaviour
     
     public virtual void UnlockExits()
     {
+        if (!doorsLocked) return; // Already unlocked
+        
         doorsLocked = false;
+        
+        Debug.Log($"Room {gameObject.name}: Unlocking doors - removing door tiles from exits");
         
         // Remove door tiles (place floor tiles) at exit positions
         if (hasNorthExit) SetExitTile("north", false);
@@ -545,10 +1009,33 @@ public class Room : MonoBehaviour
     
     protected virtual void CheckRoomClearCondition()
     {
-        // Room is cleared when all enemies are defeated
+        // Clean up any null references from manually deleted enemies
+        enemiesInRoom.RemoveAll(enemy => enemy == null);
+        
+        Debug.Log($"Room {gameObject.name}: CheckRoomClearCondition - Enemies remaining: {enemiesInRoom.Count}, Current wave: {currentWave}/{numberOfWaves}, All waves completed: {allWavesCompleted}, Is cleared: {isCleared}");
+        
+        // Room is cleared when all enemies are defeated and all waves are completed
         if (enemiesInRoom.Count == 0 && !isCleared)
         {
-            MarkCleared();
+            // For rooms that don't spawn enemies (start rooms, item rooms), clear immediately
+            if (!ShouldSpawnEnemies())
+            {
+                Debug.Log($"Room {gameObject.name}: No enemies to spawn - room cleared immediately!");
+                MarkCleared();
+            }
+            // Check if there are more waves to spawn
+            else if (currentWave < numberOfWaves && !allWavesCompleted)
+            {
+                Debug.Log($"Room {gameObject.name}: Wave {currentWave} cleared! Spawning wave {currentWave + 1}...");
+                currentWave++;
+                StartCoroutine(SpawnWave(currentWave));
+            }
+            // For rooms with enemies, check if all waves are completed
+            else if (allWavesCompleted)
+            {
+                Debug.Log($"Room {gameObject.name}: All waves completed and all enemies defeated - room cleared!");
+                MarkCleared();
+            }
         }
     }
     
@@ -570,6 +1057,19 @@ public class Room : MonoBehaviour
     public void SetGridPosition(Vector2Int pos)
     {
         gridPos = pos;
+    }
+    
+    // Set the room type
+    public void SetRoomType(RoomType type)
+    {
+        roomType = type;
+        Debug.Log($"Room {gameObject.name} at {gridPos} set to type: {type}");
+    }
+    
+    // Get the room type
+    public RoomType GetRoomType()
+    {
+        return roomType;
     }
     
     // Generate the actual tiles on dual tilemaps
@@ -878,94 +1378,6 @@ public class Room : MonoBehaviour
         }
     }
     
-    private IEnumerator SpawnEnemiesAfterDelay()
-    {
-        // Wait for the spawn delay
-        yield return new WaitForSeconds(spawnDelay);
-        
-        // Verify player is still in this room before spawning
-        if (playerInRoom)
-        {
-            // Spawn enemies
-            SpawnEnemies();
-        }
-    }
-    
-    private void SpawnEnemies()
-    {
-        if (enemiesSpawned) return; // Prevent multiple spawns
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
-        
-        // Double-check that player is actually in this room before spawning
-        if (!playerInRoom) return;
-        
-        // Get player position
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player == null) return; // Can't spawn without player
-        
-        Vector3 playerPosition = player.transform.position;
-        enemiesSpawned = true;
-        
-        // Spawn the specified number of enemies
-        for (int i = 0; i < enemySpawnCount; i++)
-        {
-            Vector3 spawnPosition;
-            int attempts = 0;
-            const int maxAttempts = 50; // Prevent infinite loop
-            
-            // Try to find a spawn position near the player but not too close
-            do
-            {
-                // Random position within a circle around the player
-                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-                // Random distance between minDistanceFromPlayer and spawnRadius
-                float distance = Random.Range(minDistanceFromPlayer, spawnRadius);
-                
-                float randomX = Mathf.Cos(angle) * distance;
-                float randomY = Mathf.Sin(angle) * distance;
-                spawnPosition = playerPosition + new Vector3(randomX, randomY, 0);
-                
-                attempts++;
-            } 
-            while (Vector3.Distance(spawnPosition, playerPosition) < minDistanceFromPlayer && attempts < maxAttempts);
-            
-            // If we couldn't find a good position after max attempts, use a position at minDistanceFromPlayer
-            if (attempts >= maxAttempts)
-            {
-                float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-                spawnPosition = playerPosition + new Vector3(
-                    Mathf.Cos(angle) * minDistanceFromPlayer,
-                    Mathf.Sin(angle) * minDistanceFromPlayer,
-                    0
-                );
-            }
-            
-            // Randomly select an enemy prefab from the list
-            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-            if (enemyPrefab != null)
-            {
-                // Instantiate enemy as child of this room
-                GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
-                Enemy enemy = enemyObj.GetComponent<Enemy>();
-                
-                if (enemy != null)
-                {
-                    // Ensure enemy has proper collision setup
-                    SetupEnemyCollision(enemyObj);
-                    
-                    // Ensure enemy components are properly initialized
-                    EnsureEnemyInitialization(enemyObj);
-                    
-                    // Add to enemies list
-                    enemiesInRoom.Add(enemy);
-                    
-                    // Subscribe to death event
-                    enemy.OnDeath += OnEnemyDeath;
-                }
-            }
-        }
-    }
-    
     private void SetupEnemyCollision(GameObject enemyObj)
     {
         // Ensure Rigidbody2D has proper collision detection
@@ -1018,6 +1430,62 @@ public class Room : MonoBehaviour
                 rb.isKinematic = false; // Enemies need dynamic physics to move
             }
         }
+    }
+    
+    /// <summary>
+    /// Shows spawn indicator tiles at the given positions
+    /// </summary>
+    /// <param name="spawnPositions">World positions where enemies will spawn</param>
+    /// <returns>List of tilemap positions where indicators were placed</returns>
+    private List<Vector3Int> ShowSpawnIndicators(List<Vector3> spawnPositions)
+    {
+        List<Vector3Int> indicatorPositions = new List<Vector3Int>();
+        
+        if (spawnIndicatorTilemap == null)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: No spawn indicator tilemap available for showing indicators");
+            return indicatorPositions;
+        }
+        
+        if (spawnIndicatorTile == null)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: No spawn indicator tile assigned");
+            return indicatorPositions;
+        }
+        
+        foreach (Vector3 worldPos in spawnPositions)
+        {
+            // Convert world position to tilemap position
+            Vector3Int tilePos = spawnIndicatorTilemap.WorldToCell(worldPos);
+            
+            // Place the indicator tile
+            spawnIndicatorTilemap.SetTile(tilePos, spawnIndicatorTile);
+            indicatorPositions.Add(tilePos);
+        }
+        
+        Debug.Log($"Room {gameObject.name}: Showing {indicatorPositions.Count} spawn indicators");
+        return indicatorPositions;
+    }
+    
+    /// <summary>
+    /// Removes spawn indicator tiles from the given positions
+    /// </summary>
+    /// <param name="indicatorPositions">Tilemap positions to clear</param>
+    private void RemoveSpawnIndicators(List<Vector3Int> indicatorPositions)
+    {
+        if (spawnIndicatorTilemap == null)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: No spawn indicator tilemap available for removing indicators");
+            return;
+        }
+        
+        foreach (Vector3Int tilePos in indicatorPositions)
+        {
+            // Remove the tile (set to null)
+            spawnIndicatorTilemap.SetTile(tilePos, null);
+        }
+        
+        Debug.Log($"Room {gameObject.name}: Removed {indicatorPositions.Count} spawn indicators");
     }
     
     protected virtual void OnDestroy()

@@ -48,17 +48,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Room
   interiorSize: {x: 14, y: 10}
   gridPos: {x: 0, y: 0}
+  roomType: 0
   grid: {fileID: 0}
   wallTilemap: {fileID: 0}
   floorTilemap: {fileID: 0}
+  spawnIndicatorTilemap: {fileID: 0}
   autoFindGlobalTilemaps: 1
   enableDebugLogging: 1
   globalGridName: Global_Grid
   wallTilemapName: Collision TM
   floorTilemapName: Floor TM
+  spawnIndicatorTilemapName: Decal TM
   floorTile: {fileID: 11400000, guid: fda68607d6fd2f84fb1f435edebd9a45, type: 2}
   wallTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
-  doorTile: {fileID: 11400000, guid: 9c3cabc3bfeef5e4eb4dbcf00a2d3244, type: 2}
+  doorTile: {fileID: 11400000, guid: 1154c77dbca06cf48be2df8da2d45707, type: 2}
   hasNorthExit: 0
   hasSouthExit: 0
   hasEastExit: 0
@@ -72,10 +75,14 @@ MonoBehaviour:
   - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
   - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
   - {fileID: 3520070930834900833, guid: caa9b0773c1b145d892120cb7a931d82, type: 3}
-  enemySpawnCount: 3
+  enemySpawnCount: 5
   spawnDelay: 1.5
+  timeBetweenWaves: 3
+  numberOfWaves: 2
   spawnRadius: 3
   minDistanceFromPlayer: 1.5
+  spawnIndicatorTile: {fileID: 11400000, guid: c3a55b167f1325a4aadd67bb0b8ae817, type: 2}
+  spawnIndicatorDuration: 1
 --- !u!1839735485 &7401764260757693448
 Tilemap:
   m_ObjectHideFlags: 0

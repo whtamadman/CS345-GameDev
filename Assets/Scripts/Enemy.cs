@@ -14,6 +14,9 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]protected float moveSpeed, shootForce, reloadTime;
     [SerializeField]protected float friction;
+    [SerializeField]protected bool canAttackWhileMoving = false; // Can this enemy attack while moving?
+    [SerializeField]protected float minMovementThreshold = 0.1f; // Minimum velocity to consider "moving"
+    [SerializeField]public bool allowShooting = true; // Inspector toggle to enable/disable shooting
     protected Vector2 moveDirection;
     protected bool canShoot = true;
     Vector3 targetPosition;
@@ -101,7 +104,7 @@ public class Enemy : MonoBehaviour
         {
             rigidBody.linearVelocity = Vector2.zero;
             moveDirection = Vector2.zero;
-            if(canShoot){
+            if(CanAttackNow()){
                 StartCoroutine(Shoot(moveDirection,shootForce));
             }
             return;
@@ -129,7 +132,7 @@ public class Enemy : MonoBehaviour
             if(distanceToPlayer > shootDist){
                 currentState = State.Chase;
             }
-            if(canShoot){
+            if(CanAttackNow()){
                 StartCoroutine(Shoot(moveDirection,shootForce));
             }
         }
@@ -144,6 +147,36 @@ public class Enemy : MonoBehaviour
         {
             moveDirection = Vector2.zero;
         }
+    }
+    
+    /// <summary>
+    /// Checks if the enemy is currently moving
+    /// </summary>
+    /// <returns>True if the enemy is moving above the minimum threshold</returns>
+    protected bool IsMoving()
+    {
+        if (rigidBody == null) return false;
+        return rigidBody.linearVelocity.magnitude > minMovementThreshold;
+    }
+    
+    /// <summary>
+    /// Checks if the enemy can attack in its current state
+    /// </summary>
+    /// <returns>True if the enemy can attack (considering movement restrictions and inspector settings)</returns>
+    protected bool CanAttackNow()
+    {
+        // Check if shooting is enabled in inspector
+        if (!allowShooting) return false;
+        
+        if (!canShoot) return false;
+        
+        // If enemy can't attack while moving, check if it's currently moving
+        if (!canAttackWhileMoving && IsMoving())
+        {
+            return false;
+        }
+        
+        return true;
     }
     
     protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
