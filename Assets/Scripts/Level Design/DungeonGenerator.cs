@@ -137,6 +137,9 @@ public class DungeonGenerator : MonoBehaviour
         startRoom = CreateRoom(centerPos, "Start Room");
         availablePositions.Remove(centerPos);
         
+        // Set room type to Start
+        startRoom.SetRoomType(RoomType.Start);
+        
         // Initialize with all exits open for start room
         startRoom.ConfigureExits(true, true, true, true);
         
@@ -360,6 +363,7 @@ public class DungeonGenerator : MonoBehaviour
             // Convert the farthest room to boss room
             bossRoom = farthestRoom;
             bossRoom.name = "Boss Room";
+            bossRoom.SetRoomType(RoomType.Boss);
             fightRooms.Remove(bossRoom);
             
             // Configure boss room connections
@@ -379,6 +383,7 @@ public class DungeonGenerator : MonoBehaviour
             Room randomRoom = fightRooms[Random.Range(0, fightRooms.Count)];
             itemRoom = randomRoom;
             itemRoom.name = "Item Room";
+            itemRoom.SetRoomType(RoomType.Item);
             fightRooms.Remove(itemRoom);
         }
     }
@@ -522,6 +527,7 @@ public class DungeonGenerator : MonoBehaviour
         
         // Set room data
         room.SetGridPosition(gridPos);
+        room.SetRoomType(RoomType.Normal); // Default to normal room type
         roomGrid[gridPos.x, gridPos.y] = room;
         roomObj.name = $"{roomName}_{gridPos.x}_{gridPos.y}";
         

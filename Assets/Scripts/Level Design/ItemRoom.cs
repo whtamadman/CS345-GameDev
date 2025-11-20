@@ -18,6 +18,9 @@ public class ItemRoom : Room
     {
         base.Awake();
         
+        // Set room type to Item
+        roomType = RoomType.Item;
+        
         // Set default spawn point if not assigned
         if (itemSpawnPoint == null)
         {

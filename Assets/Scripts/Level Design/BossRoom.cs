@@ -7,6 +7,9 @@ public class BossRoom : Room
     protected override void Awake()
     {
         base.Awake();
+        
+        // Set room type to Boss
+        roomType = RoomType.Boss;
     }
     
     public override void MarkCleared()
