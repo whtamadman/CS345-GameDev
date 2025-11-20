@@ -44,11 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ddca5354fb6438488e8b3a2199ddf58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomObstacleGenerator
+  includeObstacles: 1
   obstacleTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
   useRandomGeneration: 0
   minObstacles: 1
   maxObstacles: 5
-  obstacleChance: 0.3
   fixedLayouts:
   - layoutName: Cross Pattern
     obstaclePositions:
@@ -98,6 +98,7 @@ MonoBehaviour:
   collisionTilemapName: Collision TM
   preserveExistingWalls: 1
   includeBreakableBlocks: 1
+  customBreakableTileManager: {fileID: 1524295355580075092, guid: da47715537954c649880f90250ea02f3, type: 3}
   breakableTile: {fileID: 11400000, guid: 9c3cabc3bfeef5e4eb4dbcf00a2d3244, type: 2}
   minBreakableBlocks: 2
   maxBreakableBlocks: 8
