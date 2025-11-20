@@ -285,10 +285,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 411744526}
-  - component: {fileID: 411744525}
-  - component: {fileID: 411744527}
-  - component: {fileID: 411744528}
+  - component: {fileID: 602199915}
+  - component: {fileID: 602199917}
+  - component: {fileID: 602199916}
   m_Layer: 0
   m_Name: PowerUp
   m_TagString: power
@@ -673,16 +672,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f58688eef7af3c4486bda2baa891af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  animator: {fileID: 0}
+  invincibility: 0
+  meleeHitbox: {fileID: 6932073957137778937, guid: cd7ab39032980fd479ce5c2d6ce44251, type: 3}
   health: 9999
   maxHealth: 0
   moveSpeed: 2.2
   attackRange: 1
   damage: 0
   friction: 1
-  opponentTag: 
-  animator: {fileID: 0}
-  invincibility: 0
-  powerUpText: {fileID: 0}
+  invinceTimer: 5
 --- !u!50 &660805253
 Rigidbody2D:
   serializedVersion: 5
@@ -2183,7 +2182,6 @@ SceneRoots:
   - {fileID: 3970275119895556221}
   - {fileID: 1793919416}
   - {fileID: 1936532888}
-  - {fileID: 411744526}
   - {fileID: 1005046722}
   - {fileID: 825920987}
   - {fileID: 1197655605}

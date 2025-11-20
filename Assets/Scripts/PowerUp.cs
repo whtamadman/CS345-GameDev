@@ -15,7 +15,6 @@ public class PowerUp : MonoBehaviour {
     {
         GameObject popup = Instantiate(popupTextPrefab);
         popup.transform.SetParent(hudCanvas, false);
-        Debug.Log("2HI\n");
         popup.GetComponentInChildren<TMP_Text>().text = effect.powerUpName + "\n" + effect.description;
         Destroy(popup, 2f);
         StartCoroutine(UpdateResetVar(2f));
