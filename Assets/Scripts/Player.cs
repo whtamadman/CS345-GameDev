@@ -75,5 +75,4 @@ public class Player : MonoBehaviour {
         Debug.Log("Invince False");
         invincibility = false;
     }
-
 }
