@@ -9,11 +9,24 @@ public class Projectile : MonoBehaviour
     [SerializeField] private bool isBoomerang = false;
     [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
     [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
+    [SerializeField] private bool isTrackingProjectile = false;
+    [SerializeField] private float trackingSpeed = 4f;
+    [SerializeField] private float trackingTurnSpeed = 720f;
+    [SerializeField] private bool isBeamProjectile = false;
+    [SerializeField] private LayerMask beamStopLayers;
+    [SerializeField] private bool isStaticProjectile = false;
+    [SerializeField] private float staticTravelSpeed = 6f;
+    [SerializeField] private float staticArrivalThreshold = 0.2f;
+    [SerializeField] private float staticHoldDuration = 2f;
 
     private Transform target;
     private Rigidbody2D rb;
     private GameObject shooter;
     private bool isReturning = false;
+    private Vector3 staticDestination;
+    private bool staticDestinationLocked = false;
+    private bool staticHasSettled = false;
+    private Coroutine staticHoldCoroutine;
     
     // Static tracking for boomerangs (max 1 per shooter at a time)
     private static Dictionary<GameObject, Projectile> activeBoomerangs = new Dictionary<GameObject, Projectile>();
@@ -44,6 +57,12 @@ public class Projectile : MonoBehaviour
         Vector2 direction = (target.position - transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+        
+        if (isStaticProjectile && target != null)
+        {
+            staticDestination = target.position;
+            staticDestinationLocked = true;
+        }
         
         // If this is a boomerang, check if the shooter already has one active (max 1 per shooter)
         if (isBoomerang && shooter != null)
@@ -98,27 +117,40 @@ public class Projectile : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (rb != null)
+        if (rb == null)
         {
-            if (isReturning && shooter != null)
-            {
-                // Return to shooter
-                Vector2 direction = (shooter.transform.position - transform.position).normalized;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-                transform.rotation = Quaternion.Euler(0, 0, angle);
-                rb.linearVelocity = direction * boomerangReturnSpeed;
-
-                // Check if reached shooter
-                if (Vector2.Distance(transform.position, shooter.transform.position) < 0.5f)
-                {
-                    Destroy(gameObject);
-                }
-            }
-            else
-            {
-                rb.linearVelocity = transform.up * speed;
-            }
+            return;
         }
+
+        if (isReturning && shooter != null)
+        {
+            // Return to shooter
+            Vector2 direction = (shooter.transform.position - transform.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            rb.linearVelocity = direction * boomerangReturnSpeed;
+
+            // Check if reached shooter
+            if (Vector2.Distance(transform.position, shooter.transform.position) < 0.5f)
+            {
+                Destroy(gameObject);
+            }
+            return;
+        }
+
+        if (isTrackingProjectile)
+        {
+            HandleTrackingMovement();
+            return;
+        }
+
+        if (isStaticProjectile)
+        {
+            HandleStaticMovement();
+            return;
+        }
+
+        rb.linearVelocity = transform.up * speed;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -151,6 +183,16 @@ public class Projectile : MonoBehaviour
             }
         }
 
+        if (isBeamProjectile)
+        {
+            bool shouldStopBeam = ((1 << other.gameObject.layer) & beamStopLayers) != 0;
+            if (shouldStopBeam)
+            {
+                Destroy(gameObject);
+                return;
+            }
+        }
+
         // If boomerang mode, don't destroy on hit - let it return
         if (isBoomerang && !isReturning)
         {
@@ -168,6 +210,69 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
         // Don't destroy on collision with walls or other objects that aren't the target
+    }
+    
+    private void HandleTrackingMovement()
+    {
+        if (rb == null)
+        {
+            return;
+        }
+
+        if (target == null)
+        {
+            rb.linearVelocity = transform.up * trackingSpeed;
+            return;
+        }
+
+        Vector2 desiredDirection = ((Vector2)target.position - rb.position).normalized;
+        float angle = Mathf.Atan2(desiredDirection.y, desiredDirection.x) * Mathf.Rad2Deg - 90f;
+        Quaternion desiredRotation = Quaternion.Euler(0f, 0f, angle);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation, trackingTurnSpeed * Time.fixedDeltaTime);
+        rb.linearVelocity = transform.up * trackingSpeed;
+    }
+
+    private void HandleStaticMovement()
+    {
+        if (rb == null)
+        {
+            return;
+        }
+
+        if (!staticDestinationLocked)
+        {
+            staticDestination = target != null ? target.position : transform.position;
+            staticDestinationLocked = true;
+        }
+
+        if (staticHasSettled)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        Vector2 toDestination = (Vector2)staticDestination - rb.position;
+        if (toDestination.magnitude <= staticArrivalThreshold)
+        {
+            staticHasSettled = true;
+            rb.linearVelocity = Vector2.zero;
+            if (staticHoldCoroutine == null)
+            {
+                staticHoldCoroutine = StartCoroutine(StaticHoldTimer());
+            }
+            return;
+        }
+
+        Vector2 travelDirection = toDestination.normalized;
+        rb.linearVelocity = travelDirection * staticTravelSpeed;
+        float angle = Mathf.Atan2(travelDirection.y, travelDirection.x) * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    private IEnumerator StaticHoldTimer()
+    {
+        yield return new WaitForSeconds(staticHoldDuration);
+        Destroy(gameObject);
     }
     
     private void OnDestroy()
