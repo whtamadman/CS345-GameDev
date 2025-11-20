@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Projectile : MonoBehaviour
 {
@@ -100,29 +101,120 @@ public class Projectile : MonoBehaviour
     {
         if (rb != null)
         {
+            Vector2 currentVelocity;
+            
             if (isReturning && shooter != null)
             {
                 // Return to shooter
                 Vector2 direction = (shooter.transform.position - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
                 transform.rotation = Quaternion.Euler(0, 0, angle);
-                rb.linearVelocity = direction * boomerangReturnSpeed;
+                currentVelocity = direction * boomerangReturnSpeed;
+                rb.linearVelocity = currentVelocity;
 
                 // Check if reached shooter
                 if (Vector2.Distance(transform.position, shooter.transform.position) < 0.5f)
                 {
                     Destroy(gameObject);
+                    return;
                 }
             }
             else
             {
-                rb.linearVelocity = transform.up * speed;
+                currentVelocity = transform.up * speed;
+                rb.linearVelocity = currentVelocity;
+            }
+            
+            // Check for wall collision along movement path
+            CheckWallCollision(currentVelocity);
+        }
+    }
+    
+    private void CheckWallCollision(Vector2 velocity)
+    {
+        if (velocity.magnitude < 0.1f) return; // Skip if not moving
+        
+        // Cast a ray from current position in the direction of movement
+        Vector2 rayDirection = velocity.normalized;
+        float rayDistance = velocity.magnitude * Time.fixedDeltaTime + 0.2f; // Add buffer
+        
+        // Use RaycastAll to get ALL colliders in the path (not just the first one)
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, rayDirection, rayDistance);
+        
+        foreach (RaycastHit2D hit in hits)
+        {
+            // Skip if it's the projectile itself or the shooter
+            if (hit.collider.gameObject == gameObject) continue;
+            if (shooter != null && (hit.collider.gameObject == shooter || hit.collider.transform.IsChildOf(shooter.transform))) continue;
+            
+            // Check if this is a wall
+            if (IsWallCollider(hit.collider))
+            {
+                // Hit a wall - move to hit point and destroy
+                transform.position = hit.point;
+                if (isBoomerang && shooter != null)
+                {
+                    if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] == this)
+                    {
+                        activeBoomerangs.Remove(shooter);
+                    }
+                }
+                Destroy(gameObject);
+                return;
             }
         }
+    }
+    
+    private bool IsWallCollider(Collider2D collider)
+    {
+        // Skip trigger colliders (those are for entities, not walls)
+        if (collider.isTrigger) return false;
+        
+        // Skip the projectile itself
+        if (collider.gameObject == gameObject) return false;
+        
+        // Check for tilemap collision
+        if (collider.GetComponent<TilemapCollider2D>() != null) return true;
+        
+        // Check for collision tilemap by name
+        if (collider.gameObject.name.ToLower().Contains("collision")) return true;
+        
+        // Check for walls layer (if you have one)
+        int wallsLayer = LayerMask.NameToLayer("Walls");
+        if (wallsLayer != -1 && collider.gameObject.layer == wallsLayer) return true;
+        
+        // Any non-trigger collider that's not an entity is likely a wall
+        // (This catches any solid obstacles)
+        return true;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        HandleCollision(other);
+    }
+    
+    private void HandleCollision(Collider2D other)
+    {
+        // Check for breakable tiles first
+        BreakableTileManager tileManager = FindFirstObjectByType<BreakableTileManager>();
+        if (tileManager != null)
+        {
+            // Try to break tile at collision point, passing shooter info for permission check
+            if (tileManager.TryBreakTile(transform.position, shooter))
+            {
+                // Tile was broken, destroy projectile
+                if (isBoomerang && shooter != null)
+                {
+                    if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] == this)
+                    {
+                        activeBoomerangs.Remove(shooter);
+                    }
+                }
+                Destroy(gameObject);
+                return;
+            }
+        }
+        
         // Don't collide with shooter or any of its colliders
         if (shooter != null)
         {
@@ -151,7 +243,7 @@ public class Projectile : MonoBehaviour
             }
         }
 
-        // If boomerang mode, don't destroy on hit - let it return
+        // If boomerang mode, don't destroy on target hit - let it return
         if (isBoomerang && !isReturning)
         {
             if (target != null && other.tag == target.tag)
@@ -167,7 +259,6 @@ public class Projectile : MonoBehaviour
             other.GetComponent<Player>()?.takeDamage();
             Destroy(gameObject);
         }
-        // Don't destroy on collision with walls or other objects that aren't the target
     }
     
     private void OnDestroy()

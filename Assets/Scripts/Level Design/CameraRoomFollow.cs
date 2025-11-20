@@ -100,8 +100,7 @@ public class CameraRoomFollow : MonoBehaviour
         {
             transform.position = targetPosition;
         }
-        
-        Debug.Log($"Camera target set to room center: {roomCenter}, adjusted target: {targetPosition}");
+
     }
     
     private Vector3 ConstrainToRoomBounds(Vector3 desiredPosition, Vector3 roomCenter)

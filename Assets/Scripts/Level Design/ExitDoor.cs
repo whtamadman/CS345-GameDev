@@ -60,8 +60,7 @@ public class ExitDoor : MonoBehaviour
         {
             doorAnimator.SetBool("IsOpen", false);
         }
-        
-        Debug.Log($"Door {gameObject.name} locked");
+
     }
     
     public void Unlock()
@@ -85,8 +84,7 @@ public class ExitDoor : MonoBehaviour
         {
             doorAnimator.SetBool("IsOpen", true);
         }
-        
-        Debug.Log($"Door {gameObject.name} unlocked");
+
     }
     
     public void Toggle()

@@ -92,8 +92,7 @@ public class ItemRoom : Room
         SetupItemCollection();
         
         itemSpawned = true;
-        
-        Debug.Log($"Item spawned in room at {gridPos}: {itemToSpawn.name}");
+
     }
     
     private void SetupItemCollection()
@@ -124,8 +123,7 @@ public class ItemRoom : Room
     private void OnItemCollected(ItemCollectable item)
     {
         itemCollected = true;
-        
-        Debug.Log($"Item collected in room at {gridPos}: {item.name}");
+
         
         // Optionally mark room as "truly cleared" only when item is collected
         // This could affect completion percentage or achievements
@@ -191,8 +189,7 @@ public class ItemRoom : Room
         
         SetupItemCollection();
         itemSpawned = true;
-        
-        Debug.Log($"Specific item spawned in room at {gridPos}: {itemToSpawn.name}");
+
     }
     
     protected override void OnDestroy()
@@ -240,8 +237,6 @@ public class ItemCollectable : MonoBehaviour
     
     private void CollectItem()
     {
-        Debug.Log($"Player collected: {itemName}");
-        
         // Notify listeners
         OnItemCollected?.Invoke(this);
         

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8139992207396022576}
   - component: {fileID: 7544419418564987596}
   m_Layer: 0
-  m_Name: MathEnemy
+  m_Name: CS_Enemy
   m_TagString: Math
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,10 +116,17 @@ MonoBehaviour:
   shootForce: 3
   reloadTime: 0.5
   friction: 0.15
+  canAttackWhileMoving: 0
+  minMovementThreshold: 0.1
+  allowShooting: 1
   rangedDistance: 3
-  chaseDist: 3
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  requireLineOfSight: 1
+  chaseDist: 2
   roamDist: 5
-  shootDist: 2
+  shootDist: 1
 --- !u!61 &730666939150347738
 BoxCollider2D:
   m_ObjectHideFlags: 0

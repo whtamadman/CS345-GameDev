@@ -167,7 +167,15 @@ public class Room : MonoBehaviour
             isValid = false;
         }
         
-        // Configuration is valid
+        // Report validation result
+        if (isValid)
+        {
+            Debug.Log($"Room {gameObject.name}: Configuration is valid!");
+        }
+        else
+        {
+            Debug.LogError($"Room {gameObject.name}: Configuration has errors that need to be fixed!");
+        }
         
         // Update and display variant info
         UpdateRoomVariantInfo();
@@ -589,7 +597,11 @@ public class Room : MonoBehaviour
         
         if (positions.Count < count)
         {
-            Debug.LogWarning($"Room {gameObject.name}: Could only find {positions.Count} valid spawn positions out of {count} requested");
+            Debug.LogWarning($"Room {gameObject.name}: Could only find {positions.Count} valid spawn positions out of {count} requested after {attempts} attempts. This may be due to obstacles, breakable blocks, or insufficient space.");
+        }
+        else
+        {
+            Debug.Log($"Room {gameObject.name}: Successfully generated {positions.Count} spawn positions, avoiding obstacles and breakable blocks.");
         }
         
         return positions;
@@ -656,6 +668,20 @@ public class Room : MonoBehaviour
             return false;
         }
         
+        // Check if position has obstacles (collision tilemap)
+        if (IsPositionOnObstacle(position))
+        {
+            // Debug.Log($"Room: Spawn position {position} rejected - obstacle found");
+            return false;
+        }
+        
+        // Check if position has breakable blocks
+        if (IsPositionOnBreakableBlock(position))
+        {
+            // Debug.Log($"Room: Spawn position {position} rejected - breakable block found");
+            return false;
+        }
+        
         return true;
     }
     
@@ -681,6 +707,50 @@ public class Room : MonoBehaviour
         // Check if there's a floor tile at this position
         TileBase tileAtPosition = floorTilemap.GetTile(tilePos);
         return tileAtPosition != null;
+    }
+    
+    private bool IsPositionOnObstacle(Vector3 worldPosition)
+    {
+        if (grid == null) return false;
+        
+        // Convert world position to tile position
+        Vector3Int tilePos = grid.WorldToCell(worldPosition);
+        
+        // Find collision tilemap in scene
+        GameObject collisionTilemapObj = GameObject.Find("Collision TM");
+        if (collisionTilemapObj != null)
+        {
+            Tilemap collisionTilemap = collisionTilemapObj.GetComponent<Tilemap>();
+            if (collisionTilemap != null)
+            {
+                TileBase tileAtPosition = collisionTilemap.GetTile(tilePos);
+                return tileAtPosition != null; // True if there's an obstacle at this position
+            }
+        }
+        
+        return false; // No obstacles found
+    }
+    
+    private bool IsPositionOnBreakableBlock(Vector3 worldPosition)
+    {
+        if (grid == null) return false;
+        
+        // Convert world position to tile position
+        Vector3Int tilePos = grid.WorldToCell(worldPosition);
+        
+        // Find breakable tilemap in scene
+        GameObject breakableTilemapObj = GameObject.Find("Breakable TM");
+        if (breakableTilemapObj != null)
+        {
+            Tilemap breakableTilemap = breakableTilemapObj.GetComponent<Tilemap>();
+            if (breakableTilemap != null)
+            {
+                TileBase tileAtPosition = breakableTilemap.GetTile(tilePos);
+                return tileAtPosition != null; // True if there's a breakable block at this position
+            }
+        }
+        
+        return false; // No breakable blocks found
     }
     
     private void SpawnEnemyAtPosition(Vector3 position, int waveOrIndex)
@@ -1425,9 +1495,9 @@ public class Room : MonoBehaviour
         if (rb != null)
         {
             rb.WakeUp(); // Wake up the rigidbody if it's sleeping
-            if (rb.isKinematic)
+            if (rb.bodyType == RigidbodyType2D.Kinematic)
             {
-                rb.isKinematic = false; // Enemies need dynamic physics to move
+                rb.bodyType = RigidbodyType2D.Dynamic; // Enemies need dynamic physics to move
             }
         }
     }

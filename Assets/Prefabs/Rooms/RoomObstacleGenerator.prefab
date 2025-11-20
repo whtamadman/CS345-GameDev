@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1219164225766843320
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3523341369715608905}
+  - component: {fileID: 2759703590717585177}
+  m_Layer: 0
+  m_Name: RoomObstacleGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3523341369715608905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219164225766843320}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.18383, y: 7.74877, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2759703590717585177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219164225766843320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ddca5354fb6438488e8b3a2199ddf58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomObstacleGenerator
+  obstacleTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
+  useRandomGeneration: 0
+  minObstacles: 1
+  maxObstacles: 5
+  obstacleChance: 0.3
+  fixedLayouts:
+  - layoutName: Cross Pattern
+    obstaclePositions:
+    - {x: -2, y: 0}
+    - {x: 2, y: 0}
+    - {x: 0, y: -2}
+    - {x: 0, y: 2}
+    layoutPreview: "  #\n # # \n  #"
+  - layoutName: Corner Blocks
+    obstaclePositions:
+    - {x: -3, y: -2}
+    - {x: -2, y: -2}
+    - {x: 2, y: -2}
+    - {x: 3, y: -2}
+    - {x: -3, y: 2}
+    - {x: -2, y: 2}
+    - {x: 2, y: 2}
+    - {x: 3, y: 2}
+    layoutPreview: "## ##\n     \n## ##"
+  - layoutName: Center Column
+    obstaclePositions:
+    - {x: 0, y: -2}
+    - {x: 0, y: -1}
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    - {x: 0, y: 2}
+    layoutPreview: "  #\n  #\n  #\n  #\n  #"
+  - layoutName: L-Shapes
+    obstaclePositions:
+    - {x: -3, y: -2}
+    - {x: -3, y: -1}
+    - {x: -2, y: -1}
+    - {x: 2, y: 1}
+    - {x: 3, y: 1}
+    - {x: 3, y: 2}
+    layoutPreview: "##   \n#    \n   ##\n    #"
+  useFixedLayouts: 1
+  minObstacleWidth: 1
+  maxObstacleWidth: 3
+  minObstacleHeight: 1
+  maxObstacleHeight: 3
+  borderBuffer: 2
+  centerClearRadius: 2
+  avoidExitPaths: 1
+  generateOnStart: 1
+  collisionTilemap: {fileID: 0}
+  collisionTilemapName: Collision TM
+  preserveExistingWalls: 1
+  includeBreakableBlocks: 1
+  breakableTile: {fileID: 11400000, guid: 9c3cabc3bfeef5e4eb4dbcf00a2d3244, type: 2}
+  minBreakableBlocks: 2
+  maxBreakableBlocks: 8
+  breakableBlockChance: 10
+  breakableTilemapName: Breakable TM

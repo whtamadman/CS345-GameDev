@@ -23,6 +23,29 @@ public class Enemy : MonoBehaviour
     OutOfBounds outOfBounds;
     public float rangedDistance;
     
+    [Header("Behavior Options")]
+    [SerializeField] private bool enableMovement = true; // Can this enemy move?
+    [SerializeField] private bool enableChasing = true; // Can this enemy chase the player?
+    [SerializeField] private bool enableRoaming = true; // Can this enemy roam when not chasing?
+    
+    [Header("Line of Sight")]
+    [SerializeField] private LayerMask wallLayers = -1; // What layers block line of sight
+    [SerializeField] private bool requireLineOfSight = true; // Must see player to chase/shoot
+    
+    [Header("Wall Avoidance")]
+    [SerializeField] private bool enableWallAvoidance = true;
+    [SerializeField] private float wallDetectionDistance = 1.5f;
+    [SerializeField] private float stuckThreshold = 0.1f; // Velocity threshold to consider "stuck"
+    [SerializeField] private float stuckTime = 0.5f; // Time stuck before trying to go around
+    
+    // Wall avoidance tracking
+    private Vector2 lastPosition;
+    private float stuckTimer = 0f;
+    private bool isAvoidingWall = false;
+    private Vector2 avoidanceDirection = Vector2.zero;
+    private float avoidanceTimer = 0f;
+    private float avoidanceDuration = 1.5f;
+    
     // Event for room system integration
     public System.Action<Enemy> OnDeath;
 
@@ -36,7 +59,8 @@ public class Enemy : MonoBehaviour
     public enum EnemyType
     {
         Melee,
-        Ranged
+        Ranged,
+        Static // Doesn't move, only shoots if player is in range
     };
 
     [SerializeField] private float chaseDist, roamDist, shootDist;
@@ -58,15 +82,28 @@ public class Enemy : MonoBehaviour
         if (rigidBody != null)
         {
             rigidBody.WakeUp();
-            if (rigidBody.isKinematic)
+            if (rigidBody.bodyType == RigidbodyType2D.Kinematic)
             {
-                rigidBody.isKinematic = false; // Enemies need dynamic physics to move
+                rigidBody.bodyType = RigidbodyType2D.Dynamic; // Enemies need dynamic physics to move
             }
         }
         
-        currentState = State.Roam;
-        targetPosition = (Vector2)transform.position
-                         + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
+        // Static enemies don't have states, they just shoot
+        if (type == EnemyType.Static)
+        {
+            Debug.Log($"Static Enemy {gameObject.name} initialized (no movement)");
+            targetPosition = transform.position; // Stay in place
+        }
+        else
+        {
+            currentState = State.Roam;
+            Debug.Log($"Enemy {gameObject.name} started in ROAM state");
+            targetPosition = (Vector2)transform.position
+                             + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
+        }
+        
+        // Initialize wall avoidance
+        lastPosition = transform.position;
     }
 
     void FixedUpdate()
@@ -77,6 +114,13 @@ public class Enemy : MonoBehaviour
     void Move()
     {
         if (rigidBody == null) return;
+        
+        // Check if movement is disabled or enemy is static type
+        if (!enableMovement || type == EnemyType.Static)
+        {
+            rigidBody.linearVelocity = Vector2.zero;
+            return;
+        }
         
         if(moveDirection.magnitude > 0.01f) {
             rigidBody.linearVelocity = moveDirection * moveSpeed;
@@ -102,50 +146,122 @@ public class Enemy : MonoBehaviour
         
         if (type == EnemyType.Ranged && distanceToPlayer <= rangedDistance)
         {
-            rigidBody.linearVelocity = Vector2.zero;
-            moveDirection = Vector2.zero;
-            if(CanAttackNow()){
-                StartCoroutine(Shoot(moveDirection,shootForce));
+            // Check line of sight before shooting
+            if (HasLineOfSight(player.transform))
+            {
+                rigidBody.linearVelocity = Vector2.zero;
+                moveDirection = Vector2.zero;
+                if(CanAttackNow()){
+                    StartCoroutine(Shoot(moveDirection,shootForce));
+                }
+                return;
             }
+            // If no line of sight, continue with normal state behavior below
+        }
+        
+        bool hasLineOfSight = HasLineOfSight(player.transform);
+        
+        // Static enemies don't change states, they only shoot
+        if (type == EnemyType.Static)
+        {
+            // Static enemies stay in one place but can still shoot
+            moveDirection = Vector2.zero;
             return;
         }
         
         if (currentState == State.Roam){
+            // Check if roaming is enabled
+            if (!enableRoaming)
+            {
+                moveDirection = Vector2.zero;
+                return;
+            }
+            
             float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
                 
             if(distanceToTarget < 1f){
                 targetPosition = (Vector2)transform.position + new
                     Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
             }
-            if(distanceToPlayer < chaseDist){
+            // Only chase if chasing is enabled and we can see the player
+            if(enableChasing && distanceToPlayer < chaseDist && hasLineOfSight){
                 currentState = State.Chase;
             }
         }else if(currentState == State.Chase){
-            targetPosition = player.transform.position;
-            if(distanceToPlayer < shootDist){
-                currentState = State.Shoot;
-            }else if(distanceToPlayer > chaseDist*1.2f){
+            // If chasing is disabled, return to roam
+            if (!enableChasing)
+            {
                 currentState = State.Roam;
+                Debug.Log($"Enemy {gameObject.name} entered ROAM state (chasing disabled)");
+                targetPosition = (Vector2)transform.position + new
+                    Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
             }
-        }else{
-            targetPosition = player.transform.position;
-            if(distanceToPlayer > shootDist){
-                currentState = State.Chase;
+            // If we lose line of sight, return to roaming
+            else if (!hasLineOfSight)
+            {
+                currentState = State.Roam;
+                Debug.Log($"Enemy {gameObject.name} entered ROAM state (lost line of sight)");
+                // Set new roam target
+                targetPosition = (Vector2)transform.position + new
+                    Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
             }
-            if(CanAttackNow()){
-                StartCoroutine(Shoot(moveDirection,shootForce));
+            else
+            {
+                targetPosition = player.transform.position;
+                if(distanceToPlayer < shootDist){
+                    currentState = State.Shoot;
+                }else if(distanceToPlayer > chaseDist*1.2f){
+                    currentState = State.Roam;
+                    Debug.Log($"Enemy {gameObject.name} entered ROAM state (player too far away)");
+                }
+            }
+        }else{ // Shoot state
+            // If we lose line of sight while shooting, return to roaming
+            if (!hasLineOfSight)
+            {
+                currentState = State.Roam;
+                Debug.Log($"Enemy {gameObject.name} entered ROAM state (lost line of sight while shooting)");
+                // Set new roam target
+                targetPosition = (Vector2)transform.position + new
+                    Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
+            }
+            else
+            {
+                targetPosition = player.transform.position;
+                if(distanceToPlayer > shootDist){
+                    currentState = State.Chase;
+                    Debug.Log($"Enemy {gameObject.name} entered CHASE state (player moved away from shoot distance)");
+                }
+                if(CanAttackNow()){
+                    StartCoroutine(Shoot(moveDirection,shootForce));
+                }
             }
         }
         
         // Calculate direction directly (room-based, no wrap-around)
         Vector3 direction = targetPosition - transform.position;
-        if (direction.magnitude > 0.1f)
+        Vector2 desiredDirection = Vector2.zero;
+        
+        // Only calculate movement if movement is enabled
+        if (enableMovement && type != EnemyType.Static && direction.magnitude > 0.1f)
         {
-            moveDirection = direction.normalized;
+            desiredDirection = direction.normalized;
+        }
+        
+        // Apply wall avoidance if in chase mode and wall avoidance is enabled
+        if (currentState == State.Chase && enableWallAvoidance && enableMovement)
+        {
+            moveDirection = HandleWallAvoidance(desiredDirection);
         }
         else
         {
-            moveDirection = Vector2.zero;
+            moveDirection = desiredDirection;
+            // Reset avoidance when not chasing or movement disabled
+            if (isAvoidingWall)
+            {
+                isAvoidingWall = false;
+                stuckTimer = 0f;
+            }
         }
     }
     
@@ -157,6 +273,172 @@ public class Enemy : MonoBehaviour
     {
         if (rigidBody == null) return false;
         return rigidBody.linearVelocity.magnitude > minMovementThreshold;
+    }
+    
+    /// <summary>
+    /// Handles wall avoidance when enemy gets stuck
+    /// </summary>
+    /// <param name="desiredDirection">The direction the enemy wants to move</param>
+    /// <returns>Modified direction to avoid walls</returns>
+    private Vector2 HandleWallAvoidance(Vector2 desiredDirection)
+    {
+        if (!enableWallAvoidance) return desiredDirection;
+        
+        // Check if we're stuck (not moving much despite wanting to move)
+        Vector2 currentPos = transform.position;
+        float distanceMoved = Vector2.Distance(currentPos, lastPosition);
+        
+        if (desiredDirection.magnitude > 0.1f && distanceMoved < stuckThreshold)
+        {
+            stuckTimer += Time.deltaTime;
+            
+            if (stuckTimer >= stuckTime && !isAvoidingWall)
+            {
+                // We're stuck, start wall avoidance
+                StartWallAvoidance(desiredDirection);
+            }
+        }
+        else
+        {
+            stuckTimer = 0f;
+            if (!isAvoidingWall)
+            {
+                lastPosition = currentPos;
+            }
+        }
+        
+        // Handle active wall avoidance
+        if (isAvoidingWall)
+        {
+            avoidanceTimer -= Time.deltaTime;
+            
+            // Check if we can now move toward target
+            if (avoidanceTimer <= 0f || !IsWallInDirection(desiredDirection))
+            {
+                isAvoidingWall = false;
+                lastPosition = currentPos;
+                return desiredDirection;
+            }
+            
+            return avoidanceDirection;
+        }
+        
+        return desiredDirection;
+    }
+    
+    /// <summary>
+    /// Starts wall avoidance behavior
+    /// </summary>
+    /// <param name="blockedDirection">The direction that's blocked</param>
+    private void StartWallAvoidance(Vector2 blockedDirection)
+    {
+        isAvoidingWall = true;
+        avoidanceTimer = avoidanceDuration;
+        
+        // Try to find a clear direction to move
+        Vector2[] testDirections = {
+            new Vector2(-blockedDirection.y, blockedDirection.x), // Perpendicular left
+            new Vector2(blockedDirection.y, -blockedDirection.x), // Perpendicular right
+            -blockedDirection, // Opposite
+            Vector2.up, Vector2.down, Vector2.left, Vector2.right // Cardinals
+        };
+        
+        foreach (Vector2 testDir in testDirections)
+        {
+            if (!IsWallInDirection(testDir))
+            {
+                avoidanceDirection = testDir.normalized;
+                Debug.Log($"Enemy {gameObject.name} avoiding wall, moving {avoidanceDirection}");
+                return;
+            }
+        }
+        
+        // If all directions blocked, move backward
+        avoidanceDirection = -blockedDirection.normalized;
+        Debug.Log($"Enemy {gameObject.name} all directions blocked, moving backward");
+    }
+    
+    /// <summary>
+    /// Check if there's a wall in the given direction
+    /// </summary>
+    /// <param name="direction">Direction to check</param>
+    /// <returns>True if wall detected</returns>
+    private bool IsWallInDirection(Vector2 direction)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, wallDetectionDistance, wallLayers);
+        return hit.collider != null && IsWallCollider(hit.collider);
+    }
+    
+    /// <summary>
+    /// Checks if the enemy has clear line of sight to the target
+    /// </summary>
+    /// <param name="target">The target to check line of sight to</param>
+    /// <returns>True if there are no walls blocking the view</returns>
+    protected bool HasLineOfSight(Transform target)
+    {
+        if (!requireLineOfSight || target == null) return true;
+        
+        Vector2 directionToTarget = (target.position - transform.position).normalized;
+        float distanceToTarget = Vector2.Distance(transform.position, target.position);
+        
+        // Start raycast from slightly outside enemy's collider to avoid self-collision
+        Vector2 rayStart = (Vector2)transform.position + directionToTarget * 0.2f;
+        float adjustedDistance = distanceToTarget - 0.2f;
+        
+        if (adjustedDistance <= 0) return true; // Target too close to check properly
+        
+        // Cast multiple rays to be more thorough (center, slightly up, slightly down)
+        Vector2[] rayDirections = {
+            directionToTarget,
+            (directionToTarget + Vector2.up * 0.1f).normalized,
+            (directionToTarget + Vector2.down * 0.1f).normalized
+        };
+        
+        foreach (Vector2 rayDir in rayDirections)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(rayStart, rayDir, adjustedDistance, wallLayers);
+            
+            // If any ray hits a wall before reaching the target, line of sight is blocked
+            if (hit.collider != null && IsWallCollider(hit.collider))
+            {
+                Debug.Log($"Enemy {gameObject.name} line of sight blocked by {hit.collider.gameObject.name} at distance {hit.distance}");
+                return false; // Line of sight blocked by wall
+            }
+        }
+        
+        return true; // Clear line of sight
+    }
+    
+    /// <summary>
+    /// Checks if a collider is a wall that blocks line of sight
+    /// </summary>
+    /// <param name="collider">The collider to check</param>
+    /// <returns>True if this collider blocks line of sight</returns>
+    private bool IsWallCollider(Collider2D collider)
+    {
+        // Skip trigger colliders (those are for entities, not walls)
+        if (collider.isTrigger) return false;
+        
+        // Skip self and other enemies
+        if (collider.gameObject == gameObject) return false;
+        if (collider.GetComponent<Enemy>() != null) return false;
+        
+        // Skip player
+        if (collider.CompareTag("Player")) return false;
+        
+        // Definitely walls - tilemap collision
+        if (collider.GetComponent<UnityEngine.Tilemaps.TilemapCollider2D>() != null) return true;
+        
+        // Check for collision tilemap by name
+        if (collider.gameObject.name.ToLower().Contains("collision")) return true;
+        
+        // Check for walls layer specifically
+        int wallsLayer = LayerMask.NameToLayer("Walls");
+        if (wallsLayer != -1 && collider.gameObject.layer == wallsLayer) return true;
+        
+        // Be more conservative - only count as wall if it's explicitly a wall-like object
+        // Don't assume all non-trigger colliders are walls
+        return false;
     }
     
     /// <summary>

@@ -51,8 +51,7 @@ public class FloorManager : MonoBehaviour
     public void GenerateNewFloor(int floorNumber)
     {
         currentFloor = floorNumber;
-        
-        Debug.Log($"Generating floor {currentFloor}");
+
         
         // Generate the dungeon
         if (dungeonGenerator != null)
@@ -104,8 +103,7 @@ public class FloorManager : MonoBehaviour
         
         // Clear existing dungeon and generate new one at current floor
         GenerateNewFloor(currentFloor);
-        
-        Debug.Log($"Level recreated at origin for floor {currentFloor}");
+
     }
     
     public void MovePlayerToStart()
@@ -140,8 +138,6 @@ public class FloorManager : MonoBehaviour
                 Vector3 cameraPosition = new Vector3(startPosition.x, startPosition.y, mainCamera.transform.position.z);
                 mainCamera.transform.position = cameraPosition;
             }
-            
-            Debug.Log($"Player and camera moved to start room at {startPosition}");
         }
         else
         {
@@ -193,20 +189,6 @@ public class FloorManager : MonoBehaviour
     {
         Room previousRoom = currentPlayerRoom;
         currentPlayerRoom = room;
-        
-        Debug.Log($"🚪 ROOM TRANSITION: Player entered room at {room.gridPos} ('{room.name}') on floor {currentFloor}");
-        
-        if (previousRoom != null)
-        {
-            Debug.Log($"   Previous room: {previousRoom.gridPos} ('{previousRoom.name}')");
-        }
-        else
-        {
-            Debug.Log($"   Previous room: None (first room entry)");
-        }
-        
-        Debug.Log($"   Room world position: {room.transform.position}");
-        Debug.Log($"   Player position: {player.position}");
         
         // Update camera to follow the room (use transform position instead of GetCenter)
         if (cameraController != null)
