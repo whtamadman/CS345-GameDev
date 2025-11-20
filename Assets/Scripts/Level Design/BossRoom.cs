@@ -18,8 +18,7 @@ public class BossRoom : Room
         
         // Call base room clearing logic
         base.MarkCleared();
-        
-        Debug.Log("Boss defeated!");
+
     }
     
 
