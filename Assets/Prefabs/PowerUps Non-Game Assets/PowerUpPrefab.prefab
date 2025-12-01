@@ -105,8 +105,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
   popupTextPrefab: {fileID: 7379756527978743064, guid: ab224593bdd151242aab17179b8f4114, type: 3}
+  powerUpSprite: {fileID: 7265280159183308830, guid: b7c7a90a89fdf7f41ac72d33af34bb4b, type: 3}
   effect: {fileID: 11400000, guid: bcd8e82930ad5c342a212c81b7fba3d7, type: 2}
-  hudCanvas: {fileID: 0}
+  powerUpPrefab: {fileID: 1059502666910262663}
 --- !u!61 &26342280698817303
 BoxCollider2D:
   m_ObjectHideFlags: 0
