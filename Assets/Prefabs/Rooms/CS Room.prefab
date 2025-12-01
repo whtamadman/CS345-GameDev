@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7401764260757693448}
   - component: {fileID: 800471466016186986}
   m_Layer: 0
-  m_Name: Room
+  m_Name: CS Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,7 +54,6 @@ MonoBehaviour:
   floorTilemap: {fileID: 0}
   spawnIndicatorTilemap: {fileID: 0}
   autoFindGlobalTilemaps: 1
-  enableDebugLogging: 1
   globalGridName: Global_Grid
   wallTilemapName: Collision TM
   floorTilemapName: Floor TM
@@ -66,23 +65,33 @@ MonoBehaviour:
   hasSouthExit: 0
   hasEastExit: 0
   hasWestExit: 0
-  roomVariantName: 
-  exitCount: 0
   doorsLocked: 0
   isCleared: 0
   playerInRoom: 0
   enemyPrefabs:
-  - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
   - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
-  - {fileID: 3520070930834900833, guid: caa9b0773c1b145d892120cb7a931d82, type: 3}
-  enemySpawnCount: 5
+  - {fileID: 7857972497118599685, guid: 77d0b0a562fd0bf48a124c3b384b47d0, type: 3}
+  minEnemySpawnCount: 4
+  maxEnemySpawnCount: 5
   spawnDelay: 1.5
   timeBetweenWaves: 3
-  numberOfWaves: 2
-  spawnRadius: 3
-  minDistanceFromPlayer: 1.5
+  minNumberOfWaves: 1
+  maxNumberOfWaves: 2
   spawnIndicatorTile: {fileID: 11400000, guid: c3a55b167f1325a4aadd67bb0b8ae817, type: 2}
   spawnIndicatorDuration: 1
+  bossPrefabs: []
+  spawnRandomBoss: 1
+  specificBossIndex: 0
+  bossSpawnPoint: {fileID: 0}
+  spawnBossAtCenter: 1
+  bossDefeatPrefab: {fileID: 645930204465908015, guid: ef07821ccf5ad28488244ea2babbfd8d, type: 3}
+  spawnDefeatPrefabAtCenter: 1
+  defeatPrefabOffset: {x: -3.2, y: -2.7, z: 0}
+  bossSpawnDelay: 1
+  rewardPrefabs: []
+  rewardSpawnPoint: {fileID: 0}
+  bossSpawned: 0
+  bossDefeated: 0
 --- !u!1839735485 &7401764260757693448
 Tilemap:
   m_ObjectHideFlags: 0

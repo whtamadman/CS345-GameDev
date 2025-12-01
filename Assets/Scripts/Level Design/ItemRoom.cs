@@ -3,16 +3,11 @@ using UnityEngine;
 public class ItemRoom : Room
 {
     [Header("Item Room Configuration")]
-    public GameObject[] itemPrefabs; // Array of possible items to spawn
     public Transform itemSpawnPoint; // Where to spawn the item
     public bool spawnOnRoomClear = true; // Spawn item when room is cleared
     public bool spawnOnEntry = false; // Spawn item when player enters
     
-    [Header("Item State")]
-    public bool itemSpawned = false;
-    public bool itemCollected = false;
-    
-    private GameObject spawnedItem;
+    // Note: itemPrefabs, itemSpawned, itemCollected, and spawnedItem are inherited from base Room class
     
     protected override void Awake()
     {
@@ -63,71 +58,62 @@ public class ItemRoom : Room
     
     private void SpawnItem()
     {
+        Debug.Log($"ItemRoom {gameObject.name}: SpawnItem called - itemSpawned={itemSpawned}, spawnOnRoomClear={spawnOnRoomClear}");
+        
         if (itemSpawned)
         {
-            Debug.LogWarning("Item already spawned in this room!");
+            Debug.LogWarning($"ItemRoom {gameObject.name}: Item already spawned in this room! Existing item: {(currentItem != null ? currentItem.name : "null")}");
             return;
         }
         
+        Debug.Log($"ItemRoom {gameObject.name}: Checking item prefabs - itemPrefabs is {(itemPrefabs == null ? "null" : $"array with {itemPrefabs.Length} items")}");
+        
         if (itemPrefabs == null || itemPrefabs.Length == 0)
         {
-            Debug.LogError("No item prefabs assigned to ItemRoom!");
+            Debug.LogError($"ItemRoom {gameObject.name}: No item prefabs assigned! ItemPrefabs array is {(itemPrefabs == null ? "null" : $"empty (length: {itemPrefabs.Length})")}");
+            
+            // Check if manually placed items exist in the room
+            Debug.Log($"ItemRoom {gameObject.name}: Searching for manually placed PowerUp items...");
+            var existingItems = GetComponentsInChildren<PowerUp>();
+            Debug.Log($"ItemRoom {gameObject.name}: Found {existingItems.Length} PowerUp components in children");
+            
+            if (existingItems.Length > 0)
+            {
+                Debug.Log($"ItemRoom {gameObject.name}: Found {existingItems.Length} manually placed items in room, marking as spawned");
+                itemSpawned = true;
+                currentItem = existingItems[0].gameObject;
+            }
+            else
+            {
+                Debug.LogWarning($"ItemRoom {gameObject.name}: No manually placed items found either!");
+            }
             return;
         }
         
         // Choose random item from available prefabs
-        GameObject itemToSpawn = itemPrefabs[Random.Range(0, itemPrefabs.Length)];
+        int randomIndex = Random.Range(0, itemPrefabs.Length);
+        GameObject itemToSpawn = itemPrefabs[randomIndex];
+        Debug.Log($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex}: {(itemToSpawn != null ? itemToSpawn.name : "null")}");
         
         if (itemToSpawn == null)
         {
-            Debug.LogError("Selected item prefab is null!");
+            Debug.LogError($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex} is null!");
             return;
         }
         
         // Spawn the item
         Vector3 spawnPosition = itemSpawnPoint.position;
-        spawnedItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
-        
-        // Setup item collection detection
-        SetupItemCollection();
+        Debug.Log($"ItemRoom {gameObject.name}: Spawning item {itemToSpawn.name} at position {spawnPosition}");
+        currentItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
         
         itemSpawned = true;
+        Debug.Log($"ItemRoom {gameObject.name}: Item spawning completed successfully! Item: {currentItem.name}");
 
     }
     
-    private void SetupItemCollection()
-    {
-        if (spawnedItem == null) return;
-        
-        // Try to get existing item collection component
-        ItemCollectable itemCollectable = spawnedItem.GetComponent<ItemCollectable>();
-        
-        if (itemCollectable == null)
-        {
-            // Add item collection component if it doesn't exist
-            itemCollectable = spawnedItem.AddComponent<ItemCollectable>();
-        }
-        
-        // Subscribe to collection event
-        itemCollectable.OnItemCollected += OnItemCollected;
-        
-        // Ensure item has a trigger collider
-        Collider2D itemCollider = spawnedItem.GetComponent<Collider2D>();
-        if (itemCollider == null)
-        {
-            itemCollider = spawnedItem.AddComponent<BoxCollider2D>();
-        }
-        itemCollider.isTrigger = true;
-    }
-    
-    private void OnItemCollected(ItemCollectable item)
-    {
-        itemCollected = true;
 
-        
-        // Optionally mark room as "truly cleared" only when item is collected
-        // This could affect completion percentage or achievements
-    }
+    
+
     
     // Override room clear condition for item rooms
     protected override void CheckRoomClearCondition()
@@ -138,29 +124,13 @@ public class ItemRoom : Room
         // For example, requiring both enemies defeated AND item collected
     }
     
-    public GameObject GetSpawnedItem()
-    {
-        return spawnedItem;
-    }
+
     
-    public bool IsItemSpawned()
-    {
-        return itemSpawned;
-    }
+
     
-    public bool IsItemCollected()
-    {
-        return itemCollected;
-    }
+
     
-    // Method to manually spawn item (for testing or special conditions)
-    public void ForceSpawnItem()
-    {
-        if (!itemSpawned)
-        {
-            SpawnItem();
-        }
-    }
+
     
     // Method to manually spawn specific item by index
     public void SpawnSpecificItem(int itemIndex)
@@ -185,9 +155,8 @@ public class ItemRoom : Room
         }
         
         Vector3 spawnPosition = itemSpawnPoint.position;
-        spawnedItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
+        currentItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
         
-        SetupItemCollection();
         itemSpawned = true;
 
     }
@@ -197,13 +166,9 @@ public class ItemRoom : Room
         base.OnDestroy();
         
         // Clean up item reference
-        if (spawnedItem != null)
+        if (currentItem != null)
         {
-            ItemCollectable itemCollectable = spawnedItem.GetComponent<ItemCollectable>();
-            if (itemCollectable != null)
-            {
-                itemCollectable.OnItemCollected -= OnItemCollected;
-            }
+            // Item cleanup handled by PowerUp component itself
         }
     }
     
@@ -215,47 +180,3 @@ public class ItemRoom : Room
     }
 }
 
-// Simple item collection component
-public class ItemCollectable : MonoBehaviour
-{
-    [Header("Item Properties")]
-    public string itemName = "Item";
-    public string itemDescription = "A useful item";
-    public Sprite itemIcon;
-    public int value = 1;
-    
-    // Events
-    public System.Action<ItemCollectable> OnItemCollected;
-    
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            CollectItem();
-        }
-    }
-    
-    private void CollectItem()
-    {
-        // Notify listeners
-        OnItemCollected?.Invoke(this);
-        
-        // Add item to player inventory (if inventory system exists)
-        // PlayerInventory.Instance?.AddItem(this);
-        
-        // Play collection effects
-        PlayCollectionEffects();
-        
-        // Destroy the item
-        Destroy(gameObject);
-    }
-    
-    private void PlayCollectionEffects()
-    {
-        // Play sound effect
-        // AudioManager.Instance?.PlaySFX("ItemCollected");
-        
-        // Spawn particle effect
-        // EffectsManager.Instance?.SpawnEffect("ItemCollected", transform.position);
-    }
-}

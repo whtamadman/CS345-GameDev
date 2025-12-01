@@ -10,7 +10,7 @@ public class BreakableBlock : MonoBehaviour
     [SerializeField] private bool breakOnProjectileHit = true;
     [SerializeField] private bool breakOnPlayerContact = false;
     [SerializeField] private string playerTag = "Player";
-    [SerializeField] private string projectileTag = "Projectile";
+    [SerializeField] private string projectileTag = "Enemy"; // Projectiles from enemies
     
     [Header("Tilemap References")]
     [SerializeField] private Tilemap targetTilemap;

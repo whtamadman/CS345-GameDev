@@ -61,18 +61,57 @@ public class Room : MonoBehaviour
     
     [Header("Enemy Spawning")]
     public GameObject[] enemyPrefabs; // List of enemy prefabs to spawn from
-    public int enemySpawnCount = 3; // Number of enemies to spawn per wave
+    [Header("Spawn Count Range")]
+    public int minEnemySpawnCount = 2; // Minimum number of enemies to spawn per wave
+    public int maxEnemySpawnCount = 4; // Maximum number of enemies to spawn per wave
     public float spawnDelay = 2.0f; // Delay before spawning first wave (in seconds)
     public float timeBetweenWaves = 5.0f; // Time between waves (in seconds)
-    [Range(1, 2)]
-    public int numberOfWaves = 1; // Number of waves (1-2)
+    [Header("Wave Count Range")]
+    public int minNumberOfWaves = 1; // Minimum number of waves
+    public int maxNumberOfWaves = 2; // Maximum number of waves
     public TileBase spawnIndicatorTile; // Tile to show spawn locations
     public float spawnIndicatorDuration = 1.0f; // How long to show spawn indicators
     private bool enemiesSpawned = false; // Track if enemies have been spawned
     private int currentWave = 0; // Current wave number
+    private int actualNumberOfWaves = 1; // Actual number of waves for this room (randomly determined)
     private bool allWavesCompleted = false; // Track if all waves are done
     
-    // Events
+    [Header("Boss Room Configuration (Boss Rooms Only)")]
+    [SerializeField] private GameObject[] bossPrefabs; // Array of possible boss prefabs
+    [SerializeField] private bool spawnRandomBoss = true; // If true, picks random from array
+    [SerializeField] private int specificBossIndex = 0; // Which boss to spawn if not random
+    [SerializeField] private Transform bossSpawnPoint; // Optional specific spawn point
+    [SerializeField] private bool spawnBossAtCenter = true; // Spawn at room center if no spawn point
+    
+    [Header("Boss Defeat Rewards")]
+    [SerializeField] private GameObject bossDefeatPrefab; // Prefab to spawn when boss is defeated
+    [SerializeField] private bool spawnDefeatPrefabAtCenter = true; // Spawn at room center
+    [SerializeField] private Vector3 defeatPrefabOffset = Vector3.zero; // Offset from spawn position
+    [SerializeField] private float bossSpawnDelay = 1.0f; // Delay before spawning boss
+    [SerializeField] private GameObject[] rewardPrefabs; // Rewards to spawn on boss victory
+    [SerializeField] private Transform rewardSpawnPoint; // Where to spawn rewards
+    
+    [Header("Boss Room State")]
+    [SerializeField] private bool bossSpawned = false;
+    [SerializeField] private bool bossDefeated = false;
+    
+    // Boss tracking
+    private GameObject currentBoss;
+    private Enemy currentBossEnemy;
+    
+    [Header("Item Room Configuration (Item Rooms Only)")]
+    [SerializeField] protected GameObject[] itemPrefabs; // Array of possible items to spawn
+    [SerializeField] private bool spawnItemAtCenter = true; // Spawn item at room center
+    [SerializeField] private Vector3 itemSpawnOffset = Vector3.zero; // Offset from center position
+    [SerializeField] private bool spawnItemOnEntry = false; // Spawn item when player enters
+    [SerializeField] private bool spawnItemOnRoomClear = true; // Spawn item when room is cleared
+
+    [Header("Item Room State")]
+    [SerializeField] protected bool itemSpawned = false;
+    [SerializeField] protected bool itemCollected = false;
+
+    // Item tracking
+    protected GameObject currentItem;    // Events
     public System.Action<Room> OnPlayerEntered;
     public System.Action<Room> OnPlayerExited;
     public System.Action<Room> OnRoomCleared;
@@ -115,6 +154,24 @@ public class Room : MonoBehaviour
             if (enemy != null)
             {
                 enemy.OnDeath += OnEnemyDeath;
+            }
+        }
+        
+        // Boss room specific initialization
+        if (roomType == RoomType.Boss)
+        {
+            // Lock doors initially for boss rooms
+            doorsLocked = true;
+            UpdateExitTiles();
+        }
+        
+        // Item room specific initialization
+        if (roomType == RoomType.Item)
+        {
+            // Spawn item on entry if configured
+            if (spawnItemOnEntry)
+            {
+                SpawnItem();
             }
         }
     }
@@ -491,15 +548,18 @@ public class Room : MonoBehaviour
             return;
         }
         
-        if (enemySpawnCount <= 0)
+        if (maxEnemySpawnCount <= 0)
         {
-            Debug.Log($"Room {gameObject.name}: Enemy spawn count is 0, skipping enemy spawn.");
+            Debug.Log($"Room {gameObject.name}: Max enemy spawn count is 0, skipping enemy spawn.");
             return;
         }
         
-        // Reset wave tracking
+        // Reset wave tracking and determine actual number of waves
         currentWave = 0;
+        actualNumberOfWaves = Random.Range(minNumberOfWaves, maxNumberOfWaves + 1);
         allWavesCompleted = false;
+        
+        Debug.Log($"Room {gameObject.name}: Will spawn {actualNumberOfWaves} waves (range: {minNumberOfWaves}-{maxNumberOfWaves})");
         
         StartCoroutine(SpawnWaveSystem());
     }
@@ -516,24 +576,29 @@ public class Room : MonoBehaviour
     
     private IEnumerator SpawnWave(int waveNumber)
     {
-        Debug.Log($"Room {gameObject.name}: Starting wave {waveNumber}/{numberOfWaves}");
+        Debug.Log($"Room {gameObject.name}: Starting wave {waveNumber}/{actualNumberOfWaves}");
         
         // Wait for initial spawn delay (first wave) or time between waves
         float delayTime = (waveNumber == 1) ? spawnDelay : timeBetweenWaves;
         yield return new WaitForSeconds(delayTime);
         
         Vector3 roomCenter = transform.position;
-        List<Vector3> spawnPositions = GenerateSpawnPositions(enemySpawnCount, roomCenter);
+        
+        // Generate random enemy count within the specified range
+        int actualSpawnCount = Random.Range(minEnemySpawnCount, maxEnemySpawnCount + 1);
+        Debug.Log($"Room {gameObject.name}: Wave {waveNumber} will spawn {actualSpawnCount} enemies (range: {minEnemySpawnCount}-{maxEnemySpawnCount})");
+        
+        List<Vector3> spawnPositions = GenerateSpawnPositions(actualSpawnCount, roomCenter);
         
         if (spawnPositions.Count == 0)
         {
             Debug.LogWarning($"Room {gameObject.name}: No valid spawn positions found for wave {waveNumber}");
             
             // If this was the final wave, mark all waves completed
-            if (waveNumber >= numberOfWaves)
+            if (waveNumber >= actualNumberOfWaves)
             {
                 allWavesCompleted = true;
-                Debug.Log($"Room {gameObject.name}: All {numberOfWaves} waves completed (no enemies spawned in final wave)");
+                Debug.Log($"Room {gameObject.name}: All {actualNumberOfWaves} waves completed (no enemies spawned in final wave)");
             }
             yield break;
         }
@@ -556,10 +621,10 @@ public class Room : MonoBehaviour
         Debug.Log($"Room {gameObject.name}: Wave {waveNumber} spawned {spawnPositions.Count} enemies simultaneously");
         
         // If this was the final wave, mark all waves as completed
-        if (waveNumber >= numberOfWaves)
+        if (waveNumber >= actualNumberOfWaves)
         {
             allWavesCompleted = true;
-            Debug.Log($"Room {gameObject.name}: All {numberOfWaves} waves completed");
+            Debug.Log($"Room {gameObject.name}: All {actualNumberOfWaves} waves completed");
         }
     }
     
@@ -762,12 +827,18 @@ public class Room : MonoBehaviour
         GameObject enemyObj = Instantiate(enemyPrefab, position, Quaternion.identity, transform);
         enemyObj.name = $"Enemy_W{currentWave}_{waveOrIndex}_{enemyPrefab.name}";
         
+        // Setup proper collision detection
+        SetupEnemyCollision(enemyObj);
+        
         // Get enemy component and subscribe to death event
         Enemy enemy = enemyObj.GetComponent<Enemy>();
         if (enemy != null)
         {
             enemiesInRoom.Add(enemy);
             enemy.OnDeath += OnEnemyDeath;
+            
+            // Add spawn protection to prevent immediate contact damage
+            StartCoroutine(EnemySpawnProtection(enemy));
         }
         else
         {
@@ -797,13 +868,22 @@ public class Room : MonoBehaviour
         }
         
         Vector3 roomCenter = transform.position;
-        List<Vector3> spawnPositions = GenerateSpawnPositions(enemySpawnCount, roomCenter);
+        
+        // Use average of range for testing
+        int testSpawnCount = (minEnemySpawnCount + maxEnemySpawnCount) / 2;
+        List<Vector3> spawnPositions = GenerateSpawnPositions(testSpawnCount, roomCenter);
         List<Vector3Int> indicatorPositions = ShowSpawnIndicators(spawnPositions);
         
         Debug.Log($"Test spawning {indicatorPositions.Count} indicators at positions: {string.Join(", ", indicatorPositions)}");
         
         // Remove indicators after the duration
         StartCoroutine(RemoveIndicatorsAfterDelay(indicatorPositions));
+    }
+    
+    [ContextMenu("Test Spawn Item")]
+    public void TestSpawnItem()
+    {
+        ForceSpawnItem();
     }
     
     private IEnumerator RemoveIndicatorsAfterDelay(List<Vector3Int> indicatorPositions)
@@ -886,8 +966,13 @@ public class Room : MonoBehaviour
             LockExits();
         }
         
+        // Handle boss room logic first
+        if (roomType == RoomType.Boss && !bossSpawned && !bossDefeated)
+        {
+            StartCoroutine(SpawnBossAfterDelay());
+        }
         // Spawn enemies if it's a room that should have enemies, not already spawned, and not already cleared
-        if (ShouldSpawnEnemies() && !enemiesSpawned && !isCleared && enemyPrefabs != null && enemyPrefabs.Length > 0)
+        else if (ShouldSpawnEnemies() && !enemiesSpawned && !isCleared && enemyPrefabs != null && enemyPrefabs.Length > 0)
         {
             enemiesSpawned = true; // Mark as spawned to prevent multiple spawns
             SpawnEnemies(); // Use the new wave system
@@ -911,9 +996,9 @@ public class Room : MonoBehaviour
     {
         // Starting rooms and item rooms should not lock their exits
         // Boss rooms SHOULD lock their exits (so return false for boss rooms)
-        bool skipLocking = roomType == RoomType.Start || roomType == RoomType.Item || this is ItemRoom;
+        bool skipLocking = roomType == RoomType.Start || roomType == RoomType.Item;
         
-        Debug.Log($"Room {gameObject.name}: ShouldSkipExitLocking - RoomType: {roomType}, IsBossRoom: {this is BossRoom}, SkipLocking: {skipLocking}");
+        Debug.Log($"Room {gameObject.name}: ShouldSkipExitLocking - RoomType: {roomType}, IsBossRoom: {roomType == RoomType.Boss}, SkipLocking: {skipLocking}");
         
         return skipLocking;
     }
@@ -924,7 +1009,7 @@ public class Room : MonoBehaviour
         // Only normal rooms should spawn enemies via wave system
         // Boss rooms will be handled by separate boss scripts
         // Starting rooms, item rooms, shop rooms, and secret rooms should not spawn enemies
-        return roomType == RoomType.Normal && !(this is BossRoom) && !(this is ItemRoom);
+        return roomType == RoomType.Normal;
     }
     
     public virtual void ExitRoom()
@@ -945,6 +1030,21 @@ public class Room : MonoBehaviour
         UnlockExits();
         
         Debug.Log($"Room {gameObject.name}: Room cleared! Doors unlocked.");
+        
+        // Item room: spawn item if configured to do so (but only if no ItemRoom component exists)
+        if (roomType == RoomType.Item && spawnItemOnRoomClear && !itemSpawned)
+        {
+            // Check if there's an ItemRoom component that should handle item spawning instead
+            ItemRoom itemRoomComponent = GetComponent<ItemRoom>();
+            if (itemRoomComponent == null)
+            {
+                SpawnItem();
+            }
+            else
+            {
+                Debug.Log($"Room {gameObject.name}: ItemRoom component will handle item spawning");
+            }
+        }
         
         // Notify systems that room is cleared
         OnRoomCleared?.Invoke(this);
@@ -991,7 +1091,7 @@ public class Room : MonoBehaviour
     public void ForceCompleteAllWaves()
     {
         allWavesCompleted = true;
-        currentWave = numberOfWaves;
+        currentWave = actualNumberOfWaves;
         Debug.Log($"Room {gameObject.name}: All waves force-completed, checking room clear condition");
         CheckRoomClearCondition();
     }
@@ -1082,7 +1182,7 @@ public class Room : MonoBehaviour
         // Clean up any null references from manually deleted enemies
         enemiesInRoom.RemoveAll(enemy => enemy == null);
         
-        Debug.Log($"Room {gameObject.name}: CheckRoomClearCondition - Enemies remaining: {enemiesInRoom.Count}, Current wave: {currentWave}/{numberOfWaves}, All waves completed: {allWavesCompleted}, Is cleared: {isCleared}");
+        Debug.Log($"Room {gameObject.name}: CheckRoomClearCondition - Enemies remaining: {enemiesInRoom.Count}, Current wave: {currentWave}/{actualNumberOfWaves}, All waves completed: {allWavesCompleted}, Is cleared: {isCleared}");
         
         // Room is cleared when all enemies are defeated and all waves are completed
         if (enemiesInRoom.Count == 0 && !isCleared)
@@ -1094,7 +1194,7 @@ public class Room : MonoBehaviour
                 MarkCleared();
             }
             // Check if there are more waves to spawn
-            else if (currentWave < numberOfWaves && !allWavesCompleted)
+            else if (currentWave < actualNumberOfWaves && !allWavesCompleted)
             {
                 Debug.Log($"Room {gameObject.name}: Wave {currentWave} cleared! Spawning wave {currentWave + 1}...");
                 currentWave++;
@@ -1458,27 +1558,64 @@ public class Room : MonoBehaviour
             rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Prevent rotation
         }
         
-        // Check if enemy has any non-trigger colliders for physics collision
+        // Check if enemy has colliders for physics collision and contact damage
         Collider2D[] colliders = enemyObj.GetComponents<Collider2D>();
         bool hasNonTriggerCollider = false;
+        bool hasTriggerCollider = false;
         
         foreach (Collider2D col in colliders)
         {
-            if (!col.isTrigger)
+            if (col.isTrigger)
+            {
+                hasTriggerCollider = true;
+            }
+            else
             {
                 hasNonTriggerCollider = true;
-                break;
             }
         }
         
-        // If all colliders are triggers, add a non-trigger collider for wall collision
+        // Add non-trigger collider for wall collision if missing
         if (!hasNonTriggerCollider)
         {
-            // Add a non-trigger CircleCollider2D for physics collision with walls
             CircleCollider2D collisionCol = enemyObj.AddComponent<CircleCollider2D>();
             collisionCol.isTrigger = false;
-            collisionCol.radius = 0.4f; // Adjust size as needed based on enemy size
+            collisionCol.radius = 0.4f; // Physics collision with walls
         }
+        
+        // Add trigger collider for contact damage if missing
+        if (!hasTriggerCollider)
+        {
+            CircleCollider2D triggerCol = enemyObj.AddComponent<CircleCollider2D>();
+            triggerCol.isTrigger = true;
+            triggerCol.radius = 0.5f; // Slightly larger for contact damage detection
+            Debug.Log($"Room {gameObject.name}: Added trigger collider to enemy {enemyObj.name} for contact damage");
+        }
+    }
+    
+    /// <summary>
+    /// Provide spawn protection to prevent immediate contact damage
+    /// </summary>
+    private System.Collections.IEnumerator EnemySpawnProtection(Enemy enemy)
+    {
+        if (enemy == null) yield break;
+        
+        // Temporarily disable contact damage
+        bool originalContactDamage = enemy.GetType().GetField("enableContactDamage", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(enemy) as bool? ?? true;
+        
+        // Disable contact damage for spawn protection period
+        var contactDamageField = enemy.GetType().GetField("enableContactDamage", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        contactDamageField?.SetValue(enemy, false);
+        
+        // Wait for spawn protection period
+        yield return new WaitForSeconds(0.5f);
+        
+        // Re-enable contact damage
+        contactDamageField?.SetValue(enemy, originalContactDamage);
+        
+        Debug.Log($"Enemy {enemy.gameObject.name}: Spawn protection ended, contact damage restored");
     }
     
     private void EnsureEnemyInitialization(GameObject enemyObj)
@@ -1558,8 +1695,384 @@ public class Room : MonoBehaviour
         Debug.Log($"Room {gameObject.name}: Removed {indicatorPositions.Count} spawn indicators");
     }
     
+    // === BOSS ROOM FUNCTIONALITY ===
+    
+    /// <summary>
+    /// Spawn the boss with a delay
+    /// </summary>
+    private System.Collections.IEnumerator SpawnBossAfterDelay()
+    {
+        yield return new WaitForSeconds(bossSpawnDelay);
+        SpawnBoss();
+    }
+    
+    /// <summary>
+    /// Spawn the boss in the room
+    /// </summary>
+    public void SpawnBoss()
+    {
+        if (roomType != RoomType.Boss)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot spawn boss - room type is not Boss!");
+            return;
+        }
+        
+        if (bossSpawned || bossPrefabs == null || bossPrefabs.Length == 0) return;
+        
+        // Select boss prefab
+        GameObject bossToSpawn = null;
+        if (spawnRandomBoss)
+        {
+            bossToSpawn = bossPrefabs[Random.Range(0, bossPrefabs.Length)];
+        }
+        else
+        {
+            int index = Mathf.Clamp(specificBossIndex, 0, bossPrefabs.Length - 1);
+            bossToSpawn = bossPrefabs[index];
+        }
+        
+        if (bossToSpawn == null)
+        {
+            Debug.LogError($"Boss Room {gameObject.name}: No valid boss prefab to spawn!");
+            return;
+        }
+        
+        // Determine spawn position
+        Vector3 spawnPos = GetBossSpawnPosition();
+        
+        // Spawn the boss
+        currentBoss = Instantiate(bossToSpawn, spawnPos, Quaternion.identity);
+        currentBossEnemy = currentBoss.GetComponent<Enemy>();
+        
+        if (currentBossEnemy != null)
+        {
+            // Subscribe to boss death event
+            currentBossEnemy.OnDeath += OnBossDefeated;
+        }
+        else
+        {
+            Debug.LogWarning($"Boss Room {gameObject.name}: Boss prefab {bossToSpawn.name} doesn't have Enemy component!");
+        }
+        
+        bossSpawned = true;
+        
+        Debug.Log($"Boss Room {gameObject.name}: Spawned boss {bossToSpawn.name} at {spawnPos}");
+    }
+    
+    /// <summary>
+    /// Get the position where the boss should spawn
+    /// </summary>
+    private Vector3 GetBossSpawnPosition()
+    {
+        // Use specific spawn point if provided
+        if (bossSpawnPoint != null)
+        {
+            return bossSpawnPoint.position;
+        }
+        
+        // Use room center if enabled
+        if (spawnBossAtCenter)
+        {
+            return transform.position; // Room center
+        }
+        
+        // Fallback to room position
+        return transform.position;
+    }
+    
+    /// <summary>
+    /// Configure boss prefab from external source (e.g., DungeonGenerator)
+    /// </summary>
+    /// <param name="prefab">The boss prefab to use</param>
+    public void ConfigureBossPrefab(GameObject prefab)
+    {
+        if (prefab == null)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot configure null boss prefab!");
+            return;
+        }
+        
+        // Set the boss prefabs array with the provided prefab
+        bossPrefabs = new GameObject[] { prefab };
+        spawnRandomBoss = false; // Use the specific prefab
+        specificBossIndex = 0;
+        
+        Debug.Log($"Room {gameObject.name}: Configured with boss prefab {prefab.name}");
+    }
+    
+    /// <summary>
+    /// Called when the boss is defeated
+    /// </summary>
+    private void OnBossDefeated(Enemy defeatedEnemy)
+    {
+        if (defeatedEnemy != currentBossEnemy) return; // Not our boss
+        
+        bossDefeated = true;
+        isCleared = true;
+        
+        Debug.Log($"Boss Room {gameObject.name}: Boss defeated! Room cleared.");
+        
+        // Spawn boss defeat prefab
+        SpawnBossDefeatPrefab();
+        
+        // Unsubscribe from death event
+        if (currentBossEnemy != null)
+        {
+            currentBossEnemy.OnDeath -= OnBossDefeated;
+        }
+        
+        // Handle room clearing
+        OnBossRoomCleared();
+    }
+    
+    /// <summary>
+    /// Spawn boss defeat prefab in the middle of the room
+    /// </summary>
+    private void SpawnBossDefeatPrefab()
+    {
+        if (bossDefeatPrefab == null)
+        {
+            Debug.Log($"Boss Room {gameObject.name}: No boss defeat prefab configured");
+            return;
+        }
+        
+        Vector3 spawnPosition;
+        
+        if (spawnDefeatPrefabAtCenter)
+        {
+            // Spawn at room center
+            spawnPosition = GetCenter() + defeatPrefabOffset;
+        }
+        else
+        {
+            // Spawn at room transform position
+            spawnPosition = transform.position + defeatPrefabOffset;
+        }
+        
+        // Instantiate the defeat prefab
+        GameObject defeatObject = Instantiate(bossDefeatPrefab, spawnPosition, Quaternion.identity);
+        
+        // Set parent to keep scene organized
+        defeatObject.transform.SetParent(transform);
+        
+        Debug.Log($"Boss Room {gameObject.name}: Spawned boss defeat prefab '{bossDefeatPrefab.name}' at {spawnPosition}");
+    }
+    
+    /// <summary>
+    /// Handle boss room clearing logic
+    /// </summary>
+    private void OnBossRoomCleared()
+    {
+        // Unlock doors
+        doorsLocked = false;
+        UpdateExitTiles();
+        Debug.Log($"Boss Room {gameObject.name}: Doors unlocked!");
+        
+        // Spawn rewards
+        SpawnRewards();
+        
+        // Trigger room cleared event
+        OnRoomCleared?.Invoke(this);
+    }
+    
+    /// <summary>
+    /// Spawn victory rewards
+    /// </summary>
+    private void SpawnRewards()
+    {
+        if (rewardPrefabs == null || rewardPrefabs.Length == 0) return;
+        
+        Vector3 rewardPos = rewardSpawnPoint != null ? rewardSpawnPoint.position : transform.position;
+        
+        foreach (GameObject rewardPrefab in rewardPrefabs)
+        {
+            if (rewardPrefab != null)
+            {
+                Instantiate(rewardPrefab, rewardPos, Quaternion.identity);
+                Debug.Log($"Boss Room {gameObject.name}: Spawned reward {rewardPrefab.name}");
+                
+                // Offset position for next reward
+                rewardPos.x += 1.0f;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Spawn item in the center of the item room
+    /// </summary>
+    private void SpawnItem()
+    {
+        if (itemSpawned)
+        {
+            Debug.LogWarning($"Item Room {gameObject.name}: Item already spawned!");
+            return;
+        }
+        
+        if (itemPrefabs == null || itemPrefabs.Length == 0)
+        {
+            Debug.LogError($"Item Room {gameObject.name}: No item prefabs assigned!");
+            return;
+        }
+        
+        // Choose random item from available prefabs
+        GameObject itemToSpawn = itemPrefabs[Random.Range(0, itemPrefabs.Length)];
+        
+        if (itemToSpawn == null)
+        {
+            Debug.LogError($"Item Room {gameObject.name}: Selected item prefab is null!");
+            return;
+        }
+        
+        // Calculate spawn position
+        Vector3 spawnPosition;
+        if (spawnItemAtCenter)
+        {
+            spawnPosition = transform.position + itemSpawnOffset; // Room center + offset
+        }
+        else
+        {
+            spawnPosition = transform.position + itemSpawnOffset; // Room transform + offset
+        }
+        
+        // Instantiate the item
+        currentItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
+        currentItem.name = $"Item_{itemToSpawn.name}";
+        
+        itemSpawned = true;
+        
+        Debug.Log($"Item Room {gameObject.name}: Spawned item '{itemToSpawn.name}' at {spawnPosition}");
+    }
+    
+    /// <summary>
+    /// Force spawn boss (for testing)
+    /// </summary>
+    [ContextMenu("Force Spawn Boss")]
+    public void ForceSpawnBoss()
+    {
+        if (roomType != RoomType.Boss)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot force spawn boss - room type is not Boss!");
+            return;
+        }
+        
+        bossSpawned = false; // Reset flag
+        bossDefeated = false; // Reset flag
+        SpawnBoss();
+    }
+    
+    /// <summary>
+    /// Force clear boss room (for testing)
+    /// </summary>
+    [ContextMenu("Force Clear Boss Room")]
+    public void ForceClearBossRoom()
+    {
+        if (roomType != RoomType.Boss)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot force clear - room type is not Boss!");
+            return;
+        }
+        
+        bossDefeated = true;
+        OnBossRoomCleared();
+    }
+    
+    /// <summary>
+    /// Reset boss room state (for testing)
+    /// </summary>
+    [ContextMenu("Reset Boss Room")]
+    public void ResetBossRoom()
+    {
+        if (roomType != RoomType.Boss)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot reset - room type is not Boss!");
+            return;
+        }
+        
+        // Destroy current boss if it exists
+        if (currentBoss != null)
+        {
+            if (currentBossEnemy != null)
+            {
+                currentBossEnemy.OnDeath -= OnBossDefeated;
+            }
+            DestroyImmediate(currentBoss);
+        }
+        
+        // Reset states
+        bossSpawned = false;
+        bossDefeated = false;
+        isCleared = false;
+        doorsLocked = true;
+        
+        // Update tiles
+        UpdateExitTiles();
+        
+        Debug.Log($"Boss Room {gameObject.name}: Reset complete");
+    }
+    
+    /// <summary>
+    /// Force spawn item (for testing or special conditions)
+    /// </summary>
+    [ContextMenu("Test Spawn Item")]
+    public void ForceSpawnItem()
+    {
+        if (roomType != RoomType.Item)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Cannot spawn item - room type is not Item!");
+            return;
+        }
+        
+        if (!itemSpawned)
+        {
+            SpawnItem();
+        }
+    }
+    
+    /// <summary>
+    /// Check if item has been spawned in this room
+    /// </summary>
+    /// <returns>True if item is spawned</returns>
+    public bool IsItemSpawned()
+    {
+        return itemSpawned;
+    }
+    
+    /// <summary>
+    /// Check if item has been collected from this room
+    /// </summary>
+    /// <returns>True if item is collected</returns>
+    public bool IsItemCollected()
+    {
+        return itemCollected;
+    }
+    
+    /// <summary>
+    /// Get the spawned item GameObject
+    /// </summary>
+    /// <returns>The spawned item, or null if none</returns>
+    public GameObject GetSpawnedItem()
+    {
+        return currentItem;
+    }
+    
+    /// <summary>
+    /// Configure item prefabs from external source (e.g., DungeonGenerator)
+    /// </summary>
+    /// <param name="prefabs">Array of item prefabs to use</param>
+    public void ConfigureItemPrefabs(GameObject[] prefabs)
+    {
+        itemPrefabs = prefabs;
+        Debug.Log($"Item Room {gameObject.name}: Configured with {prefabs?.Length ?? 0} item prefab(s)");
+    }
+
     protected virtual void OnDestroy()
     {
+        // Clear room tiles from global tilemaps when room is destroyed (only if tilemaps are assigned)
+        if (wallTilemap != null && floorTilemap != null)
+        {
+            ClearRoomTiles();
+        }
+        
         // Unsubscribe from enemy events
         foreach (Enemy enemy in enemiesInRoom)
         {
@@ -1567,6 +2080,12 @@ public class Room : MonoBehaviour
             {
                 enemy.OnDeath -= OnEnemyDeath;
             }
+        }
+        
+        // Unsubscribe from boss events if this is a boss room
+        if (roomType == RoomType.Boss && currentBossEnemy != null)
+        {
+            currentBossEnemy.OnDeath -= OnBossDefeated;
         }
     }
 }
