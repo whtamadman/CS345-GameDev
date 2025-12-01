@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3772087725032564089}
   m_Layer: 0
   m_Name: Circle
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,6 +156,8 @@ MonoBehaviour:
   isBoomerang: 0
   boomerangReturnDelay: 0.5
   boomerangReturnSpeed: 12
+  rotateWhileMoving: 0
+  rotationSpeed: 360
 --- !u!50 &3772087725032564089
 Rigidbody2D:
   serializedVersion: 5

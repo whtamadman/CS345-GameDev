@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 9157952748962735845}
   - component: {fileID: 2624933695043926262}
   m_Layer: 0
-  m_Name: Nurse_Enemy
-  m_TagString: Nurse
+  m_Name: Nurse_Ranged_Enemy
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,21 +108,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   health: 10
   projectiles:
-  - {fileID: -7086934226340295845, guid: 5e93577c579834c58b1b3169d021379e, type: 3}
+  - {fileID: -7086934226340295845, guid: a15c196a7e5db8541a5f1db613e7cb0b, type: 3}
   opponentTag: Player
   type: 1
-  moveSpeed: 1
+  moveSpeed: 0.75
   shootForce: 3
   reloadTime: 0.5
   friction: 0.15
   canAttackWhileMoving: 0
   minMovementThreshold: 0.1
   allowShooting: 1
+  enableBurstFire: 0
+  burstCount: 3
+  burstDelay: 0.2
+  longReloadTime: 2
+  enableContactDamage: 1
+  contactDamage: 1
+  contactDamageCooldown: 1
+  dropsGold: 1
+  goldDropChance: 0.577
+  minGoldDrop: 1
+  maxGoldDrop: 6
+  enableChargeAttack: 0
+  chargeUpTime: 2
+  chargeSpeed: 8
+  chargeDuration: 1.5
+  chargeAttackCooldown: 5
+  chargeAttackDamage: 2
+  chargeAttackRange: 10
   rangedDistance: 3
+  enableMovement: 1
+  enableChasing: 1
+  enableRoaming: 1
   wallLayers:
     serializedVersion: 2
     m_Bits: 4294967295
   requireLineOfSight: 1
+  enableWallAvoidance: 1
+  wallDetectionDistance: 1.5
+  stuckThreshold: 0.1
+  stuckTime: 0.5
   chaseDist: 2
   roamDist: 5
   shootDist: 1

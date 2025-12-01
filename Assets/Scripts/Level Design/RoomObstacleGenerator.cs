@@ -165,7 +165,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         }
         
         // Find grid
-        Grid sceneGrid = FindObjectOfType<Grid>();
+        Grid sceneGrid = FindFirstObjectByType<Grid>();
         if (sceneGrid == null)
         {
             Debug.LogError("No Grid found in scene. Cannot create breakable tilemap.");

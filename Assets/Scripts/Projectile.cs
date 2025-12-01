@@ -10,11 +10,16 @@ public class Projectile : MonoBehaviour
     [SerializeField] private bool isBoomerang = false;
     [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
     [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
+    
+    [Header("Rotation Settings")]
+    [SerializeField] private bool rotateWhileMoving = false; // Enable continuous rotation while moving
+    [SerializeField] private float rotationSpeed = 360f; // Degrees per second rotation speed
 
     private Transform target;
     private Rigidbody2D rb;
     private GameObject shooter;
     private bool isReturning = false;
+    private Vector2 originalDirection; // Store the original movement direction
     
     // Static tracking for boomerangs (max 1 per shooter at a time)
     private static Dictionary<GameObject, Projectile> activeBoomerangs = new Dictionary<GameObject, Projectile>();
@@ -43,6 +48,7 @@ public class Projectile : MonoBehaviour
         shooter = shooterObject;
 
         Vector2 direction = (target.position - transform.position).normalized;
+        originalDirection = direction; // Store the original direction for consistent movement
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
         
@@ -121,7 +127,14 @@ public class Projectile : MonoBehaviour
             }
             else
             {
-                currentVelocity = transform.up * speed;
+                // Apply continuous rotation while moving if enabled (visual only)
+                if (rotateWhileMoving)
+                {
+                    transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
+                }
+                
+                // Use original direction for consistent straight-line movement
+                currentVelocity = originalDirection * speed;
                 rb.linearVelocity = currentVelocity;
             }
             
