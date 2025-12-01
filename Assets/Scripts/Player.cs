@@ -3,27 +3,26 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-    private float defaultHealth;
     public static Player Instance;
-    public Animator animator;
-    public bool invincibility;
-    private bool canAttack;
+    private Animator animator;
+    private bool canAttack, invincibility;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
-    public int health;
-    public int maxHealth;
-    public float moveSpeed, attackRange, damage;
+    public int health, maxHealth;
+    public float moveSpeed, attackRange, damage, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange;
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float invinceTimer;
+
 
     void Start() {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
-        defaultHealth=health;
+        maxHealth=health;
         invincibility = false;
         canAttack = true;
+        Health.Instance.InitHealthSprites();
+        animator = GetComponent<Animator>();
     }
     void Awake(){
         if(Instance == null){
@@ -38,7 +37,16 @@ public class Player : MonoBehaviour {
         }else{
             rigidBody.linearVelocity -= rigidBody.linearVelocity * friction;
         }
+        animator.SetFloat("X", moveDirection.x);
+        animator.SetFloat("Y", moveDirection.y);
+        if (moveDirection != Vector2.zero) {
+            animator.SetFloat("LastX", moveDirection.x);
+            animator.SetFloat("LastY", moveDirection.y);
+        }
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 aimDirection = (mouseWorldPos - transform.position).normalized;
         if(Input.GetMouseButton(0) && canAttack) {
+            animator.SetTrigger("Attack");
             StartCoroutine(MeleeAttack());
         }
     }
@@ -51,19 +59,28 @@ public class Player : MonoBehaviour {
         Vector3 offset = new Vector3(Mathf.Cos(hitboxDirection * Mathf.Deg2Rad), Mathf.Sin(hitboxDirection * Mathf.Deg2Rad) + 1f,  0) * 0.2f;
         Vector3 spawnPos = transform.position + offset;
         GameObject hitbox = Instantiate(meleeHitbox, spawnPos, Quaternion.Euler(0, 0, hitboxDirection - 90f));
+        hitbox.transform.localScale *= hitboxRange;
         hitbox.transform.SetParent(transform);
-        yield return new WaitForSeconds(0.2f);
+        animator.SetFloat("MouseX", direction.x);
+        animator.SetFloat("MouseY", direction.y);
+        Debug.Log(direction);
+        animator.SetTrigger("Attack");
+        //How long the attack stays out for
+        yield return new WaitForSeconds(hitboxFrames);
         Destroy(hitbox);
-        yield return new WaitForSeconds(0.3f); 
+       // animator.SetBool("attacking" = false);
+        //Melee Cooldown
+        yield return new WaitForSeconds(meleeCooldown); 
         canAttack = true;
     }
 
-    public void takeDamage(){
+    public void takeDamage(int damage = 1){
         if (!invincibility) {
-            health = health - 1;
+            health = health - damage;
             if(health<=0) {
                 Time.timeScale = 0;
             }
+            Health.Instance.UpdateHealthSprites();
             StartCoroutine(iFrames(invinceTimer));
         }
     }

@@ -6,7 +6,6 @@ public class Melee : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "CS" || other.tag == "Math" || other.tag == "Nurse") {
-            Debug.Log((int)Player.Instance.damage);
             other.GetComponent<Enemy>().TakeDamage((int)Player.Instance.damage);
         }
     }
