@@ -13,11 +13,31 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
     [SerializeField] private bool autoAddGeneratorsToRooms = true;
     [SerializeField] private RoomObstacleGenerator obstacleGeneratorPrefab;
     
+    [Header("Enemy Level Scaling")]
+    [SerializeField] private bool enableEnemyLevelScaling = true;
+    [SerializeField] private float healthScalePerLevel = 0.2f; // 20% health increase per level
+    [SerializeField] private float moveSpeedScalePerLevel = 0.1f; // 10% speed increase per level
+    [SerializeField] private float reloadTimeScalePerLevel = -0.05f; // 5% faster reload per level (negative = faster)
+    [SerializeField] private int maxScalingLevel = 10; // Cap scaling at this level
+    
     private DungeonGenerator dungeonGenerator;
+    private FloorManager floorManager;
     
     void Start()
     {
-        dungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        dungeonGenerator = FindFirstObjectByType<DungeonGenerator>();
+        floorManager = FindFirstObjectByType<FloorManager>();
+        
+        // Subscribe to new floor generation events
+        if (floorManager != null)
+        {
+            floorManager.OnNewFloorGenerated += OnNewFloorGenerated;
+            Debug.Log("PostGenerationObstacleProcessor: Subscribed to floor generation events");
+        }
+        else
+        {
+            Debug.LogWarning("PostGenerationObstacleProcessor: FloorManager not found! Will not auto-process obstacles on new levels.");
+        }
         
         if (processOnStart)
         {
@@ -40,6 +60,12 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         
         GenerateObstaclesForAllRooms();
         
+        // Scale enemy stats based on current level
+        if (enableEnemyLevelScaling)
+        {
+            ScaleEnemyStatsForCurrentLevel();
+        }
+        
         // Initialize breakable tiles after obstacles are placed
         InitializeBreakableTiles();
     }
@@ -49,7 +75,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
     /// </summary>
     private void AddObstacleGeneratorsToRooms()
     {
-        Room[] allRooms = FindObjectsOfType<Room>();
+        Room[] allRooms = FindObjectsByType<Room>(FindObjectsSortMode.None);
         int addedGenerators = 0;
         
         foreach (Room room in allRooms)
@@ -87,7 +113,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
             return true;
         
         // Skip boss rooms - they'll have their own layout
-        if (room is BossRoom)
+        if (room.roomType == RoomType.Boss)
             return true;
         
         return false;
@@ -145,7 +171,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
     /// </summary>
     private void InitializeBreakableTiles()
     {
-        BreakableTileManager manager = FindObjectOfType<BreakableTileManager>();
+        BreakableTileManager manager = FindFirstObjectByType<BreakableTileManager>();
         if (manager != null)
         {
             // Force reinitialize tiles to detect newly placed breakable blocks
@@ -160,12 +186,95 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
     [ContextMenu("Clear All Obstacles")]
     public void ClearAllObstacles()
     {
-        RoomObstacleGenerator[] generators = FindObjectsOfType<RoomObstacleGenerator>();
+        RoomObstacleGenerator[] generators = FindObjectsByType<RoomObstacleGenerator>(FindObjectsSortMode.None);
         foreach (RoomObstacleGenerator generator in generators)
         {
             generator.ClearObstacles();
         }
         
         Debug.Log($"Cleared obstacles from {generators.Length} rooms");
+    }
+    
+    /// <summary>
+    /// Scale enemy stats based on current level to increase difficulty
+    /// </summary>
+    private void ScaleEnemyStatsForCurrentLevel()
+    {
+        if (floorManager == null) return;
+        
+        int currentLevel = floorManager.GetCurrentFloor();
+        int scalingLevel = Mathf.Min(currentLevel, maxScalingLevel); // Cap scaling
+        
+        Enemy[] allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        int scaledEnemies = 0;
+        
+        foreach (Enemy enemy in allEnemies)
+        {
+            ScaleEnemyStats(enemy, scalingLevel);
+            scaledEnemies++;
+        }
+        
+        if (scaledEnemies > 0)
+        {
+            Debug.Log($"PostGenerationObstacleProcessor: Scaled stats for {scaledEnemies} enemies based on level {currentLevel}");
+        }
+    }
+    
+    /// <summary>
+    /// Apply stat scaling to individual enemy
+    /// </summary>
+    private void ScaleEnemyStats(Enemy enemy, int level)
+    {
+        if (level <= 1) return; // No scaling for level 1
+        
+        int levelsToScale = level - 1; // Scale from level 2 onwards
+        
+        // Scale health (multiplicative)
+        int originalHealth = enemy.health;
+        float healthMultiplier = 1f + (healthScalePerLevel * levelsToScale);
+        enemy.health = Mathf.RoundToInt(originalHealth * healthMultiplier);
+        
+        // Scale movement speed using reflection to access protected field
+        var moveSpeedField = typeof(Enemy).GetField("moveSpeed", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (moveSpeedField != null)
+        {
+            float originalMoveSpeed = (float)moveSpeedField.GetValue(enemy);
+            float speedMultiplier = 1f + (moveSpeedScalePerLevel * levelsToScale);
+            moveSpeedField.SetValue(enemy, originalMoveSpeed * speedMultiplier);
+        }
+        
+        // Scale reload time (faster shooting)
+        var reloadTimeField = typeof(Enemy).GetField("reloadTime", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (reloadTimeField != null)
+        {
+            float originalReloadTime = (float)reloadTimeField.GetValue(enemy);
+            float reloadMultiplier = 1f + (reloadTimeScalePerLevel * levelsToScale);
+            float newReloadTime = Mathf.Max(0.1f, originalReloadTime * reloadMultiplier); // Min 0.1s reload
+            reloadTimeField.SetValue(enemy, newReloadTime);
+        }
+    }
+    
+    /// <summary>
+    /// Event handler for when a new floor is generated
+    /// </summary>
+    private void OnNewFloorGenerated(int floorNumber)
+    {
+        Debug.Log($"PostGenerationObstacleProcessor: New floor {floorNumber} generated, processing obstacles...");
+        
+        // Use invoke with delay to ensure dungeon generation is completely finished
+        Invoke(nameof(ProcessObstacles), delayAfterGeneration);
+    }
+    
+    /// <summary>
+    /// Clean up event subscriptions when destroyed
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (floorManager != null)
+        {
+            floorManager.OnNewFloorGenerated -= OnNewFloorGenerated;
+        }
     }
 }

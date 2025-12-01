@@ -225,8 +225,7 @@ public class FloorManager : MonoBehaviour
         Debug.Log($"Room at {room.gridPos} cleared on floor {currentFloor}");
         
         // Special handling for boss room
-        BossRoom bossRoom = room as BossRoom;
-        if (bossRoom != null)
+        if (room.roomType == RoomType.Boss)
         {
             Debug.Log("Boss room cleared! Floor complete!");
         }

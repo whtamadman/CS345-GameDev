@@ -386,7 +386,7 @@ public class BreakableTileManager : MonoBehaviour
         if (((1 << obj.layer) & projectileLayerMask) == 0) return false;
         
         // Check for projectile component or tag
-        return obj.GetComponent<Projectile>() != null || obj.CompareTag("Projectile");
+        return obj.GetComponent<Projectile>() != null || obj.CompareTag("Enemy");
     }
     
     /// <summary>

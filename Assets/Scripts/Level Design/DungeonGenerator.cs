@@ -1,5 +1,29 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+
+[System.Serializable]
+public class LevelData
+{
+    [Header("Level Info")]
+    public string levelName = "Level 1";
+    public int levelNumber = 1;
+    
+    [Header("Room Prefabs")]
+    public GameObject universalRoomPrefab;
+    
+    [Header("Boss Settings")]
+    public GameObject bossPrefab;
+    [Tooltip("Optional: Custom boss room prefab. If null, uses default room layout with boss spawning.")]
+    public GameObject bossRoomPrefab; // Optional custom boss room
+    
+    [Header("Item Settings")]
+    public GameObject[] itemPrefabs;
+    
+    [Header("Level-Specific Settings")]
+    public Color levelThemeColor = Color.white;
+    public int difficultyModifier = 0;
+}
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -9,8 +33,26 @@ public class DungeonGenerator : MonoBehaviour
     public Vector2Int roomSizeInTiles = new Vector2Int(16, 12);
     public float globalGridCellSize = 0.4f;
     
-    [Header("Room Prefab")]
-    public GameObject universalRoomPrefab;
+    [Header("Multi-Level System")]
+    public List<LevelData> levels = new List<LevelData>();
+    [SerializeField] private int currentLevelIndex = 0;
+    
+    [Header("Fallback Prefabs (if level data missing)")]
+    public GameObject fallbackRoomPrefab;
+    public GameObject fallbackBossPrefab;
+    public GameObject[] fallbackItemPrefabs;
+    
+    [Header("Item Room Configuration")]
+    [Tooltip("Common items that can spawn in any item room across all levels")]
+    public GameObject[] commonItemPrefabs;
+    [Tooltip("Rare items with lower spawn chance")]
+    public GameObject[] rareItemPrefabs;
+    [Tooltip("Epic items with very low spawn chance")]
+    public GameObject[] epicItemPrefabs;
+    [Tooltip("Enable weighted item selection based on rarity")]
+    public bool useWeightedItemSelection = true;
+    [Tooltip("Chance weights: [Common, Rare, Epic] - higher values = more likely")]
+    public Vector3 itemRarityWeights = new Vector3(70f, 25f, 5f); // Common, Rare, Epic percentages
     
     [Header("Room Counts")]
     public int fightRoomCount = 6;
@@ -39,6 +81,136 @@ public class DungeonGenerator : MonoBehaviour
     public void ClearDungeon()
     {
         ClearExistingDungeon();
+        ClearAllTilemaps();
+    }
+    
+    [ContextMenu("Clear and Regenerate")]
+    public void ClearAndRegenerate()
+    {
+        ClearExistingDungeon();
+        GenerateDungeon();
+    }
+    
+    /// <summary>
+    /// Clear only dungeon-specific tilemaps (not all tilemaps in scene)
+    /// </summary>
+    public void ClearAllTilemaps()
+    {
+        // Define the specific tilemap names used by the dungeon system
+        string[] dungeonTilemapNames = {
+            "Collision TM",      // Walls
+            "Floor TM",          // Floors  
+            "Decal TM",          // Spawn indicators/decals
+            "Breakable TM"       // Breakable blocks
+        };
+        
+        int clearedCount = 0;
+        int totalTilemaps = dungeonTilemapNames.Length;
+        
+        foreach (string tilemapName in dungeonTilemapNames)
+        {
+            GameObject tilemapObj = GameObject.Find(tilemapName);
+            if (tilemapObj != null)
+            {
+                Tilemap tilemap = tilemapObj.GetComponent<Tilemap>();
+                if (tilemap != null)
+                {
+                    try
+                    {
+                        // Get the bounds of all tiles in the tilemap
+                        BoundsInt bounds = tilemap.cellBounds;
+                        
+                        // If tilemap has content, clear it
+                        if (bounds.size.x > 0 && bounds.size.y > 0)
+                        {
+                            // Use SetTilesBlock with null array
+                            int totalTiles = bounds.size.x * bounds.size.y * bounds.size.z;
+                            TileBase[] emptyTiles = new TileBase[totalTiles];
+                            tilemap.SetTilesBlock(bounds, emptyTiles);
+                            
+                            Debug.Log($"Cleared dungeon tilemap: {tilemap.name} (bounds: {bounds}, {totalTiles} tiles)");
+                            clearedCount++;
+                        }
+                        else
+                        {
+                            // Force clear using FloodFill for edge cases
+                            tilemap.FloodFill(Vector3Int.zero, null);
+                            Debug.Log($"Force cleared dungeon tilemap: {tilemap.name} (empty bounds)");
+                            clearedCount++;
+                        }
+                        
+                        // Additional safety - compress bounds to remove empty space
+                        tilemap.CompressBounds();
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError($"Error clearing dungeon tilemap {tilemap.name}: {e.Message}");
+                        
+                        // Fallback: Try to clear a large area around origin
+                        try
+                        {
+                            BoundsInt largeBounds = new BoundsInt(-100, -100, 0, 200, 200, 1);
+                            TileBase[] emptyTiles = new TileBase[largeBounds.size.x * largeBounds.size.y];
+                            tilemap.SetTilesBlock(largeBounds, emptyTiles);
+                            tilemap.CompressBounds();
+                            Debug.Log($"Fallback cleared dungeon tilemap: {tilemap.name}");
+                            clearedCount++;
+                        }
+                        catch (System.Exception fallbackError)
+                        {
+                            Debug.LogError($"Fallback clearing failed for dungeon tilemap {tilemap.name}: {fallbackError.Message}");
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"GameObject '{tilemapName}' found but no Tilemap component");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Dungeon tilemap '{tilemapName}' not found in scene");
+            }
+        }
+        
+        Debug.Log($"Successfully cleared {clearedCount}/{totalTilemaps} dungeon tilemaps for clean level transition");
+    }
+    
+    [ContextMenu("Next Level")]
+    public void GenerateNextLevel()
+    {
+        if (currentLevelIndex < levels.Count - 1)
+        {
+            currentLevelIndex++;
+            ClearAndRegenerate();
+        }
+        else
+        {
+            Debug.Log("Already at the last level!");
+        }
+    }
+    
+    [ContextMenu("Previous Level")]
+    public void GeneratePreviousLevel()
+    {
+        if (currentLevelIndex > 0)
+        {
+            currentLevelIndex--;
+            ClearAndRegenerate();
+        }
+        else
+        {
+            Debug.Log("Already at the first level!");
+        }
+    }
+    
+    /// <summary>
+    /// Check if there is a next level available
+    /// </summary>
+    /// <returns>True if there is a next level, false if at the last level</returns>
+    public bool HasNextLevel()
+    {
+        return currentLevelIndex < levels.Count - 1;
     }
     
     [ContextMenu("Show Room Positions")]
@@ -109,6 +281,49 @@ public class DungeonGenerator : MonoBehaviour
         itemRoom = null;
         fightRooms.Clear();
         availablePositions.Clear();
+        
+        Debug.Log($"Cleared existing dungeon layout for level regeneration");
+    }
+    
+    public void SetCurrentLevel(int levelIndex)
+    {
+        if (levelIndex >= 0 && levelIndex < levels.Count)
+        {
+            currentLevelIndex = levelIndex;
+            Debug.Log($"Set current level to: {GetCurrentLevelData().levelName}");
+        }
+        else
+        {
+            Debug.LogError($"Invalid level index: {levelIndex}. Valid range: 0-{levels.Count - 1}");
+        }
+    }
+    
+    public LevelData GetCurrentLevelData()
+    {
+        if (levels.Count == 0)
+        {
+            Debug.LogWarning("No levels configured! Creating default level data.");
+            return CreateDefaultLevelData();
+        }
+        
+        if (currentLevelIndex >= 0 && currentLevelIndex < levels.Count)
+        {
+            return levels[currentLevelIndex];
+        }
+        
+        Debug.LogWarning($"Invalid current level index: {currentLevelIndex}. Using first level.");
+        currentLevelIndex = 0;
+        return levels[0];
+    }
+    
+    private LevelData CreateDefaultLevelData()
+    {
+        LevelData defaultLevel = new LevelData();
+        defaultLevel.levelName = "Default Level";
+        defaultLevel.universalRoomPrefab = fallbackRoomPrefab;
+        defaultLevel.bossPrefab = fallbackBossPrefab;
+        defaultLevel.itemPrefabs = fallbackItemPrefabs;
+        return defaultLevel;
     }
     
     private void InitializeGrid()
@@ -329,6 +544,9 @@ public class DungeonGenerator : MonoBehaviour
     
     private void PlaceBossRoom(List<Room> allRooms)
     {
+        Debug.Log($"PlaceBossRoom: Starting with {allRooms.Count} total rooms");
+        Debug.Log($"Grid size: {gridRows}x{gridCols}");
+        
         // Find rooms at the edges that are farthest from start
         List<Room> edgeRooms = new List<Room>();
         Vector2Int startPos = startRoom.gridPos;
@@ -338,11 +556,15 @@ public class DungeonGenerator : MonoBehaviour
             Vector2Int pos = room.gridPos;
             bool isEdge = (pos.x == 0 || pos.x == gridRows - 1 || pos.y == 0 || pos.y == gridCols - 1);
             
+            Debug.Log($"Room at {pos}: isEdge={isEdge} (x:{pos.x}, y:{pos.y})");
+            
             if (isEdge)
             {
                 edgeRooms.Add(room);
             }
         }
+        
+        Debug.Log($"Found {edgeRooms.Count} edge rooms");
         
         if (edgeRooms.Count > 0)
         {
@@ -360,11 +582,34 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
             
-            // Convert the farthest room to boss room
-            bossRoom = farthestRoom;
-            bossRoom.name = "Boss Room";
-            bossRoom.SetRoomType(RoomType.Boss);
-            fightRooms.Remove(bossRoom);
+            Debug.Log($"Farthest room selected at {farthestRoom.gridPos} with distance {maxDistance}");
+            
+            // Create boss room - either custom prefab or convert existing room
+            LevelData currentLevel = GetCurrentLevelData();
+            if (currentLevel.bossRoomPrefab != null)
+            {
+                Debug.Log("Using custom boss room prefab");
+                // Use custom boss room prefab
+                bossRoom = CreateCustomBossRoom(farthestRoom.gridPos, currentLevel.bossRoomPrefab);
+                // Remove the original room that we're replacing
+                roomGrid[farthestRoom.gridPos.x, farthestRoom.gridPos.y] = bossRoom;
+                DestroyImmediate(farthestRoom.gameObject);
+            }
+            else
+            {
+                Debug.Log("Converting existing room to boss room");
+                // Convert existing room to boss room (default behavior)
+                bossRoom = farthestRoom;
+                bossRoom.name = "Boss Room";
+                bossRoom.SetRoomType(RoomType.Boss);
+            }
+            
+            Debug.Log($"Boss room created: {bossRoom.name} at {bossRoom.gridPos}");
+            
+            fightRooms.Remove(farthestRoom); // Remove from fight rooms list
+            
+            // Add BossRoom component and configure it
+            SetupBossRoomComponent();
             
             // Configure boss room connections
             ConfigureBossRoomConnections();
@@ -372,6 +617,49 @@ public class DungeonGenerator : MonoBehaviour
         else
         {
             Debug.LogWarning("No edge rooms found for boss placement!");
+            Debug.LogWarning($"Total rooms: {allRooms.Count}, Grid: {gridRows}x{gridCols}");
+            foreach (Room room in allRooms)
+            {
+                Debug.LogWarning($"Room at {room.gridPos} - not on edge");
+            }
+            
+            // Fallback: Use the room farthest from start (even if not on edge)
+            if (allRooms.Count > 1)
+            {
+                Debug.Log("Using fallback boss placement: farthest room from start");
+                Room farthestRoom = allRooms[1]; // Skip start room
+                float maxDistance = Vector2Int.Distance(startPos, farthestRoom.gridPos);
+                
+                foreach (Room room in allRooms)
+                {
+                    if (room != startRoom) // Don't use start room as boss room
+                    {
+                        float distance = Vector2Int.Distance(startPos, room.gridPos);
+                        if (distance > maxDistance)
+                        {
+                            maxDistance = distance;
+                            farthestRoom = room;
+                        }
+                    }
+                }
+                
+                Debug.Log($"Fallback boss room selected at {farthestRoom.gridPos} with distance {maxDistance}");
+                
+                // Convert to boss room
+                bossRoom = farthestRoom;
+                bossRoom.name = "Boss Room (Fallback)";
+                bossRoom.SetRoomType(RoomType.Boss);
+                
+                fightRooms.Remove(farthestRoom);
+                
+                // Setup boss room
+                SetupBossRoomComponent();
+                ConfigureBossRoomConnections();
+            }
+            else
+            {
+                Debug.LogError("Cannot create boss room: Not enough rooms generated!");
+            }
         }
     }
     
@@ -385,6 +673,9 @@ public class DungeonGenerator : MonoBehaviour
             itemRoom.name = "Item Room";
             itemRoom.SetRoomType(RoomType.Item);
             fightRooms.Remove(itemRoom);
+            
+            // Setup ItemRoom component
+            SetupItemRoomComponent();
         }
     }
     
@@ -498,13 +789,226 @@ public class DungeonGenerator : MonoBehaviour
         Debug.Log($"Blocked {blockedDirection} exit in room {room.name} to prevent connection to boss room");
     }
     
+    private void SetupBossRoomComponent()
+    {
+        if (bossRoom == null)
+        {
+            Debug.LogError("Cannot setup boss room: bossRoom is null!");
+            return;
+        }
+        
+        LevelData currentLevel = GetCurrentLevelData();
+        
+        // Boss functionality is now integrated into Room class
+        // Just configure the boss prefab directly on the Room
+        if (currentLevel.bossPrefab != null)
+        {
+            // Use the ConfigureBossPrefab method from Room class
+            bossRoom.ConfigureBossPrefab(currentLevel.bossPrefab);
+            
+            // Log different messages based on room type
+            if (currentLevel.bossRoomPrefab != null)
+            {
+                Debug.Log($"Custom boss room prefab '{currentLevel.bossRoomPrefab.name}' configured with boss: {currentLevel.bossPrefab.name}");
+            }
+            else
+            {
+                Debug.Log($"Default boss room layout configured with level {currentLevel.levelNumber} boss: {currentLevel.bossPrefab.name}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No boss prefab assigned for level: {currentLevel.levelName}! Boss room will not spawn a boss.");
+        }
+    }
+    
+    private void SetupItemRoomComponent()
+    {
+        if (itemRoom == null)
+        {
+            Debug.LogError("Cannot setup ItemRoom component: itemRoom is null!");
+            return;
+        }
+        
+        // Check if ItemRoom component already exists
+        ItemRoom itemRoomComponent = itemRoom.GetComponent<ItemRoom>();
+        if (itemRoomComponent == null)
+        {
+            // Add ItemRoom component to the item room GameObject
+            itemRoomComponent = itemRoom.gameObject.AddComponent<ItemRoom>();
+            Debug.Log($"Added ItemRoom component to {itemRoom.name}");
+        }
+        
+        // Configure the item room component with current level's item prefabs
+        LevelData currentLevel = GetCurrentLevelData();
+        
+        // Check if we have ItemRoom component or use base Room class
+        if (itemRoomComponent != null)
+        {
+            ConfigureItemRoomPrefabs(itemRoomComponent, currentLevel.itemPrefabs);
+        }
+        else
+        {
+            // Use base Room class configuration if ItemRoom component not found
+            ConfigureRoomItemPrefabs(itemRoom, currentLevel.itemPrefabs);
+        }
+        
+        Debug.Log($"Item room configured for level {currentLevel.levelNumber} ({currentLevel.levelName})");
+    }
+    
+    private void ConfigureItemRoomPrefabs(ItemRoom itemRoomComponent, GameObject[] prefabs)
+    {
+        // Combine level-specific items with global item pools
+        List<GameObject> allItemPrefabs = new List<GameObject>();
+        
+        // Add level-specific items first (if any)
+        if (prefabs != null && prefabs.Length > 0)
+        {
+            allItemPrefabs.AddRange(prefabs);
+        }
+        
+        // Add global item pools based on weighted selection
+        if (useWeightedItemSelection)
+        {
+            allItemPrefabs.AddRange(GetWeightedItemSelection());
+        }
+        else
+        {
+            // Add all global items if not using weighted selection
+            if (commonItemPrefabs != null) allItemPrefabs.AddRange(commonItemPrefabs);
+            if (rareItemPrefabs != null) allItemPrefabs.AddRange(rareItemPrefabs);
+            if (epicItemPrefabs != null) allItemPrefabs.AddRange(epicItemPrefabs);
+        }
+        
+        // Use fallback items if nothing else is available
+        if (allItemPrefabs.Count == 0 && fallbackItemPrefabs != null)
+        {
+            allItemPrefabs.AddRange(fallbackItemPrefabs);
+        }
+        
+        // Configure the item room with the final item list
+        if (itemRoomComponent != null)
+        {
+            itemRoomComponent.ConfigureItemPrefabs(allItemPrefabs.ToArray());
+        }
+        
+        Debug.Log($"Item Room configured with {allItemPrefabs.Count} total item prefab(s)");
+    }
+    
+    /// <summary>
+    /// Configure item room using base Room class (for non-ItemRoom components)
+    /// </summary>
+    private void ConfigureRoomItemPrefabs(Room room, GameObject[] levelItemPrefabs)
+    {
+        if (room == null) return;
+        
+        // Combine level-specific items with global item pools
+        List<GameObject> allItemPrefabs = new List<GameObject>();
+        
+        // Add level-specific items first (if any)
+        if (levelItemPrefabs != null && levelItemPrefabs.Length > 0)
+        {
+            allItemPrefabs.AddRange(levelItemPrefabs);
+        }
+        
+        // Add global item pools
+        if (useWeightedItemSelection)
+        {
+            allItemPrefabs.AddRange(GetWeightedItemSelection());
+        }
+        else
+        {
+            if (commonItemPrefabs != null) allItemPrefabs.AddRange(commonItemPrefabs);
+            if (rareItemPrefabs != null) allItemPrefabs.AddRange(rareItemPrefabs);
+            if (epicItemPrefabs != null) allItemPrefabs.AddRange(epicItemPrefabs);
+        }
+        
+        // Use fallback items if nothing else is available
+        if (allItemPrefabs.Count == 0 && fallbackItemPrefabs != null)
+        {
+            allItemPrefabs.AddRange(fallbackItemPrefabs);
+        }
+        
+        // Configure the room with the final item list using the new Room class method
+        room.ConfigureItemPrefabs(allItemPrefabs.ToArray());
+        
+        Debug.Log($"Room {room.name} configured with {allItemPrefabs.Count} item prefab(s) using base Room class");
+    }
+    
+    /// <summary>
+    /// Get weighted selection of items based on rarity
+    /// </summary>
+    private List<GameObject> GetWeightedItemSelection()
+    {
+        List<GameObject> selectedItems = new List<GameObject>();
+        
+        // Normalize weights to percentages
+        float totalWeight = itemRarityWeights.x + itemRarityWeights.y + itemRarityWeights.z;
+        if (totalWeight <= 0) return selectedItems;
+        
+        float commonChance = itemRarityWeights.x / totalWeight;
+        float rareChance = itemRarityWeights.y / totalWeight;
+        float epicChance = itemRarityWeights.z / totalWeight;
+        
+        // Add items based on weighted probabilities
+        float random = Random.value;
+        
+        if (random < commonChance && commonItemPrefabs != null && commonItemPrefabs.Length > 0)
+        {
+            // Select from common items
+            selectedItems.AddRange(commonItemPrefabs);
+        }
+        else if (random < commonChance + rareChance && rareItemPrefabs != null && rareItemPrefabs.Length > 0)
+        {
+            // Select from rare items
+            selectedItems.AddRange(rareItemPrefabs);
+        }
+        else if (epicItemPrefabs != null && epicItemPrefabs.Length > 0)
+        {
+            // Select from epic items
+            selectedItems.AddRange(epicItemPrefabs);
+        }
+        else if (commonItemPrefabs != null && commonItemPrefabs.Length > 0)
+        {
+            // Fallback to common items if rare/epic are empty
+            selectedItems.AddRange(commonItemPrefabs);
+        }
+        
+        return selectedItems;
+    }
+    
+    /// <summary>
+    /// Test item prefab configuration (Editor only)
+    /// </summary>
+    [ContextMenu("Test Item Configuration")]
+    private void TestItemConfiguration()
+    {
+        Debug.Log($"=== Item Prefab Configuration Test ===");
+        Debug.Log($"Common Items: {(commonItemPrefabs?.Length ?? 0)}");
+        Debug.Log($"Rare Items: {(rareItemPrefabs?.Length ?? 0)}");
+        Debug.Log($"Epic Items: {(epicItemPrefabs?.Length ?? 0)}");
+        Debug.Log($"Fallback Items: {(fallbackItemPrefabs?.Length ?? 0)}");
+        Debug.Log($"Use Weighted Selection: {useWeightedItemSelection}");
+        Debug.Log($"Rarity Weights: Common={itemRarityWeights.x}%, Rare={itemRarityWeights.y}%, Epic={itemRarityWeights.z}%");
+        
+        // Test weighted selection
+        if (useWeightedItemSelection)
+        {
+            var testSelection = GetWeightedItemSelection();
+            Debug.Log($"Test weighted selection returned {testSelection.Count} items");
+        }
+    }
 
     
     private Room CreateRoom(Vector2Int gridPos, string roomName)
     {
-        if (universalRoomPrefab == null)
+        // Get current level's room prefab
+        LevelData currentLevel = GetCurrentLevelData();
+        GameObject roomPrefab = currentLevel.universalRoomPrefab;
+        
+        if (roomPrefab == null)
         {
-            Debug.LogError("Universal room prefab is null!");
+            Debug.LogError($"Room prefab is null for level: {currentLevel.levelName}!");
             return null;
         }
         
@@ -517,7 +1021,7 @@ public class DungeonGenerator : MonoBehaviour
         );
         
         // Instantiate room
-        GameObject roomObj = Instantiate(universalRoomPrefab, worldPos, Quaternion.identity, transform);
+        GameObject roomObj = Instantiate(roomPrefab, worldPos, Quaternion.identity, transform);
         Room room = roomObj.GetComponent<Room>();
         
         if (room == null)
@@ -534,9 +1038,43 @@ public class DungeonGenerator : MonoBehaviour
         return room;
     }
     
+    private Room CreateCustomBossRoom(Vector2Int gridPos, GameObject bossRoomPrefab)
+    {
+        if (bossRoomPrefab == null)
+        {
+            Debug.LogError("Custom boss room prefab is null!");
+            return null;
+        }
+        
+        // Calculate world position
+        Vector3 worldPos = new Vector3(
+            gridPos.y * RoomSpacingX, // x = column * room width
+            gridPos.x * RoomSpacingY, // y = row * room height
+            0
+        );
+        
+        // Instantiate custom boss room
+        GameObject bossRoomObj = Instantiate(bossRoomPrefab, worldPos, Quaternion.identity, transform);
+        Room bossRoom = bossRoomObj.GetComponent<Room>();
+        
+        // If the prefab doesn't have a Room component, add one
+        if (bossRoom == null)
+        {
+            bossRoom = bossRoomObj.AddComponent<Room>();
+        }
+        
+        // Configure boss room
+        bossRoom.SetGridPosition(gridPos);
+        bossRoom.SetRoomType(RoomType.Boss);
+        bossRoomObj.name = $"BossRoom_{gridPos.x}_{gridPos.y}";
+        
+        Debug.Log($"Created custom boss room from prefab: {bossRoomPrefab.name}");
+        return bossRoom;
+    }
+    
     private void ConnectRooms()
     {
-        // Connect all adjacent rooms with bidirectional exits
+        // Connect all adjacent rooms with bidirectional exits, respecting boss room connections
         for (int row = 0; row < gridRows; row++)
         {
             for (int col = 0; col < gridCols; col++)
@@ -544,14 +1082,142 @@ public class DungeonGenerator : MonoBehaviour
                 Room currentRoom = roomGrid[row, col];
                 if (currentRoom == null || currentRoom == bossRoom) continue;
                 
-                // Check adjacent positions
-                bool north = (row + 1 < gridRows) && (roomGrid[row + 1, col] != null);
-                bool south = (row - 1 >= 0) && (roomGrid[row - 1, col] != null);
-                bool east = (col + 1 < gridCols) && (roomGrid[row, col + 1] != null);
-                bool west = (col - 1 >= 0) && (roomGrid[row, col - 1] != null);
+                // Declare exit variables
+                bool north, south, east, west;
+                
+                // Special handling for starting room: simple adjacency check only
+                if (currentRoom.roomType == RoomType.Start)
+                {
+                    // For start room, only connect to existing adjacent rooms (no boss room logic)
+                    north = (row + 1 < gridRows) && (roomGrid[row + 1, col] != null);
+                    south = (row - 1 >= 0) && (roomGrid[row - 1, col] != null);
+                    east = (col + 1 < gridCols) && (roomGrid[row, col + 1] != null);
+                    west = (col - 1 >= 0) && (roomGrid[row, col - 1] != null);
+                    
+                    Debug.Log($"Start room at ({row},{col}) - Adjacent rooms: North: {north}, South: {south}, East: {east}, West: {west}");
+                }
+                else
+                {
+                    // Check adjacent positions, but respect boss room connections (for non-start rooms)
+                    north = (row + 1 < gridRows) && (roomGrid[row + 1, col] != null) && 
+                            (roomGrid[row + 1, col] != bossRoom || currentRoom.hasNorthExit);
+                    south = (row - 1 >= 0) && (roomGrid[row - 1, col] != null) && 
+                            (roomGrid[row - 1, col] != bossRoom || currentRoom.hasSouthExit);
+                    east = (col + 1 < gridCols) && (roomGrid[row, col + 1] != null) && 
+                           (roomGrid[row, col + 1] != bossRoom || currentRoom.hasEastExit);
+                    west = (col - 1 >= 0) && (roomGrid[row, col - 1] != null) && 
+                           (roomGrid[row, col - 1] != bossRoom || currentRoom.hasWestExit);
+                }
+                
+                // For non-start rooms, also preserve existing exits (boss room setup logic)
+                if (currentRoom.roomType != RoomType.Start && 
+                    (currentRoom.hasNorthExit || currentRoom.hasSouthExit || 
+                     currentRoom.hasEastExit || currentRoom.hasWestExit))
+                {
+                    // Room already has some exits configured (probably by boss room setup)
+                    // Preserve existing exits and only add new ones for non-boss connections
+                    north = currentRoom.hasNorthExit || (north && roomGrid[row + 1, col] != bossRoom);
+                    south = currentRoom.hasSouthExit || (south && roomGrid[row - 1, col] != bossRoom);
+                    east = currentRoom.hasEastExit || (east && roomGrid[row, col + 1] != bossRoom);
+                    west = currentRoom.hasWestExit || (west && roomGrid[row, col - 1] != bossRoom);
+                }
                 
                 currentRoom.ConfigureExits(north, south, east, west);
             }
+        }
+        
+        // Ensure all non-boss rooms remain accessible after boss room connection restrictions
+        ValidateAndFixConnectivity();
+    }
+    
+    private void ValidateAndFixConnectivity()
+    {
+        // Get all non-boss rooms that should be accessible
+        List<Room> allNonBossRooms = new List<Room>();
+        for (int row = 0; row < gridRows; row++)
+        {
+            for (int col = 0; col < gridCols; col++)
+            {
+                Room room = roomGrid[row, col];
+                if (room != null && room != bossRoom)
+                {
+                    allNonBossRooms.Add(room);
+                }
+            }
+        }
+        
+        if (allNonBossRooms.Count == 0) return;
+        
+        // Find all rooms reachable from start room (excluding boss room path)
+        HashSet<Room> reachableRooms = GetReachableNonBossRooms(startRoom);
+        
+        // Find unreachable non-boss rooms
+        List<Room> unreachableRooms = new List<Room>();
+        foreach (Room room in allNonBossRooms)
+        {
+            if (!reachableRooms.Contains(room))
+            {
+                unreachableRooms.Add(room);
+            }
+        }
+        
+        if (unreachableRooms.Count > 0)
+        {
+            Debug.LogWarning($"Found {unreachableRooms.Count} unreachable non-boss rooms. Fixing connectivity...");
+            ConnectUnreachableRooms(unreachableRooms, reachableRooms);
+        }
+        else
+        {
+            Debug.Log("All non-boss rooms are accessible!");
+        }
+    }
+    
+    private HashSet<Room> GetReachableNonBossRooms(Room startingRoom)
+    {
+        HashSet<Room> visited = new HashSet<Room>();
+        Queue<Room> toVisit = new Queue<Room>();
+        
+        toVisit.Enqueue(startingRoom);
+        visited.Add(startingRoom);
+        
+        while (toVisit.Count > 0)
+        {
+            Room currentRoom = toVisit.Dequeue();
+            Vector2Int pos = currentRoom.gridPos;
+            
+            // Check all four directions for connected non-boss rooms
+            CheckNeighborForConnectivity(pos.x + 1, pos.y, currentRoom.hasNorthExit, "south", visited, toVisit);
+            CheckNeighborForConnectivity(pos.x - 1, pos.y, currentRoom.hasSouthExit, "north", visited, toVisit);
+            CheckNeighborForConnectivity(pos.x, pos.y + 1, currentRoom.hasEastExit, "west", visited, toVisit);
+            CheckNeighborForConnectivity(pos.x, pos.y - 1, currentRoom.hasWestExit, "east", visited, toVisit);
+        }
+        
+        return visited;
+    }
+    
+    private void CheckNeighborForConnectivity(int row, int col, bool hasExit, string requiredExit, HashSet<Room> visited, Queue<Room> toVisit)
+    {
+        if (!hasExit || row < 0 || row >= gridRows || col < 0 || col >= gridCols)
+            return;
+            
+        Room neighbor = roomGrid[row, col];
+        if (neighbor == null || neighbor == bossRoom || visited.Contains(neighbor))
+            return;
+            
+        // Check if neighbor has the required exit back to us
+        bool neighborHasExit = false;
+        switch (requiredExit)
+        {
+            case "north": neighborHasExit = neighbor.hasNorthExit; break;
+            case "south": neighborHasExit = neighbor.hasSouthExit; break;
+            case "east": neighborHasExit = neighbor.hasEastExit; break;
+            case "west": neighborHasExit = neighbor.hasWestExit; break;
+        }
+        
+        if (neighborHasExit)
+        {
+            visited.Add(neighbor);
+            toVisit.Enqueue(neighbor);
         }
     }
 
@@ -910,6 +1576,101 @@ public class DungeonGenerator : MonoBehaviour
     public Room GetItemRoom()
     {
         return itemRoom;
+    }
+    
+    // === LEVEL MANAGEMENT PUBLIC METHODS ===
+    
+    /// <summary>
+    /// Generate a specific level by index
+    /// </summary>
+    public void GenerateLevel(int levelIndex)
+    {
+        SetCurrentLevel(levelIndex);
+        ClearAndRegenerate();
+    }
+    
+    /// <summary>
+    /// Advance to the next level and regenerate
+    /// </summary>
+    public void AdvanceToNextLevel()
+    {
+        GenerateNextLevel();
+    }
+    
+    /// <summary>
+    /// Go back to the previous level and regenerate
+    /// </summary>
+    public void GoToPreviousLevel()
+    {
+        GeneratePreviousLevel();
+    }
+    
+    /// <summary>
+    /// Clear current layout and generate a new one with the same level
+    /// </summary>
+    public void RegenerateCurrentLevel()
+    {
+        ClearAndRegenerate();
+    }
+    
+    /// <summary>
+    /// Get information about the current level
+    /// </summary>
+    public string GetCurrentLevelInfo()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        return $"Level {currentLevel.levelNumber}: {currentLevel.levelName}";
+    }
+    
+    /// <summary>
+    /// Get the total number of available levels
+    /// </summary>
+    public int GetTotalLevels()
+    {
+        return levels.Count;
+    }
+    
+    /// <summary>
+    /// Get the current level index (0-based)
+    /// </summary>
+    public int GetCurrentLevelIndex()
+    {
+        return currentLevelIndex;
+    }
+    
+    /// <summary>
+    /// Check if there are previous levels available
+    /// </summary>
+    public bool HasPreviousLevel()
+    {
+        return currentLevelIndex > 0;
+    }
+    
+    /// <summary>
+    /// Check if current level uses a custom boss room prefab
+    /// </summary>
+    public bool IsUsingCustomBossRoom()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        return currentLevel.bossRoomPrefab != null;
+    }
+    
+    /// <summary>
+    /// Get information about current boss room configuration
+    /// </summary>
+    public string GetBossRoomInfo()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        
+        string roomType = currentLevel.bossRoomPrefab != null ? 
+            $"Custom Room: {currentLevel.bossRoomPrefab.name}" : 
+            "Default Layout";
+            
+        string bossType = currentLevel.bossPrefab != null ? 
+            $"Boss: {currentLevel.bossPrefab.name}" : 
+            "No Boss";
+            
+        return $"{roomType} | {bossType}";
     }
     
     public List<Room> GetFightRooms()
