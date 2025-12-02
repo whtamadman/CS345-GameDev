@@ -160,7 +160,7 @@ public class Projectile : MonoBehaviour
         }
 
         // Normal projectile movement with optional rotation
-        Vector2 currentVelocity;
+        Vector2 _currentVelocity;
         
         // Apply continuous rotation while moving if enabled (visual only)
         if (rotateWhileMoving)
@@ -169,11 +169,11 @@ public class Projectile : MonoBehaviour
         }
         
         // Use original direction for consistent straight-line movement
-        currentVelocity = originalDirection * speed;
-        rb.linearVelocity = currentVelocity;
+        _currentVelocity = originalDirection * speed;
+        rb.linearVelocity = _currentVelocity;
         
         // Check for wall collision along movement path
-        CheckWallCollision(currentVelocity);
+        CheckWallCollision(_currentVelocity);
     }
     
     private void CheckWallCollision(Vector2 velocity)
