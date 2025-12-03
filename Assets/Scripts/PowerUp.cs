@@ -2,15 +2,23 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PowerUp : MonoBehaviour {
 
     public GameObject popupTextPrefab;
+    public GameObject powerUpSprite;
     public PowerUpEffect effect;
     public Transform hudCanvas;
+    private Transform powerUpContainer;
     private bool inTrigger;
     private bool popUpExist;
     private bool hasBeenPickedUp = false; // Prevent multiple pickups
+    private SpriteRenderer sr;
+    public GameObject hoverPopUp;
+    public GameObject powerUpPrefab;
+    
 
     public void ShowPowerUpText()
     {
@@ -52,6 +60,12 @@ public class PowerUp : MonoBehaviour {
 
     void Start() {
         popUpExist = false;
+        hudCanvas = GameObject.Find("HUD").transform;
+        powerUpContainer = GameObject.Find("PowerUpSprites").transform;
+        sr = GetComponent<SpriteRenderer>();
+        if ((effect) && (sr)) {
+            sr.sprite = effect.itemSprite;
+        }
     }
 
     void Update () {
@@ -59,6 +73,7 @@ public class PowerUp : MonoBehaviour {
             Debug.Log($"PowerUp {gameObject.name}: E key pressed, applying effect and destroying item");
             hasBeenPickedUp = true;
             effect.Apply(Player.Instance);
+            AddPowerUpToSide();
             Destroy(gameObject);
         }
     }
@@ -101,5 +116,12 @@ public class PowerUp : MonoBehaviour {
     private IEnumerator UpdateResetVar(float delay) {
         yield return new WaitForSeconds(delay);
         popUpExist = false;
+    }
+
+    private void AddPowerUpToSide() {
+        GameObject sideSprite = Instantiate(powerUpSprite, powerUpContainer);
+        sideSprite.GetComponent<Image>().sprite = effect.itemSprite;
+        PowerUpSprite iconComponent = sideSprite.GetComponent<PowerUpSprite>();
+        iconComponent.SetData((string)effect.powerUpName, (string)effect.description);
     }
 }

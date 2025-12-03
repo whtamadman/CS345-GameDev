@@ -3,21 +3,17 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
-    private float defaultHealth;
     public static Player Instance;
-    public Animator animator;
-    public bool invincibility;
-    private bool canAttack;
+    private Animator animator;
+    private bool canAttack, invincibility, inEnemy;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
-    public int health;
-    public int maxHealth;
+    public int health, maxHealth, maxMaxHealth;
     public int coins = 0; // Player's gold/currency
-    public float moveSpeed, attackRange, damage;
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float invinceTimer;
+    public float moveSpeed, damage, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange;
     
     [Header("Visual Effects")]
     [SerializeField] private Color invisibilityColor = Color.blue;
@@ -32,9 +28,14 @@ public class Player : MonoBehaviour {
     void Start() {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
-        defaultHealth=health;
+        maxMaxHealth = 10;
+        maxHealth = 5;
+        health = maxHealth;
         invincibility = false;
         canAttack = true;
+        Health.Instance.InitHealthSprites();
+        animator = GetComponent<Animator>();
+        inEnemy = false;
         
         // Store original layer and get all colliders
         originalLayer = gameObject.layer;
@@ -50,21 +51,20 @@ public class Player : MonoBehaviour {
         moveDirection = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")).normalized;
         if(moveDirection.magnitude > 0){
             rigidBody.linearVelocity = moveDirection * moveSpeed;
-            
-            // Rotate sprite based on horizontal movement direction
-            if (moveDirection.x > 0) // Moving right
-            {
-                transform.rotation = Quaternion.Euler(0, -180f, 0);
-            }
-            else if (moveDirection.x < 0) // Moving left
-            {
-                transform.rotation = Quaternion.Euler(0, 0f, 0);
-            }
-            // If only moving vertically (x == 0), keep current rotation
+
         }else{
             rigidBody.linearVelocity -= rigidBody.linearVelocity * friction;
         }
+        animator.SetFloat("X", moveDirection.x);
+        animator.SetFloat("Y", moveDirection.y);
+        if (moveDirection != Vector2.zero) {
+            animator.SetFloat("LastX", moveDirection.x);
+            animator.SetFloat("LastY", moveDirection.y);
+        }
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 aimDirection = (mouseWorldPos - transform.position).normalized;
         if(Input.GetMouseButton(0) && canAttack) {
+            animator.SetTrigger("Attack");
             StartCoroutine(MeleeAttack());
         }
     }
@@ -74,25 +74,31 @@ public class Player : MonoBehaviour {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 direction = (mousePos - transform.position).normalized;
         float hitboxDirection = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Vector3 offset = new Vector3(Mathf.Cos(hitboxDirection * Mathf.Deg2Rad), Mathf.Sin(hitboxDirection * Mathf.Deg2Rad) + 1f,  0) * 0.2f;
+        Vector3 offset = new Vector3(Mathf.Cos(hitboxDirection * Mathf.Deg2Rad), Mathf.Sin(hitboxDirection * Mathf.Deg2Rad),  0) * 0.2f;
         Vector3 spawnPos = transform.position + offset;
         GameObject hitbox = Instantiate(meleeHitbox, spawnPos, Quaternion.Euler(0, 0, hitboxDirection - 90f));
+        hitbox.transform.localScale *= hitboxRange;
         hitbox.transform.SetParent(transform);
-        yield return new WaitForSeconds(0.2f);
+        animator.SetFloat("MouseX", direction.x);
+        animator.SetFloat("MouseY", direction.y);
+        Debug.Log(direction);
+        animator.SetTrigger("Attack");
+        //How long the attack stays out for
+        yield return new WaitForSeconds(hitboxFrames);
         Destroy(hitbox);
-        yield return new WaitForSeconds(0.3f); 
+       // animator.SetBool("attacking" = false);
+        //Melee Cooldown
+        yield return new WaitForSeconds(meleeCooldown); 
         canAttack = true;
     }
 
-    public void takeDamage(){
+    public void takeDamage(int damage = 1){
         if (!invincibility) {
-            Debug.Log($"Player taking damage! Health: {health} -> {health-1} at position {transform.position}");
-            Debug.Log($"Damage source call stack: {System.Environment.StackTrace}");
-            
-            health = health - 1;
+            health = health - damage;
             if(health<=0) {
                 Time.timeScale = 0;
             }
+            Health.Instance.UpdateHealthSprites();
             StartCoroutine(iFrames(invinceTimer));
         }
         else
@@ -128,6 +134,19 @@ public class Player : MonoBehaviour {
         
         Debug.Log("Invince False");
         invincibility = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Enemy") && !inEnemy) {
+            takeDamage();
+            inEnemy = true;
+        }
+    }
+
+        private void OnTriggerExit2D(Collider2D other) {
+        if (other.CompareTag("Enemy") && inEnemy) {
+            inEnemy = false;
+        }
     }
     
     /// <summary>

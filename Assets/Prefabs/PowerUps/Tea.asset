@@ -10,10 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: PencilSharperner
+  m_Name: Tea
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Pencil Sharperner
-  description: Looks like you can increase your damage at the cost of HP
-  damageIncrease: 10
-  healthChange: -10
+  powerUpName: Freshly Brewed Tea
+  description: This surge of caffine allows you to attack 1.2x faster
   moveSpeed: 0
+  damage: 0
+  meleeCooldown: 0.8
+  hitboxRange: 0
+  health: 0
+  maxHealth: 0
+  itemSprite: {fileID: 21300000, guid: 476e92035edc51449bd19d577ba6eb7a, type: 3}
