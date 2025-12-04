@@ -84,8 +84,13 @@ public class Teleporter : MonoBehaviour
         isTeleporting = true;
         
         // Play teleport sound if available
-        if (audioSource != null && teleportSound != null)
+        if (AudioManager.Instance != null)
         {
+            AudioManager.Instance.PlayTeleporter();
+        }
+        else if (audioSource != null && teleportSound != null)
+        {
+            // Fallback to local audio source if AudioManager not available
             audioSource.PlayOneShot(teleportSound);
         }
         

@@ -538,6 +538,12 @@ public class Enemy : MonoBehaviour
     {
         canShoot = false;
         
+        // Play shoot sound
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayEnemyShoot();
+        }
+        
         if (enableBurstFire)
         {
             // Burst fire mode - shoot multiple projectiles with delay between them
@@ -577,6 +583,20 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
+        
+        // Play hit sound
+        if (AudioManager.Instance != null)
+        {
+            if (health <= 0)
+            {
+                AudioManager.Instance.PlayEnemyDeath();
+            }
+            else
+            {
+                AudioManager.Instance.PlayEnemyHit();
+            }
+        }
+        
         if (health <= 0)
         {
             Die();
@@ -696,6 +716,12 @@ public class Enemy : MonoBehaviour
         isChargingUp = true;
         chargeUpTimer = chargeUpTime;
         chargeDirection = (playerPosition - transform.position).normalized;
+        
+        // Play charge sound
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayEnemyCharge();
+        }
         
         Debug.Log($"Enemy {gameObject.name} initiating charge attack!");
     }
