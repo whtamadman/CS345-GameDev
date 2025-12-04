@@ -196,6 +196,12 @@ public class Projectile : MonoBehaviour
             // Check if this is a wall
             if (IsWallCollider(hit.collider))
             {
+                // Play wall hit sound
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayProjectileWallHit();
+                }
+                
                 // Hit a wall - move to hit point and destroy
                 transform.position = hit.point;
                 if (isBoomerang && shooter != null)
@@ -312,6 +318,12 @@ public class Projectile : MonoBehaviour
         // Normal projectile behavior - only hit the target tag
         if (target != null && other.tag == target.tag)
         {
+            // Play hit sound
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayProjectileHit();
+            }
+            
             other.GetComponent<Player>()?.takeDamage();
             Destroy(gameObject);
         }

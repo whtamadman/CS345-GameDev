@@ -74,6 +74,13 @@ public class PowerUp : MonoBehaviour {
             hasBeenPickedUp = true;
             effect.Apply(Player.Instance);
             AddPowerUpToSide();
+            
+            // Play pickup sound
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayPlayerPickup();
+            }
+            
             Destroy(gameObject);
         }
     }

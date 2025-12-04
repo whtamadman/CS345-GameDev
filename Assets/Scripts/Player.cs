@@ -83,6 +83,13 @@ public class Player : MonoBehaviour {
         animator.SetFloat("MouseY", direction.y);
         Debug.Log(direction);
         animator.SetTrigger("Attack");
+        
+        // Play attack sound
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPlayerAttack();
+        }
+        
         //How long the attack stays out for
         yield return new WaitForSeconds(hitboxFrames);
         Destroy(hitbox);
@@ -95,6 +102,20 @@ public class Player : MonoBehaviour {
     public void takeDamage(int damage = 1){
         if (!invincibility) {
             health = health - damage;
+            
+            // Play hit sound
+            if (AudioManager.Instance != null)
+            {
+                if (health <= 0)
+                {
+                    AudioManager.Instance.PlayPlayerDeath();
+                }
+                else
+                {
+                    AudioManager.Instance.PlayPlayerHit();
+                }
+            }
+            
             if(health<=0) {
                 Time.timeScale = 0;
             }
