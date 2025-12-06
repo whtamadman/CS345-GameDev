@@ -21,6 +21,8 @@ public class PowerUp : MonoBehaviour {
     public GameObject hoverPopUp;
     public GameObject powerUpPrefab;
     private static GameObject popup;
+    public PowerUpEffect startingMelee;
+    public PowerUpEffect startingRange;
     
 
     public void ShowPowerUpText()

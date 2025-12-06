@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
@@ -13,9 +14,14 @@ public class Player : MonoBehaviour {
     public int coins = 0; // Player's gold/currency
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime, shootForce;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime;
     public GameObject weapon;
     public Projectile projectile;
+    public PowerUpEffect startingMelee;
+    public PowerUpEffect startingRange;
+    public Transform meleeContainer;
+    public Transform rangeContainer;
+    public GameObject powerUpSprite;
     
     [Header("Visual Effects")]
     [SerializeField] private Color invisibilityColor = Color.blue;
@@ -39,7 +45,7 @@ public class Player : MonoBehaviour {
         animator = GetComponent<Animator>();
         inEnemy = false;
         canShoot = true;
-        
+        initWeapons();
         // Store original layer and get all colliders
         originalLayer = gameObject.layer;
         playerColliders = GetComponentsInChildren<Collider2D>();
@@ -72,8 +78,23 @@ public class Player : MonoBehaviour {
         }
         if(Input.GetMouseButton(1) && canShoot) {
             canShoot = false;
-            StartCoroutine(Shoot(moveDirection, shootForce));
+            StartCoroutine(Shoot());
         }
+    }
+
+    private void initWeapons() {
+        GameObject meleeSprite = Instantiate(powerUpSprite, meleeContainer);
+        meleeSprite.GetComponent<Image>().sprite = startingMelee.itemSprite;
+        PowerUpSprite iconComponent1 = meleeSprite.GetComponent<PowerUpSprite>();
+        iconComponent1.SetData((string)startingMelee.powerUpName, (string)startingMelee.description);
+        Debug.Log("I Am here");
+        startingMelee.Apply(this);
+        GameObject rangeSprite = Instantiate(powerUpSprite, rangeContainer);
+        rangeSprite.GetComponent<Image>().sprite = startingRange.itemSprite;
+        PowerUpSprite iconComponent2 = rangeSprite.GetComponent<PowerUpSprite>();
+        iconComponent2.SetData((string)startingRange.powerUpName, (string)startingRange.description);
+        startingRange.Apply(this);
+        projectile = Resources.Load<Projectile>("Player Projectiles/" + startingRange.powerUpName);
     }
 
     protected IEnumerator MeleeAttack() {
@@ -309,10 +330,9 @@ public class Player : MonoBehaviour {
         return coins >= cost;
     }
 
-    protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
+    protected IEnumerator Shoot()
     {
             Projectile newBullet = Instantiate(projectile, transform.position, Quaternion.identity);
-            newBullet.speed = shootForce;
             newBullet.SetTarget(this.gameObject, this.gameObject);
             yield return new WaitForSeconds(reloadTime);
             canShoot = true;

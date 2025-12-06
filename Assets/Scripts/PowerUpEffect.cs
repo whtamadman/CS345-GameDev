@@ -12,14 +12,12 @@ public class PowerUpEffect : ScriptableObject
     public virtual void Apply(Player player)
     {
         if (isMeleeWeapon) {
-            return;
+            player.baseMeleeDamage = baseMeleeDamage;
         } else if (isRangeWeapon) {
-            return;
+            player.baseRangeDamage = baseRangeDamage;
         }
         player.damageMeleeModifier += damageMeleeModifier;
-        if (player.damageMeleeModifier <= 1) {
-            player.damageMeleeModifier = 1;
-        }
+        player.baseRangeModifier += baseRangeModifier;
         player.maxHealth += (int)maxHealth;
         if (player.maxHealth >= player.maxMaxHealth) {
             player.maxHealth = player.maxMaxHealth;
