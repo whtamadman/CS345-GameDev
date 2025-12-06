@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float lifeTime = 2f;
-    [SerializeField] private float speed = 10f;
+    [SerializeField] public float speed = 10f;
     [SerializeField] private bool isBoomerang = false;
     [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
     [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
@@ -44,12 +44,25 @@ public class Projectile : MonoBehaviour
 
     public void SetTarget(GameObject targetObject, GameObject shooterObject = null)
     {
+        Vector2 direction;
+        float angle;
         target = targetObject.transform;
         shooter = shooterObject;
 
-        Vector2 direction = (target.position - transform.position).normalized;
+        if (targetObject == shooterObject) {
+            Player player = shooterObject.GetComponent<Player>();
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            direction = (mousePos - (Vector2)player.transform.position).normalized;
+            originalDirection = direction;
+            Debug.Log(originalDirection);
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            return;
+        }
+
+        direction = (target.position - transform.position).normalized;
         originalDirection = direction; // Store the original direction for consistent movement
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
         
         // If this is a boomerang, check if the shooter already has one active (max 1 per shooter)
@@ -132,7 +145,6 @@ public class Projectile : MonoBehaviour
                 {
                     transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
                 }
-                
                 // Use original direction for consistent straight-line movement
                 currentVelocity = originalDirection * speed;
                 rb.linearVelocity = currentVelocity;
@@ -182,6 +194,10 @@ public class Projectile : MonoBehaviour
     {
         // Skip trigger colliders (those are for entities, not walls)
         if (collider.isTrigger) return false;
+
+        if (collider.gameObject.name.ToLower().Contains("player")) return false;
+
+        if (collider.gameObject.tag.ToLower().Contains("enemy")) return false;
         
         // Skip the projectile itself
         if (collider.gameObject == gameObject) return false;
@@ -272,6 +288,12 @@ public class Projectile : MonoBehaviour
             other.GetComponent<Player>()?.takeDamage();
             Destroy(gameObject);
         }
+
+        if (other.tag == "Enemy") {
+            other.GetComponent<Enemy>()?.TakeDamage((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier);
+            Destroy(gameObject);
+        }
+
     }
     
     private void OnDestroy()

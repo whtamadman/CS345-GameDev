@@ -4,8 +4,8 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     public static Player Instance;
-    private Animator animator;
-    private bool canAttack, invincibility, inEnemy;
+    public Animator animator;
+    private bool canAttack, canShoot, invincibility, inEnemy;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
@@ -13,7 +13,9 @@ public class Player : MonoBehaviour {
     public int coins = 0; // Player's gold/currency
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float moveSpeed, damage, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime, shootForce;
+    public GameObject weapon;
+    public Projectile projectile;
     
     [Header("Visual Effects")]
     [SerializeField] private Color invisibilityColor = Color.blue;
@@ -36,6 +38,7 @@ public class Player : MonoBehaviour {
         Health.Instance.InitHealthSprites();
         animator = GetComponent<Animator>();
         inEnemy = false;
+        canShoot = true;
         
         // Store original layer and get all colliders
         originalLayer = gameObject.layer;
@@ -67,6 +70,10 @@ public class Player : MonoBehaviour {
             animator.SetTrigger("Attack");
             StartCoroutine(MeleeAttack());
         }
+        if(Input.GetMouseButton(1) && canShoot) {
+            canShoot = false;
+            StartCoroutine(Shoot(moveDirection, shootForce));
+        }
     }
 
     protected IEnumerator MeleeAttack() {
@@ -81,7 +88,6 @@ public class Player : MonoBehaviour {
         hitbox.transform.SetParent(transform);
         animator.SetFloat("MouseX", direction.x);
         animator.SetFloat("MouseY", direction.y);
-        Debug.Log(direction);
         animator.SetTrigger("Attack");
         //How long the attack stays out for
         yield return new WaitForSeconds(hitboxFrames);
@@ -281,4 +287,14 @@ public class Player : MonoBehaviour {
     {
         return coins >= cost;
     }
+
+    protected IEnumerator Shoot(Vector3 shootDirection, float shootForce)
+    {
+            Projectile newBullet = Instantiate(projectile, transform.position, Quaternion.identity);
+            newBullet.speed = shootForce;
+            newBullet.SetTarget(this.gameObject, this.gameObject);
+            yield return new WaitForSeconds(reloadTime);
+            canShoot = true;
+    }
+
 }

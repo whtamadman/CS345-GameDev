@@ -17,6 +17,7 @@ public class PowerUpSprite : MonoBehaviour {
         hudCanvas = GameObject.Find("HUD").transform;
         transform.SetAsLastSibling();
         rectTransform = GetComponent<RectTransform>();
+        
     }
 
     void Update() {
