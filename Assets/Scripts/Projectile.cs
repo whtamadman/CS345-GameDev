@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float lifeTime = 2f;
-    [SerializeField] private float speed = 10f;
+    [SerializeField] public float speed = 10f;
     [SerializeField] private bool isBoomerang = false;
     [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
     [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
@@ -58,12 +58,25 @@ public class Projectile : MonoBehaviour
 
     public void SetTarget(GameObject targetObject, GameObject shooterObject = null)
     {
+        Vector2 direction;
+        float angle;
         target = targetObject.transform;
         shooter = shooterObject;
 
-        Vector2 direction = (target.position - transform.position).normalized;
+        if (targetObject == shooterObject) {
+            Player player = shooterObject.GetComponent<Player>();
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            direction = (mousePos - (Vector2)player.transform.position).normalized;
+            originalDirection = direction;
+            Debug.Log(originalDirection);
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            return;
+        }
+
+        direction = (target.position - transform.position).normalized;
         originalDirection = direction; // Store the original direction for consistent movement
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
         
         if (isStaticProjectile && target != null)
@@ -127,7 +140,38 @@ public class Projectile : MonoBehaviour
     {
         if (rb == null)
         {
-            return;
+            Vector2 currentVelocity;
+            
+            if (isReturning && shooter != null)
+            {
+                // Return to shooter
+                Vector2 direction = (shooter.transform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.Euler(0, 0, angle);
+                currentVelocity = direction * boomerangReturnSpeed;
+                rb.linearVelocity = currentVelocity;
+
+                // Check if reached shooter
+                if (Vector2.Distance(transform.position, shooter.transform.position) < 0.5f)
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+            else
+            {
+                // Apply continuous rotation while moving if enabled (visual only)
+                if (rotateWhileMoving)
+                {
+                    transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
+                }
+                // Use original direction for consistent straight-line movement
+                currentVelocity = originalDirection * speed;
+                rb.linearVelocity = currentVelocity;
+            }
+            
+            // Check for wall collision along movement path
+            CheckWallCollision(currentVelocity);
         }
 
         if (isReturning && shooter != null)
@@ -221,6 +265,10 @@ public class Projectile : MonoBehaviour
     {
         // Skip trigger colliders (those are for entities, not walls)
         if (collider.isTrigger) return false;
+
+        if (collider.gameObject.name.ToLower().Contains("player")) return false;
+
+        if (collider.gameObject.tag.ToLower().Contains("enemy")) return false;
         
         // Skip the projectile itself
         if (collider.gameObject == gameObject) return false;
@@ -327,6 +375,12 @@ public class Projectile : MonoBehaviour
             other.GetComponent<Player>()?.takeDamage();
             Destroy(gameObject);
         }
+
+        if (other.tag == "Enemy") {
+            other.GetComponent<Enemy>()?.TakeDamage((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier);
+            Destroy(gameObject);
+        }
+
     }
     
     private void HandleTrackingMovement()

@@ -5,14 +5,27 @@ public class PowerUpEffect : ScriptableObject
 {
     public string powerUpName;
     public string description;
-    public float moveSpeed, damage, meleeCooldown, hitboxRange, health, maxHealth;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxRange, health, maxHealth;
     public Sprite itemSprite;
+    public bool isMeleeWeapon, isRangeWeapon;
     
     public virtual void Apply(Player player)
     {
-        player.damage += damage;
-        if (player.damage <= 1) {
-            player.damage = 1;
+        if (isMeleeWeapon) {
+            return;
+        } else if (isRangeWeapon) {
+            return;
+        }
+        player.damageMeleeModifier += damageMeleeModifier;
+        if (player.damageMeleeModifier <= 1) {
+            player.damageMeleeModifier = 1;
+        }
+        player.maxHealth += (int)maxHealth;
+        if (player.maxHealth >= player.maxMaxHealth) {
+            player.maxHealth = player.maxMaxHealth;
+        }
+        if (player.health != player.maxHealth && maxHealth != 0f); {
+            player.health = player.maxHealth;
         }
         player.health += (int)health;
         if (player.health <= 0) {
@@ -21,5 +34,8 @@ public class PowerUpEffect : ScriptableObject
             player.health = player.maxHealth;
         }
         Health.Instance.UpdateHealthSprites();
+        player.moveSpeed += moveSpeed;
+        player.meleeCooldown += meleeCooldown;
+        player.hitboxRange += hitboxRange;
     }
 }

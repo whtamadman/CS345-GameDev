@@ -12,12 +12,15 @@ public class PowerUp : MonoBehaviour {
     public PowerUpEffect effect;
     public Transform hudCanvas;
     private Transform powerUpContainer;
+    private Transform meleeContainer;
+    private Transform rangeContainer;
     private bool inTrigger;
     private bool popUpExist;
     private bool hasBeenPickedUp = false; // Prevent multiple pickups
     private SpriteRenderer sr;
     public GameObject hoverPopUp;
     public GameObject powerUpPrefab;
+    private static GameObject popup;
     
 
     public void ShowPowerUpText()
@@ -39,7 +42,7 @@ public class PowerUp : MonoBehaviour {
             return;
         }
         
-        GameObject popup = Instantiate(popupTextPrefab);
+        popup = Instantiate(popupTextPrefab);
         Debug.Log($"PowerUp {gameObject.name}: Created popup: {popup.name}");
         
         popup.transform.SetParent(hudCanvas, false);
@@ -52,15 +55,13 @@ public class PowerUp : MonoBehaviour {
         } else {
             Debug.LogError($"PowerUp {gameObject.name}: No TMP_Text component found in popup!");
         }
-        
-        Destroy(popup, 2f);
-        StartCoroutine(UpdateResetVar(2f));
-        Debug.Log($"PowerUp {gameObject.name}: Popup setup complete, will destroy in 2 seconds");
     }
 
     void Start() {
         popUpExist = false;
         hudCanvas = GameObject.Find("HUD").transform;
+        meleeContainer = GameObject.Find("MeleeContainer").transform;
+        rangeContainer = GameObject.Find("RangeContainer").transform;
         powerUpContainer = GameObject.Find("PowerUpSprites").transform;
         sr = GetComponent<SpriteRenderer>();
         if ((effect) && (sr)) {
@@ -86,6 +87,8 @@ public class PowerUp : MonoBehaviour {
     }
     
     void OnDestroy() {
+        Destroy(popup);
+        popUpExist = false;
         Debug.Log($"PowerUp {gameObject.name}: OnDestroy called! HasBeenPickedUp: {hasBeenPickedUp}");
     }
 
@@ -111,7 +114,8 @@ public class PowerUp : MonoBehaviour {
 
     private void OnTriggerExit2D(Collider2D other) {
         if(hasBeenPickedUp) return; // Don't process if already picked up
-        
+        Destroy(popup, 0.5f);
+        popUpExist = false;
         Debug.Log($"PowerUp {gameObject.name}: Trigger exited by {other.gameObject.name} with tag '{other.tag}'");
         
         if(other.CompareTag("Player")) {
@@ -126,7 +130,19 @@ public class PowerUp : MonoBehaviour {
     }
 
     private void AddPowerUpToSide() {
-        GameObject sideSprite = Instantiate(powerUpSprite, powerUpContainer);
+        Transform container;
+        if (effect.isMeleeWeapon) {
+            if (meleeContainer.childCount > 0)
+                Destroy(meleeContainer.GetChild(0).gameObject);
+            container = meleeContainer;
+        } else if (effect.isRangeWeapon) {
+            if (rangeContainer.childCount > 0)
+                Destroy(rangeContainer.GetChild(0).gameObject);
+            container = rangeContainer;
+        } else {
+            container = powerUpContainer;
+        }
+        GameObject sideSprite = Instantiate(powerUpSprite, container);
         sideSprite.GetComponent<Image>().sprite = effect.itemSprite;
         PowerUpSprite iconComponent = sideSprite.GetComponent<PowerUpSprite>();
         iconComponent.SetData((string)effect.powerUpName, (string)effect.description);
