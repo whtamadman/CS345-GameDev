@@ -10,6 +10,9 @@ TagManager:
   - GlassBlade
   - PencilSharperner
   - power
+  - Enemy
+  - Undefined
+  - Hitbox
   layers:
   - Default
   - TransparentFX

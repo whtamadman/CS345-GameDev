@@ -10,14 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: ExtendableRuler
+  m_Name: TheRuler
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: ExtendableRuler
-  description: This ruler gives your pencil extra length by 1.2x
+  powerUpName: The Ruler
+  description: Straight and precise, always measures up. Its sharp swing deals +2
+    damage
   moveSpeed: 0
-  damage: 0
-  meleeCooldown: 0
+  baseMeleeDamage: 2
+  damageMeleeModifier: 0
+  baseRangeDamage: 0
+  baseRangeModifier: 0
+  meleeCooldown: 0.8
   hitboxRange: 1.2
   health: 0
   maxHealth: 0
+  reloadTime: 0
+  cost: 1
   itemSprite: {fileID: -5193274847877074898, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  isMeleeWeapon: 1
+  isRangeWeapon: 0

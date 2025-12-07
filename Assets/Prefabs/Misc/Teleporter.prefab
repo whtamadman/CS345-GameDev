@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 47048370332876274}
   - component: {fileID: 8793964165642677042}
   - component: {fileID: 5551308099959332144}
+  - component: {fileID: -6439220151295692256}
   m_Layer: 0
   m_Name: Teleporter
   m_TagString: Untagged
@@ -181,7 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Teleporter
   teleportDestination: {x: -17.38, y: 12.91, z: 0}
   useLocalOffset: 0
-  popupTextPrefab: {fileID: 0}
+  popupTextPrefab: {fileID: 7379756527978743064, guid: ab224593bdd151242aab17179b8f4114, type: 3}
   hudCanvas: {fileID: 0}
   teleporterName: Teleporter
   interactionText: Press E to teleport
@@ -196,7 +197,20 @@ MonoBehaviour:
   fixedCameraPosition: {x: -16.88, y: 13.91, z: -10}
   returnCameraToRoomFollow: 0
   snapCameraImmediately: 1
-  disableRoomFollowDuringTeleport: 1
   endingLocation: {x: 0, y: 0, z: 0}
   useEndingLocation: 0
   destroyAfterTeleport: 1
+  shop: {fileID: 0}
+--- !u!114 &-6439220151295692256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645930204465908015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403aebafc3a07054d903b1e8ef29d310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shop
+  powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}

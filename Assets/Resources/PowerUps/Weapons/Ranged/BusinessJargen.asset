@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
+  m_Name: BusinessJargen
+  m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
+  powerUpName: Binary Code
+  description: Binary Code Text
+  moveSpeed: 0
+  baseMeleeDamage: 0
+  damageMeleeModifier: 0
+  baseRangeDamage: 2
+  baseRangeModifier: 0
+  meleeCooldown: 0
+  hitboxRange: 0
+  health: 0
+  maxHealth: 0
+  reloadTime: 1
+  cost: 1
+  itemSprite: {fileID: -8477071223308182605, guid: 61370aa79a1ef4e25899ca1fe67a95fa, type: 3}
+  isMeleeWeapon: 0
+  isRangeWeapon: 1

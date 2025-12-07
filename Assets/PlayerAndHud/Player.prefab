@@ -118,7 +118,7 @@ MonoBehaviour:
   damageMeleeModifier: 0
   baseRangeDamage: 0
   baseRangeModifier: 0
-  hitboxFrames: 0.5
+  hitboxFrames: 0.6
   meleeCooldown: 0
   invinceTimer: 3
   hitboxRange: 0
@@ -130,6 +130,7 @@ MonoBehaviour:
   meleeContainer: {fileID: 0}
   rangeContainer: {fileID: 0}
   powerUpSprite: {fileID: 7265280159183308830, guid: b7c7a90a89fdf7f41ac72d33af34bb4b, type: 3}
+  weaponsObtained: []
   invisibilityColor: {r: 0, g: 0, b: 1, a: 1}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   ignoreCollisionsDuringInvis: 1
@@ -194,7 +195,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0047680363, y: -0.02656154}
+  m_Offset: {x: -0.007122243, y: -0.06448275}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -204,7 +205,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.1491699, y: 0.29392317}
+  m_Size: {x: 0.053742718, y: 0.22146034}
   m_EdgeRadius: 0
 --- !u!95 &6826087539840911497
 Animator:
