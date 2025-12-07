@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 public class PowerUpSprite : MonoBehaviour {
 
-    public string name, description;
+    public string localName, description;
     public GameObject popupTextPrefab;
     private Transform hudCanvas;
     private RectTransform rectTransform;
@@ -29,7 +29,7 @@ public class PowerUpSprite : MonoBehaviour {
                 hoverPopUp.transform.SetParent(transform.root, false);
                 var textComponent = hoverPopUp.GetComponentInChildren<TMP_Text>();
                 if (textComponent != null) {
-                    textComponent.text = name + "\n" + description;
+                    textComponent.text = localName + "\n" + description;
                 }
             }
         }
@@ -41,7 +41,7 @@ public class PowerUpSprite : MonoBehaviour {
     }
 
     public void SetData(string powerUpName, string desc) {
-        name = powerUpName;
+        localName = powerUpName;
         description = desc;
     }
 }

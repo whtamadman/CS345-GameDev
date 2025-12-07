@@ -20,8 +20,8 @@ public class Teleporter : MonoBehaviour
     [Header("Interaction Settings")]
     public GameObject popupTextPrefab; // UI popup prefab (reuse PowerUp popup)
     public Transform hudCanvas; // Canvas for UI elements
-    public string teleporterName = "Teleporter";
-    public string interactionText = "Press E to teleport";
+    public string teleporterName = "Teleporter:";
+    public string interactionText = "Press E to go to the next floor";
     
     [Header("Visual Effects")]
     public GameObject teleportEffectPrefab; // Optional teleport effect
@@ -48,6 +48,9 @@ public class Teleporter : MonoBehaviour
     
     [Header("Cleanup Settings")]
     public bool destroyAfterTeleport = false; // Destroy this teleporter after teleporting
+
+    [Header("Shop")]
+    public Shop shop;
     
     // Internal state
     private bool inTrigger = false;
@@ -59,6 +62,8 @@ public class Teleporter : MonoBehaviour
     {
         popUpExists = false;
         audioSource = GetComponent<AudioSource>();
+        hudCanvas = GameObject.Find("HUD").transform;
+        shop = GetComponent<Shop>();
         
         // If no audio source exists and we have a sound, add one
         if (audioSource == null && teleportSound != null)
@@ -135,7 +140,7 @@ public class Teleporter : MonoBehaviour
         
         // Perform the actual teleportation first (move player to temp area)
         PerformTeleportation();
-        
+        shop.SpawnInShopItems();
         // Switch camera to fixed mode AFTER player is moved (for temp areas outside dungeon)
         if (switchCameraToFixed)
         {
@@ -558,6 +563,7 @@ public class Teleporter : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("On Teleporter");
             if (!popUpExists)
             {
                 popUpExists = true;

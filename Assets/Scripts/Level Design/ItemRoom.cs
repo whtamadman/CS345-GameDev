@@ -91,23 +91,26 @@ public class ItemRoom : Room
         }
         
         // Choose random item from available prefabs
-        int randomIndex = Random.Range(0, itemPrefabs.Length);
-        GameObject itemToSpawn = itemPrefabs[randomIndex];
-        Debug.Log($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex}: {(itemToSpawn != null ? itemToSpawn.name : "null")}");
+        PowerUpEffect[] effects = Resources.LoadAll<PowerUpEffect>("PowerUps/DropItems");
+        int randomIndex = Random.Range(0, effects.Length);
+        PowerUpEffect itemToSpawnEffect = effects[randomIndex];
+        GameObject itemToSpawn = itemPrefabs[0];
+        // Debug.Log($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex}: {(itemToSpawn != null ? itemToSpawn.name : "null")}");
         
-        if (itemToSpawn == null)
-        {
-            Debug.LogError($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex} is null!");
-            return;
-        }
-        
+        // if (itemToSpawn == null)
+        // {
+        //     Debug.LogError($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex} is null!");
+        //     return;
+        // }
+        PowerUp powerUpScript = itemToSpawn.GetComponent<PowerUp>();
+        powerUpScript.effect = itemToSpawnEffect;
         // Spawn the item
         Vector3 spawnPosition = itemSpawnPoint.position;
-        Debug.Log($"ItemRoom {gameObject.name}: Spawning item {itemToSpawn.name} at position {spawnPosition}");
+        // Debug.Log($"ItemRoom {gameObject.name}: Spawning item {itemToSpawn.name} at position {spawnPosition}");
         currentItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
         
         itemSpawned = true;
-        Debug.Log($"ItemRoom {gameObject.name}: Item spawning completed successfully! Item: {currentItem.name}");
+        // Debug.Log($"ItemRoom {gameObject.name}: Item spawning completed successfully! Item: {currentItem.name}");
 
     }
     

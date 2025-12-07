@@ -52,7 +52,11 @@ public class PowerUp : MonoBehaviour {
         
         var textComponent = popup.GetComponentInChildren<TMP_Text>();
         if (textComponent != null) {
-            textComponent.text = effect.powerUpName + "\n" + effect.description;
+            if (effect.cost <= 0) {
+                textComponent.text = effect.powerUpName + "\n" + effect.description;
+            } else {
+                textComponent.text = effect.powerUpName + "\n" + effect.description + "\nCost: " + effect.cost + " Gold";
+            }
             Debug.Log($"PowerUp {gameObject.name}: Set popup text to: '{effect.powerUpName}\\n{effect.description}'");
         } else {
             Debug.LogError($"PowerUp {gameObject.name}: No TMP_Text component found in popup!");
@@ -73,18 +77,25 @@ public class PowerUp : MonoBehaviour {
 
     void Update () {
         if(inTrigger && Input.GetKeyDown(KeyCode.E)) {
-            Debug.Log($"PowerUp {gameObject.name}: E key pressed, applying effect and destroying item");
-            hasBeenPickedUp = true;
-            effect.Apply(Player.Instance);
-            AddPowerUpToSide();
-            
-            // Play pickup sound
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayPlayerPickup();
+            if (Player.Instance.coins >= effect.cost) {
+                Debug.Log($"PowerUp {gameObject.name}: E key pressed, applying effect and destroying item");
+                hasBeenPickedUp = true;
+                effect.Apply(Player.Instance);
+                AddPowerUpToSide();
+                Player.Instance.coins -= effect.cost;
+                // Play pickup sound
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayPlayerPickup();
+                }
+                Destroy(gameObject);
+            } else {
+                popup = Instantiate(popupTextPrefab);
+                popup.transform.SetParent(hudCanvas, false);
+                var textComponent = popup.GetComponentInChildren<TMP_Text>();
+                textComponent.text = "Not enough cash stranger";
+                Destroy(popup, 2f);
             }
-            
-            Destroy(gameObject);
         }
     }
     

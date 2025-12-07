@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
@@ -22,6 +23,7 @@ public class Player : MonoBehaviour {
     public Transform meleeContainer;
     public Transform rangeContainer;
     public GameObject powerUpSprite;
+    public List<PowerUpEffect> weaponsObtained;
     
     [Header("Visual Effects")]
     [SerializeField] private Color invisibilityColor = Color.blue;
@@ -49,6 +51,9 @@ public class Player : MonoBehaviour {
         // Store original layer and get all colliders
         originalLayer = gameObject.layer;
         playerColliders = GetComponentsInChildren<Collider2D>();
+        weaponsObtained = new List<PowerUpEffect>();
+        weaponsObtained.Add(startingMelee);
+        weaponsObtained.Add(startingRange);
     }
     void Awake(){
         if(Instance == null){
@@ -87,7 +92,6 @@ public class Player : MonoBehaviour {
         meleeSprite.GetComponent<Image>().sprite = startingMelee.itemSprite;
         PowerUpSprite iconComponent1 = meleeSprite.GetComponent<PowerUpSprite>();
         iconComponent1.SetData((string)startingMelee.powerUpName, (string)startingMelee.description);
-        Debug.Log("I Am here");
         startingMelee.Apply(this);
         GameObject rangeSprite = Instantiate(powerUpSprite, rangeContainer);
         rangeSprite.GetComponent<Image>().sprite = startingRange.itemSprite;
@@ -102,7 +106,7 @@ public class Player : MonoBehaviour {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 direction = (mousePos - transform.position).normalized;
         float hitboxDirection = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Vector3 offset = new Vector3(Mathf.Cos(hitboxDirection * Mathf.Deg2Rad), Mathf.Sin(hitboxDirection * Mathf.Deg2Rad),  0) * 0.2f;
+        Vector3 offset = new Vector3(Mathf.Cos(hitboxDirection * Mathf.Deg2Rad), Mathf.Sin(hitboxDirection * Mathf.Deg2Rad),  0) * 0.15f;
         Vector3 spawnPos = transform.position + offset;
         GameObject hitbox = Instantiate(meleeHitbox, spawnPos, Quaternion.Euler(0, 0, hitboxDirection - 90f));
         hitbox.transform.localScale *= hitboxRange;
@@ -184,18 +188,18 @@ public class Player : MonoBehaviour {
         invincibility = false;
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Enemy") && !inEnemy) {
-            takeDamage();
-            inEnemy = true;
-        }
-    }
+    // private void OnTriggerEnter2D(Collider2D other) {
+    //     if (other.CompareTag("Enemy") && !inEnemy) {
+    //         takeDamage();
+    //         inEnemy = true;
+    //     }
+    // }
 
-        private void OnTriggerExit2D(Collider2D other) {
-        if (other.CompareTag("Enemy") && inEnemy) {
-            inEnemy = false;
-        }
-    }
+    //     private void OnTriggerExit2D(Collider2D other) {
+    //     if (other.CompareTag("Enemy") && inEnemy) {
+    //         inEnemy = false;
+    //     }
+    // }
     
     /// <summary>
     /// Handle visual effect for invisibility - blue tint that fades back to white
