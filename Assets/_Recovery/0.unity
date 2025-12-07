@@ -2421,22 +2421,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4289158361048101773, guid: 292766b0494386e44af47e21daed4abd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5429308204872461772, guid: 292766b0494386e44af47e21daed4abd, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4289158361048101773, guid: 292766b0494386e44af47e21daed4abd, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5429308204872461772, guid: 292766b0494386e44af47e21daed4abd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2088990262}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 292766b0494386e44af47e21daed4abd, type: 3}
 --- !u!1001 &963935180
 PrefabInstance:
@@ -2541,7 +2533,7 @@ PrefabInstance:
     - target: {fileID: 4343683964325265453, guid: d09699d686e3e8844acc0fc5cb3fb688, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1348213434032779675, guid: f851e40f1cf690040b7457a3c6bb98ca, type: 3}
+      objectReference: {fileID: -6535851383234153879, guid: 3f37068616d9ca84e9a176d2ee680faa, type: 3}
     - target: {fileID: 4371037238304153449, guid: d09699d686e3e8844acc0fc5cb3fb688, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -3474,7 +3466,7 @@ TilemapCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 6c3fa4afdcef08f4f909d72ff7878d77, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3518,7 +3510,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 6c3fa4afdcef08f4f909d72ff7878d77, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3573,7 +3565,7 @@ MonoBehaviour:
     difficultyModifier: 0
   - levelName: Nursing Major
     levelNumber: 2
-    universalRoomPrefab: {fileID: 6927960357120834552, guid: 8f7fbf830c359514093eb7f4b3bbd9f8, type: 3}
+    universalRoomPrefab: {fileID: 6927960357120834552, guid: 847a626f44508834a89421cca1e776a5, type: 3}
     bossPrefab: {fileID: 3520070930834900833, guid: caa9b0773c1b145d892120cb7a931d82, type: 3}
     bossRoomPrefab: {fileID: 0}
     itemPrefabs: []
@@ -3721,7 +3713,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 11
-  m_Sprite: {fileID: -1604013942635242318, guid: af6316a90fda05b4290106e224965abe, type: 3}
+  m_Sprite: {fileID: 5091096643542742285, guid: 0b307781f5de3a94abce6333253dfec9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4028,48 +4020,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2088990255 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5429308204872461772, guid: 292766b0494386e44af47e21daed4abd, type: 3}
-  m_PrefabInstance: {fileID: 926027619}
-  m_PrefabAsset: {fileID: 0}
---- !u!70 &2088990262
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2088990255}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 6c3fa4afdcef08f4f909d72ff7878d77, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.17, y: 0.36}
-  m_Direction: 0
 --- !u!1001 &3970275119895556221
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4163,8 +4113,8 @@ SceneRoots:
   - {fileID: 3970275119895556221}
   - {fileID: 654211654}
   - {fileID: 1793919416}
-  - {fileID: 227267198}
   - {fileID: 1936532888}
+  - {fileID: 227267198}
   - {fileID: 370167983}
   - {fileID: 926027619}
   - {fileID: 963935180}

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3f37068616d9ca84e9a176d2ee680faa
+guid: 39298ab226c60de40a969d8f601470e2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6535851383234153879
-    second: Range Frame_0
+      213: 6778322797175092689
+    second: BossDoorFrame_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Range Frame_0
+      name: BossDoorFrame_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 962359d9bcdfb45a0800000000000000
-      internalID: -6535851383234153879
+      spriteID: 1d5bd82cba0711e50800000000000000
+      internalID: 6778322797175092689
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Range Frame_0: -6535851383234153879
+      BossDoorFrame_0: 6778322797175092689
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

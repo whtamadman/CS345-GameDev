@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3f37068616d9ca84e9a176d2ee680faa
+guid: 2e121e3176855ad4e96f7f00dae5112b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6535851383234153879
-    second: Range Frame_0
+      213: 1848962803126180293
+    second: nurse_wall_tilemap_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Range Frame_0
+      name: nurse_wall_tilemap_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 962359d9bcdfb45a0800000000000000
-      internalID: -6535851383234153879
+      spriteID: 5c91f3b8fd5d8a910800000000000000
+      internalID: 1848962803126180293
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Range Frame_0: -6535851383234153879
+      nurse_wall_tilemap_0: 1848962803126180293
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

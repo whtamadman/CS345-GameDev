@@ -59,7 +59,7 @@ MonoBehaviour:
   floorTilemapName: Floor TM
   spawnIndicatorTilemapName: Decal TM
   floorTile: {fileID: 11400000, guid: fda68607d6fd2f84fb1f435edebd9a45, type: 2}
-  wallTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
+  wallTile: {fileID: 11400000, guid: febcc4944fa618644b9231e310ed626e, type: 2}
   doorTile: {fileID: 11400000, guid: 1154c77dbca06cf48be2df8da2d45707, type: 2}
   hasNorthExit: 0
   hasSouthExit: 0
@@ -92,6 +92,15 @@ MonoBehaviour:
   rewardSpawnPoint: {fileID: 0}
   bossSpawned: 0
   bossDefeated: 0
+  itemPrefabs: []
+  spawnItemAtCenter: 1
+  itemSpawnOffset: {x: 0, y: 0, z: 0}
+  spawnItemOnEntry: 0
+  spawnItemOnRoomClear: 1
+  itemSpawned: 0
+  itemCollected: 0
+  bossIndicatorTile: {fileID: 11400000, guid: fbb71ad3d9e386249898e4bb8656b788, type: 2}
+  useBossEntranceIndicators: 1
 --- !u!1839735485 &7401764260757693448
 Tilemap:
   m_ObjectHideFlags: 0

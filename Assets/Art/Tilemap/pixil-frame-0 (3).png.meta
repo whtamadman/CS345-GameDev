@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c6d7a94436a6d884c95326684d8a9768
+guid: 3bb81c4d29018e047834a9badf190bef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5983492433812402438
-    second: ZAQcnk_0
+      213: -5513050994037168576
+    second: pixil-frame-0 (3)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ZAQcnk_0
+      name: pixil-frame-0 (3)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 800
-        height: 480
+        width: 40
+        height: 40
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 60130a9aaa2a90350800000000000000
-      internalID: 5983492433812402438
+      spriteID: 046eccf8455bd73b0800000000000000
+      internalID: -5513050994037168576
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ZAQcnk_0: 5983492433812402438
+      pixil-frame-0 (3)_0: -5513050994037168576
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

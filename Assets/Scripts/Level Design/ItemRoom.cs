@@ -174,12 +174,5 @@ public class ItemRoom : Room
             // Item cleanup handled by PowerUp component itself
         }
     }
-    
-    // Debug methods
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    public void DebugSpawnItem()
-    {
-        ForceSpawnItem();
-    }
 }
 

@@ -111,7 +111,27 @@ public class Room : MonoBehaviour
     [SerializeField] protected bool itemCollected = false;
 
     // Item tracking
-    protected GameObject currentItem;    // Events
+    protected GameObject currentItem;
+    
+    [Header("Boss Room Entrance Indicators")]
+    [Tooltip("Tile to place on Floor TM where doors lead to boss rooms")]
+    [SerializeField] private TileBase bossIndicatorTile;
+    [Tooltip("Enable/disable boss entrance indicators")]
+    [SerializeField] private bool useBossEntranceIndicators = true;
+    
+    // Tracking placed boss indicator tiles
+    private Vector3Int[] northBossIndicatorPositions;
+    private Vector3Int[] southBossIndicatorPositions;
+    private Vector3Int[] eastBossIndicatorPositions;
+    private Vector3Int[] westBossIndicatorPositions;
+    
+    // Store original floor tiles to restore later
+    private TileBase[] northOriginalTiles;
+    private TileBase[] southOriginalTiles;
+    private TileBase[] eastOriginalTiles;
+    private TileBase[] westOriginalTiles;
+    
+    // Events
     public System.Action<Room> OnPlayerEntered;
     public System.Action<Room> OnPlayerExited;
     public System.Action<Room> OnRoomCleared;
@@ -141,9 +161,6 @@ public class Room : MonoBehaviour
     {
         // Generate the room layout with current exit configuration
         GenerateRoomTiles();
-        
-        // Update variant info based on current exits
-        UpdateRoomVariantInfo();
         
         // Find all enemies in this room
         FindEnemiesInRoom();
@@ -176,130 +193,21 @@ public class Room : MonoBehaviour
         }
     }
     
-    // Method for manual room generation (testing purposes)
-    [ContextMenu("Generate Room")]
-    public void GenerateRoomManually()
-    {
-        SetupTilemapComponents();
-        GenerateRoomTiles();
-    }
+
     
-    // Method to regenerate room with new settings
-    [ContextMenu("Regenerate Room")]
-    public void RegenerateRoom()
-    {
-        // Clear existing tiles first
-        ClearRoomTiles();
-        
-        // Generate new room
-        GenerateRoomManually();
-    }
+
     
-    // Validate room configuration
-    [ContextMenu("Validate Room Setup")]
-    public void ValidateRoomSetup()
-    {
-        bool isValid = true;
-        
-        if (floorTile == null)
-        {
-            Debug.LogError($"Room {gameObject.name}: Floor tile is not assigned!");
-            isValid = false;
-        }
-        
-        if (wallTile == null)
-        {
-            Debug.LogError($"Room {gameObject.name}: Wall tile is not assigned!");
-            isValid = false;
-        }
-        
-        if (doorTile == null)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Door tile is not assigned - doors won't work properly!");
-        }
-        
-        if (interiorSize.x <= 0 || interiorSize.y <= 0)
-        {
-            Debug.LogError($"Room {gameObject.name}: Interior size must be positive values!");
-            isValid = false;
-        }
-        
-        // Report validation result
-        if (isValid)
-        {
-            Debug.Log($"Room {gameObject.name}: Configuration is valid!");
-        }
-        else
-        {
-            Debug.LogError($"Room {gameObject.name}: Configuration has errors that need to be fixed!");
-        }
-        
-        // Update and display variant info
-        UpdateRoomVariantInfo();
-    }
+
     
-    // Test door functionality
-    [ContextMenu("Test Lock Doors")]
-    public void TestLockDoors()
-    {
-        if (wallTilemap == null || floorTilemap == null)
-        {
-            Debug.LogError("Cannot test doors - tilemaps not initialized!");
-            return;
-        }
-        
-        LockExits();
-    }
+
     
-    [ContextMenu("Test Unlock Doors")]  
-    public void TestUnlockDoors()
-    {
-        if (wallTilemap == null || floorTilemap == null)
-        {
-            Debug.LogError("Cannot test doors - tilemap not initialized!");
-            return;
-        }
-        
-        UnlockExits();
-    }
+
     
-    // Debug room tile positions
-    [ContextMenu("Show Room Tile Info")]
-    public void ShowRoomTileInfo()
-    {
-        Vector3 worldPos = transform.position;
-        Vector3Int offset = GetRoomTileOffset();
-        Vector2Int totalSize = TotalSize;
-        
-        // Room tile information calculated for debugging
-        if (grid != null)
-        {
-            Vector3Int gridPos = grid.WorldToCell(worldPos);
-        }
-    }
+
     
-    // Toggle all exits for testing
-    [ContextMenu("Toggle All Exits")]
-    public void ToggleAllExits()
-    {
-        hasNorthExit = !hasNorthExit;
-        hasSouthExit = !hasSouthExit;
-        hasEastExit = !hasEastExit;
-        hasWestExit = !hasWestExit;
-        
-        UpdateExitTiles();
-        
-        // Update variant info after toggling
-        UpdateRoomVariantInfo();
-    }
+
     
-    // Generate room variant name based on exit configuration
-    [ContextMenu("Update Room Variant Info")]
-    public void UpdateRoomVariantInfo()
-    {
-        // Method kept for backward compatibility but no longer stores cached values
-        // All values are now calculated on-demand
-    }
+
     
     // Check if this room matches a specific exit pattern
     public bool MatchesExitPattern(bool north, bool south, bool east, bool west)
@@ -347,46 +255,37 @@ public class Room : MonoBehaviour
             UpdateExitTiles();
         }
         
-        // Update variant info
-        UpdateRoomVariantInfo();
+        // Update boss entrance indicators
+        UpdateBossEntranceIndicators();
     }
     
-    // Reset all exits to open (for prefab default state)
-    [ContextMenu("Reset All Exits Open")]
-    public void ResetAllExitsOpen()
-    {
-        ConfigureExits(true, true, true, true);
-    }
+
     
-    // Manually assign global tilemaps (for testing in editor)
-    [ContextMenu("Find Global Tilemaps")]
-    public void FindGlobalTilemapsManually()
-    {
-        FindGlobalTilemaps();
-        
-        // Check if all tilemaps were found successfully
-    }
+
     
-    // Clear room tiles from global tilemaps for testing
-    [ContextMenu("Clear Room Tiles")]
-    public void ClearRoomTiles()
-    {
-        if (wallTilemap == null || floorTilemap == null)
-        {
-            Debug.LogError("Cannot clear tiles - tilemaps not assigned!");
-            return;
-        }
-        
-        Vector2Int totalSize = TotalSize;
-        Vector3Int offset = GetRoomTileOffset();
-        
-        // Clear tiles from both tilemaps in the room's area
-        BoundsInt bounds = new BoundsInt(offset.x, offset.y, 0, totalSize.x, totalSize.y, 1);
-        TileBase[] emptyTiles = new TileBase[totalSize.x * totalSize.y];
-        
-        wallTilemap.SetTilesBlock(bounds, emptyTiles);
-        floorTilemap.SetTilesBlock(bounds, emptyTiles);
-    }
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
     // Automatically find global tilemaps in the scene
     private void FindGlobalTilemaps()
@@ -428,6 +327,16 @@ public class Room : MonoBehaviour
             if (spawnIndicatorObj != null)
             {
                 spawnIndicatorTilemap = spawnIndicatorObj.GetComponent<Tilemap>();
+            }
+            
+            // Also try "Decal TM" as fallback for backward compatibility
+            if (spawnIndicatorTilemap == null)
+            {
+                GameObject decalObj = GameObject.Find("Decal TM");
+                if (decalObj != null)
+                {
+                    spawnIndicatorTilemap = decalObj.GetComponent<Tilemap>();
+                }
             }
         }
         
@@ -474,46 +383,340 @@ public class Room : MonoBehaviour
         // Global tilemap components validated successfully
     }
     
-    // Validate assigned grid settings
-    [ContextMenu("Validate Grid Settings")]
-    public void ValidateGridSettings()
+
+    
+
+    
+    // === BOSS ENTRANCE INDICATOR FUNCTIONALITY ===
+    
+    /// <summary>
+    /// Update boss entrance indicators based on current exits and connected rooms
+    /// </summary>
+    public void UpdateBossEntranceIndicators()
     {
-        if (grid == null)
+        if (!useBossEntranceIndicators || bossIndicatorTile == null || spawnIndicatorTilemap == null)
+            return;
+        
+        // Clear existing indicators
+        ClearBossEntranceIndicators();
+        
+        // Only place indicators if this room leads to a boss room (not if this IS a boss room)
+        if (roomType != RoomType.Boss)
         {
-            Debug.LogError($"Room {gameObject.name}: No Grid assigned! Please assign a global Grid component.");
+            PlaceBossEntranceIndicatorsForExternalRoom();
+        }
+    }
+    
+    /// <summary>
+    /// Check for adjacent boss rooms when this room is cleared and set up boss entrance indicators
+    /// </summary>
+    private void CheckForBossRoomConnections()
+    {
+        if (!useBossEntranceIndicators || bossIndicatorTile == null || roomType == RoomType.Boss)
+            return;
+        
+        // Find the DungeonGenerator to get room grid information
+        DungeonGenerator dungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        if (dungeonGenerator == null)
+        {
+            Debug.LogWarning($"Room {gameObject.name}: Could not find DungeonGenerator to check for boss rooms");
             return;
         }
         
-        // Check if grid has the expected settings for the dungeon system
-        Vector3 expectedCellSize = new Vector3(0.4f, 0.4f, 0f);
-        if (grid.cellSize != expectedCellSize)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Grid cell size is {grid.cellSize}, expected {expectedCellSize}");
-        }
-        
-        // Grid validation complete
-    }
-    
-    // Complete prefab setup - call this before creating prefab
-    [ContextMenu("Setup Complete Prefab")]
-    public void SetupCompletePrefab()
-    {
-        // Validate assigned grid first
-        if (grid == null)
-        {
-            Debug.LogError($"Room {gameObject.name}: No Grid assigned! Please assign a global Grid component before setup.");
+        // Get the boss room from the dungeon generator
+        Room bossRoom = dungeonGenerator.GetBossRoom();
+        if (bossRoom == null)
             return;
+        
+        // Check if this room is adjacent to the boss room
+        Vector2Int thisPos = gridPos;
+        Vector2Int bossPos = bossRoom.gridPos;
+        
+        // Check each direction for boss room adjacency
+        if (IsAdjacentToBossRoom(thisPos, bossPos, "north") && hasNorthExit)
+        {
+            SetBossRoomConnection("north", true);
+            Debug.Log($"Room {gameObject.name}: Found boss room to the north, placing entrance indicators");
         }
-        
-        // Validate grid settings
-        ValidateGridSettings();
-        
-        // Setup all tilemap components
-        SetupTilemapComponents();
-        
-        // Ensure all components are properly initialized
+        if (IsAdjacentToBossRoom(thisPos, bossPos, "south") && hasSouthExit)
+        {
+            SetBossRoomConnection("south", true);
+            Debug.Log($"Room {gameObject.name}: Found boss room to the south, placing entrance indicators");
+        }
+        if (IsAdjacentToBossRoom(thisPos, bossPos, "east") && hasEastExit)
+        {
+            SetBossRoomConnection("east", true);
+            Debug.Log($"Room {gameObject.name}: Found boss room to the east, placing entrance indicators");
+        }
+        if (IsAdjacentToBossRoom(thisPos, bossPos, "west") && hasWestExit)
+        {
+            SetBossRoomConnection("west", true);
+            Debug.Log($"Room {gameObject.name}: Found boss room to the west, placing entrance indicators");
+        }
     }
     
+    /// <summary>
+    /// Check if this room is adjacent to boss room in a specific direction
+    /// </summary>
+    private bool IsAdjacentToBossRoom(Vector2Int thisPos, Vector2Int bossPos, string direction)
+    {
+        switch (direction.ToLower())
+        {
+            case "north":
+                return thisPos.x + 1 == bossPos.x && thisPos.y == bossPos.y;
+            case "south":
+                return thisPos.x - 1 == bossPos.x && thisPos.y == bossPos.y;
+            case "east":
+                return thisPos.x == bossPos.x && thisPos.y + 1 == bossPos.y;
+            case "west":
+                return thisPos.x == bossPos.x && thisPos.y - 1 == bossPos.y;
+            default:
+                return false;
+        }
+    }
+    
+    /// <summary>
+    /// Place boss entrance indicators in this room if it connects to a boss room
+    /// </summary>
+    private void PlaceBossEntranceIndicatorsForExternalRoom()
+    {
+        // Check each exit to see if it would lead to a boss room
+        // For now, we'll need to implement boss room detection via DungeonGenerator or room connections
+        
+        // Check each direction for potential boss room connections
+        if (hasNorthExit && ShouldPlaceBossIndicatorForDirection("north"))
+        {
+            PlaceBossIndicatorTilesExternal("north");
+        }
+        if (hasSouthExit && ShouldPlaceBossIndicatorForDirection("south"))
+        {
+            PlaceBossIndicatorTilesExternal("south");
+        }
+        if (hasEastExit && ShouldPlaceBossIndicatorForDirection("east"))
+        {
+            PlaceBossIndicatorTilesExternal("east");
+        }
+        if (hasWestExit && ShouldPlaceBossIndicatorForDirection("west"))
+        {
+            PlaceBossIndicatorTilesExternal("west");
+        }
+    }
+    
+    // Dictionary to track which directions lead to boss rooms
+    private Dictionary<string, bool> bossRoomConnections = new Dictionary<string, bool>();
+    
+    /// <summary>
+    /// Set whether a specific direction connects to a boss room (called by DungeonGenerator)
+    /// </summary>
+    /// <param name="direction">Direction ("north", "south", "east", "west")</param>
+    /// <param name="connectsToBoss">True if this direction leads to a boss room</param>
+    public void SetBossRoomConnection(string direction, bool connectsToBoss)
+    {
+        if (bossRoomConnections == null)
+            bossRoomConnections = new Dictionary<string, bool>();
+        
+        bossRoomConnections[direction.ToLower()] = connectsToBoss;
+        
+        if (connectsToBoss)
+        {
+            Debug.Log($"Room {gameObject.name}: {direction} direction marked as leading to boss room");
+            
+            // Immediately update indicators when a boss connection is set
+            if (useBossEntranceIndicators)
+            {
+                UpdateBossEntranceIndicators();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Clear all boss room connections (useful for resetting or testing)
+    /// </summary>
+    public void ClearBossRoomConnections()
+    {
+        if (bossRoomConnections != null)
+        {
+            bossRoomConnections.Clear();
+        }
+        
+        // Clear any existing indicators since there are no more boss connections
+        ClearBossEntranceIndicators();
+        
+        Debug.Log($"Room {gameObject.name}: Cleared all boss room connections");
+    }
+    
+    /// <summary>
+    /// Check if the specified direction leads to a boss room
+    /// </summary>
+    /// <param name="direction">Direction to check ("north", "south", "east", "west")</param>
+    /// <returns>True if this direction leads to a boss room</returns>
+    private bool ShouldPlaceBossIndicatorForDirection(string direction)
+    {
+        if (bossRoomConnections == null)
+            return false;
+        
+        return bossRoomConnections.TryGetValue(direction.ToLower(), out bool connectsToBoss) && connectsToBoss;
+    }
+    
+    /// <summary>
+    /// Place boss indicator tiles on the external side of the entrance (in this room, pointing toward boss room)
+    /// </summary>
+    /// <param name="bossDirection">Direction where the boss room is located ("north", "south", "east", "west")</param>
+    private void PlaceBossIndicatorTilesExternal(string bossDirection)
+    {
+        if (bossIndicatorTile == null || floorTilemap == null)
+            return;
+        
+        // Get positions where indicators should be placed (2 tiles away from the exit, inside this room)
+        Vector3Int[] indicatorPositions = GetBossEntranceIndicatorPositionsExternal(bossDirection);
+        
+        // Store original tiles and positions for later restoration
+        TileBase[] originalTiles = new TileBase[indicatorPositions.Length];
+        for (int i = 0; i < indicatorPositions.Length; i++)
+        {
+            originalTiles[i] = spawnIndicatorTilemap.GetTile(indicatorPositions[i]);
+        }
+        
+        // Store positions and original tiles based on direction
+        switch (bossDirection.ToLower())
+        {
+            case "north":
+                northBossIndicatorPositions = indicatorPositions;
+                northOriginalTiles = originalTiles;
+                break;
+            case "south":
+                southBossIndicatorPositions = indicatorPositions;
+                southOriginalTiles = originalTiles;
+                break;
+            case "east":
+                eastBossIndicatorPositions = indicatorPositions;
+                eastOriginalTiles = originalTiles;
+                break;
+            case "west":
+                westBossIndicatorPositions = indicatorPositions;
+                westOriginalTiles = originalTiles;
+                break;
+        }
+        
+        // Place boss indicator tiles on the Decal TM
+        foreach (Vector3Int pos in indicatorPositions)
+        {
+            spawnIndicatorTilemap.SetTile(pos, bossIndicatorTile);
+        }
+        
+        Debug.Log($"Room {gameObject.name}: Placed boss entrance indicators pointing {bossDirection} toward boss room ({indicatorPositions.Length} tiles)");
+    }
+    
+    /// <summary>
+    /// Get positions in this room where entrance indicators should be placed (pointing toward boss room)
+    /// </summary>
+    /// <param name="bossDirection">Direction where the boss room is located</param>
+    /// <returns>Array of tile positions in this room, right at the edge before the exit</returns>
+    private Vector3Int[] GetBossEntranceIndicatorPositionsExternal(string bossDirection)
+    {
+        Vector2Int totalSize = TotalSize;
+        Vector3Int offset = GetRoomTileOffset();
+        int midX = totalSize.x / 2;
+        int midY = totalSize.y / 2;
+        
+        // Place indicators at the very edge before the exit (closest possible to boss room)
+        switch (bossDirection.ToLower())
+        {
+            case "north":
+                // Boss room is to the north, place indicators at the edge before the north exit
+                return new Vector3Int[] {
+                    new Vector3Int(midX - 1 + offset.x, totalSize.y - 1 + offset.y, 0),
+                    new Vector3Int(midX + offset.x, totalSize.y - 1 + offset.y, 0)
+                };
+            case "south":
+                // Boss room is to the south, place indicators at the edge before the south exit
+                return new Vector3Int[] {
+                    new Vector3Int(midX - 1 + offset.x, 0 + offset.y, 0),
+                    new Vector3Int(midX + offset.x, 0 + offset.y, 0)
+                };
+            case "east":
+                // Boss room is to the east, place indicators at the edge before the east exit
+                return new Vector3Int[] {
+                    new Vector3Int(totalSize.x - 1 + offset.x, midY - 1 + offset.y, 0),
+                    new Vector3Int(totalSize.x - 1 + offset.x, midY + offset.y, 0)
+                };
+            case "west":
+                // Boss room is to the west, place indicators at the edge before the west exit
+                return new Vector3Int[] {
+                    new Vector3Int(0 + offset.x, midY - 1 + offset.y, 0),
+                    new Vector3Int(0 + offset.x, midY + offset.y, 0)
+                };
+            default:
+                return new Vector3Int[] { };
+        }
+    }
+    
+    /// <summary>
+    /// Clear all existing boss entrance indicators
+    /// </summary>
+    private void ClearBossEntranceIndicators()
+    {
+        if (spawnIndicatorTilemap == null)
+            return;
+        
+        // Restore north door tiles
+        if (northBossIndicatorPositions != null && northOriginalTiles != null)
+        {
+            for (int i = 0; i < northBossIndicatorPositions.Length && i < northOriginalTiles.Length; i++)
+            {
+                spawnIndicatorTilemap.SetTile(northBossIndicatorPositions[i], northOriginalTiles[i]);
+            }
+            northBossIndicatorPositions = null;
+            northOriginalTiles = null;
+        }
+        
+        // Restore south door tiles
+        if (southBossIndicatorPositions != null && southOriginalTiles != null)
+        {
+            for (int i = 0; i < southBossIndicatorPositions.Length && i < southOriginalTiles.Length; i++)
+            {
+                spawnIndicatorTilemap.SetTile(southBossIndicatorPositions[i], southOriginalTiles[i]);
+            }
+            southBossIndicatorPositions = null;
+            southOriginalTiles = null;
+        }
+        
+        // Restore east door tiles
+        if (eastBossIndicatorPositions != null && eastOriginalTiles != null)
+        {
+            for (int i = 0; i < eastBossIndicatorPositions.Length && i < eastOriginalTiles.Length; i++)
+            {
+                spawnIndicatorTilemap.SetTile(eastBossIndicatorPositions[i], eastOriginalTiles[i]);
+            }
+            eastBossIndicatorPositions = null;
+            eastOriginalTiles = null;
+        }
+        
+        // Restore west door tiles
+        if (westBossIndicatorPositions != null && westOriginalTiles != null)
+        {
+            for (int i = 0; i < westBossIndicatorPositions.Length && i < westOriginalTiles.Length; i++)
+            {
+                spawnIndicatorTilemap.SetTile(westBossIndicatorPositions[i], westOriginalTiles[i]);
+            }
+            westBossIndicatorPositions = null;
+            westOriginalTiles = null;
+        }
+    }
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
 
     
     private void SetupRoomTrigger()
@@ -846,45 +1049,11 @@ public class Room : MonoBehaviour
         }
     }
     
-    [ContextMenu("Test Spawn Enemies")]
-    public void TestSpawnEnemies()
-    {
-        SpawnEnemies();
-    }
+
     
-    [ContextMenu("Test Spawn Indicators")]
-    public void TestSpawnIndicators()
-    {
-        if (spawnIndicatorTile == null)
-        {
-            Debug.LogError($"Room {gameObject.name}: No spawn indicator tile assigned!");
-            return;
-        }
-        
-        if (spawnIndicatorTilemap == null)
-        {
-            Debug.LogError($"Room {gameObject.name}: No spawn indicator tilemap found! Check tilemap setup.");
-            return;
-        }
-        
-        Vector3 roomCenter = transform.position;
-        
-        // Use average of range for testing
-        int testSpawnCount = (minEnemySpawnCount + maxEnemySpawnCount) / 2;
-        List<Vector3> spawnPositions = GenerateSpawnPositions(testSpawnCount, roomCenter);
-        List<Vector3Int> indicatorPositions = ShowSpawnIndicators(spawnPositions);
-        
-        Debug.Log($"Test spawning {indicatorPositions.Count} indicators at positions: {string.Join(", ", indicatorPositions)}");
-        
-        // Remove indicators after the duration
-        StartCoroutine(RemoveIndicatorsAfterDelay(indicatorPositions));
-    }
+
     
-    [ContextMenu("Test Spawn Item")]
-    public void TestSpawnItem()
-    {
-        ForceSpawnItem();
-    }
+
     
     private IEnumerator RemoveIndicatorsAfterDelay(List<Vector3Int> indicatorPositions)
     {
@@ -892,28 +1061,9 @@ public class Room : MonoBehaviour
         RemoveSpawnIndicators(indicatorPositions);
     }
     
-    [ContextMenu("Clear All Enemies")]
-    public void ClearAllEnemies()
-    {
-        // Destroy all existing enemies
-        foreach (Enemy enemy in enemiesInRoom)
-        {
-            if (enemy != null)
-            {
-                enemy.OnDeath -= OnEnemyDeath;
-                DestroyImmediate(enemy.gameObject);
-            }
-        }
-        enemiesInRoom.Clear();
-        
-        Debug.Log($"Room {gameObject.name}: All enemies cleared");
-    }
+
     
-    [ContextMenu("Debug Room Info")]
-    public void DebugRoomInfo()
-    {
-        Debug.Log($"Room {gameObject.name}: Type={roomType}, GridPos={gridPos}, ShouldSkipLocking={ShouldSkipExitLocking()}, IsCleared={isCleared}");
-    }
+
     
     public int GetEnemyCount()
     {
@@ -1031,6 +1181,9 @@ public class Room : MonoBehaviour
         
         Debug.Log($"Room {gameObject.name}: Room cleared! Doors unlocked.");
         
+        // Check for adjacent boss rooms and place entrance indicators
+        CheckForBossRoomConnections();
+        
         // Item room: spawn item if configured to do so (but only if no ItemRoom component exists)
         if (roomType == RoomType.Item && spawnItemOnRoomClear && !itemSpawned)
         {
@@ -1045,86 +1198,19 @@ public class Room : MonoBehaviour
                 Debug.Log($"Room {gameObject.name}: ItemRoom component will handle item spawning");
             }
         }
-        
         // Notify systems that room is cleared
         OnRoomCleared?.Invoke(this);
     }
     
-    /// <summary>
-    /// Manually mark room as completed (useful for testing or special cases)
-    /// </summary>
-    [ContextMenu("Mark Room Completed")]
-    public void MarkRoomCompleted()
-    {
-        MarkCleared();
-    }
+
     
-    /// <summary>
-    /// Reset room to incomplete state (useful for testing)
-    /// </summary>
-    [ContextMenu("Reset Room Completion")]
-    public void ResetRoomCompletion()
-    {
-        isCleared = false;
-        enemiesSpawned = false;
-        currentWave = 0;
-        allWavesCompleted = false;
-        enemiesInRoom.Clear();
-        
-        Debug.Log($"Room {gameObject.name}: Room completion reset - can spawn enemies again");
-    }
+
     
-    /// <summary>
-    /// Manually check if room should be cleared (useful when enemies are manually deleted)
-    /// </summary>
-    [ContextMenu("Force Check Room Clear")]
-    public void ForceCheckRoomClear()
-    {
-        Debug.Log($"Room {gameObject.name}: Manual room clear check triggered");
-        CheckRoomClearCondition();
-    }
+
     
-    /// <summary>
-    /// Force all waves to be marked as completed (useful for testing)
-    /// </summary>
-    [ContextMenu("Force Complete All Waves")]
-    public void ForceCompleteAllWaves()
-    {
-        allWavesCompleted = true;
-        currentWave = actualNumberOfWaves;
-        Debug.Log($"Room {gameObject.name}: All waves force-completed, checking room clear condition");
-        CheckRoomClearCondition();
-    }
+
     
-    /// <summary>
-    /// Kill all enemies in the room (useful for testing wave progression and room clearing)
-    /// </summary>
-    [ContextMenu("Kill All Enemies")]
-    public void KillAllEnemies()
-    {
-        int enemiesKilled = 0;
-        
-        // Create a copy of the list to avoid modification during iteration
-        List<Enemy> enemiesToKill = new List<Enemy>(enemiesInRoom);
-        
-        foreach (Enemy enemy in enemiesToKill)
-        {
-            if (enemy != null)
-            {
-                // Destroy the enemy GameObject
-                DestroyImmediate(enemy.gameObject);
-                enemiesKilled++;
-            }
-        }
-        
-        // Clear the list of null references
-        enemiesInRoom.RemoveAll(enemy => enemy == null);
-        
-        Debug.Log($"Room {gameObject.name}: Killed {enemiesKilled} enemies. Enemies remaining: {enemiesInRoom.Count}");
-        
-        // Check if room should progress to next wave or be cleared
-        CheckRoomClearCondition();
-    }
+
     
     public virtual void LockExits()
     {
@@ -1284,6 +1370,9 @@ public class Room : MonoBehaviour
         
         // Setup collision for walls and exits (but not floors)
         SetupTileCollisions();
+        
+        // Update boss entrance indicators after room tiles are generated
+        UpdateBossEntranceIndicators();
     }
     
     // Setup 2D collisions for walls and exits, ensuring floors don't have collision
@@ -1942,92 +2031,7 @@ public class Room : MonoBehaviour
         
         Debug.Log($"Item Room {gameObject.name}: Spawned item '{itemToSpawn.name}' at {spawnPosition}");
     }
-    
-    /// <summary>
-    /// Force spawn boss (for testing)
-    /// </summary>
-    [ContextMenu("Force Spawn Boss")]
-    public void ForceSpawnBoss()
-    {
-        if (roomType != RoomType.Boss)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Cannot force spawn boss - room type is not Boss!");
-            return;
-        }
-        
-        bossSpawned = false; // Reset flag
-        bossDefeated = false; // Reset flag
-        SpawnBoss();
-    }
-    
-    /// <summary>
-    /// Force clear boss room (for testing)
-    /// </summary>
-    [ContextMenu("Force Clear Boss Room")]
-    public void ForceClearBossRoom()
-    {
-        if (roomType != RoomType.Boss)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Cannot force clear - room type is not Boss!");
-            return;
-        }
-        
-        bossDefeated = true;
-        OnBossRoomCleared();
-    }
-    
-    /// <summary>
-    /// Reset boss room state (for testing)
-    /// </summary>
-    [ContextMenu("Reset Boss Room")]
-    public void ResetBossRoom()
-    {
-        if (roomType != RoomType.Boss)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Cannot reset - room type is not Boss!");
-            return;
-        }
-        
-        // Destroy current boss if it exists
-        if (currentBoss != null)
-        {
-            if (currentBossEnemy != null)
-            {
-                currentBossEnemy.OnDeath -= OnBossDefeated;
-            }
-            DestroyImmediate(currentBoss);
-        }
-        
-        // Reset states
-        bossSpawned = false;
-        bossDefeated = false;
-        isCleared = false;
-        doorsLocked = true;
-        
-        // Update tiles
-        UpdateExitTiles();
-        
-        Debug.Log($"Boss Room {gameObject.name}: Reset complete");
-    }
-    
-    /// <summary>
-    /// Force spawn item (for testing or special conditions)
-    /// </summary>
-    [ContextMenu("Test Spawn Item")]
-    public void ForceSpawnItem()
-    {
-        if (roomType != RoomType.Item)
-        {
-            Debug.LogWarning($"Room {gameObject.name}: Cannot spawn item - room type is not Item!");
-            return;
-        }
-        
-        if (!itemSpawned)
-        {
-            SpawnItem();
-        }
-    }
-    
+
     /// <summary>
     /// Check if item has been spawned in this room
     /// </summary>
@@ -2070,7 +2074,12 @@ public class Room : MonoBehaviour
         // Clear room tiles from global tilemaps when room is destroyed (only if tilemaps are assigned)
         if (wallTilemap != null && floorTilemap != null)
         {
-            ClearRoomTiles();
+            Vector2Int totalSize = TotalSize;
+            Vector3Int offset = GetRoomTileOffset();
+            BoundsInt bounds = new BoundsInt(offset.x, offset.y, 0, totalSize.x, totalSize.y, 1);
+            TileBase[] emptyTiles = new TileBase[totalSize.x * totalSize.y];
+            wallTilemap.SetTilesBlock(bounds, emptyTiles);
+            floorTilemap.SetTilesBlock(bounds, emptyTiles);
         }
         
         // Unsubscribe from enemy events
@@ -2087,5 +2096,8 @@ public class Room : MonoBehaviour
         {
             currentBossEnemy.OnDeath -= OnBossDefeated;
         }
+        
+        // Clean up boss entrance indicators
+        ClearBossEntranceIndicators();
     }
 }

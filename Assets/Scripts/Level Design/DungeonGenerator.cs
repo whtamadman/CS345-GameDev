@@ -57,6 +57,16 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Room Counts")]
     public int fightRoomCount = 6;
     
+    [Header("Tile Asset Configuration")]
+    [Tooltip("Automatically configure tile assets for all rooms from the room prefab")]
+    public bool autoConfigureTileAssets = true;
+    [Tooltip("Automatically extract reference tiles from room prefab at startup")]
+    public bool autoExtractTileAssets = true;
+    [Tooltip("Reference tile assets - these will be copied to all rooms if autoConfigureTileAssets is enabled")]
+    public TileBase referenceFloorTile;
+    public TileBase referenceWallTile;
+    public TileBase referenceDoorTile;
+    
     // Properties
     public float RoomSpacingX => roomSizeInTiles.x * globalGridCellSize;
     public float RoomSpacingY => roomSizeInTiles.y * globalGridCellSize;
@@ -69,6 +79,16 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private List<Room> fightRooms = new List<Room>();
     
     private List<Vector2Int> availablePositions = new List<Vector2Int>();
+    
+    // Unity lifecycle methods
+    private void Awake()
+    {
+        // Auto-extract tile assets from room prefab if enabled and reference tiles are null
+        if (autoExtractTileAssets && (referenceFloorTile == null || referenceWallTile == null))
+        {
+            AutoExtractTileAssetsFromPrefab();
+        }
+    }
     
     // Context menu methods
     [ContextMenu("Generate Test Dungeon")]
@@ -89,6 +109,42 @@ public class DungeonGenerator : MonoBehaviour
     {
         ClearExistingDungeon();
         GenerateDungeon();
+    }
+    
+    [ContextMenu("Debug Current Level")]
+    public void DebugCurrentLevel()
+    {
+        Debug.Log($"=== Current Level Debug Info ===");
+        Debug.Log($"Current Level Index: {currentLevelIndex} (Level {currentLevelIndex + 1})");
+        Debug.Log($"Total Levels Configured: {levels.Count}");
+        
+        if (levels.Count > 0)
+        {
+            for (int i = 0; i < levels.Count; i++)
+            {
+                LevelData level = levels[i];
+                string marker = (i == currentLevelIndex) ? " ← CURRENT" : "";
+                int displayLevel = i + 1;
+                Debug.Log($"  Level {displayLevel} (index {i}): '{level.levelName}' - Prefab: {level.universalRoomPrefab?.name ?? "null"}{marker}");
+            }
+        }
+        
+        LevelData currentLevel = GetCurrentLevelData();
+        Debug.Log($"Selected Level: '{currentLevel.levelName}' with prefab '{currentLevel.universalRoomPrefab?.name ?? "null"}'");
+    }
+    
+    [ContextMenu("Set to Level 1")]
+    public void SetToLevel1()
+    {
+        SetCurrentLevel(1); // Use 1-based level number
+        DebugCurrentLevel();
+    }
+    
+    [ContextMenu("Set to Level 2")]
+    public void SetToLevel2()
+    {
+        SetCurrentLevel(2); // Use 1-based level number
+        DebugCurrentLevel();
     }
     
     /// <summary>
@@ -176,17 +232,450 @@ public class DungeonGenerator : MonoBehaviour
         Debug.Log($"Successfully cleared {clearedCount}/{totalTilemaps} dungeon tilemaps for clean level transition");
     }
     
+    /// <summary>
+    /// Configure tile assets for a room based on reference tiles or room prefab assets
+    /// </summary>
+    /// <param name="room">The room to configure</param>
+    private void ConfigureRoomTileAssets(Room room)
+    {
+        if (!autoConfigureTileAssets || room == null)
+            return;
+            
+        // Check what tile assets the room currently has
+        var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        TileBase currentFloorTile = floorTileField?.GetValue(room) as TileBase;
+        TileBase currentWallTile = wallTileField?.GetValue(room) as TileBase;
+        TileBase currentDoorTile = doorTileField?.GetValue(room) as TileBase;
+        
+        Debug.Log($"Room {room.name} current assets: Floor={currentFloorTile?.name ?? "null"}, Wall={currentWallTile?.name ?? "null"}, Door={currentDoorTile?.name ?? "null"}");
+        
+        // If room doesn't have assets (or we want to override), get them from our sources
+        TileBase floorTile = GetFloorTileAsset(room);
+        TileBase wallTile = GetWallTileAsset(room);
+        TileBase doorTile = GetDoorTileAsset(room);
+        
+        // Only set tile assets if we found better ones or if the room is missing them
+        if (floorTile != null && (currentFloorTile == null || referenceFloorTile != null))
+        {
+            floorTileField?.SetValue(room, floorTile);
+        }
+        
+        if (wallTile != null && (currentWallTile == null || referenceWallTile != null))
+        {
+            wallTileField?.SetValue(room, wallTile);
+        }
+        
+        if (doorTile != null && (currentDoorTile == null || referenceDoorTile != null))
+        {
+            doorTileField?.SetValue(room, doorTile);
+        }
+        
+        // Log final state
+        TileBase finalFloorTile = floorTileField?.GetValue(room) as TileBase;
+        TileBase finalWallTile = wallTileField?.GetValue(room) as TileBase;
+        TileBase finalDoorTile = doorTileField?.GetValue(room) as TileBase;
+        
+        Debug.Log($"Room {room.name} final assets: Floor={finalFloorTile?.name ?? "null"}, Wall={finalWallTile?.name ?? "null"}, Door={finalDoorTile?.name ?? "null"}");
+    }
+    
+    /// <summary>
+    /// Get the floor tile asset to use for rooms
+    /// </summary>
+    /// <param name="room">The room to get tiles for</param>
+    /// <returns>Floor tile asset</returns>
+    private TileBase GetFloorTileAsset(Room room)
+    {
+        // If we have a reference tile set, use it (overrides everything)
+        if (referenceFloorTile != null)
+        {
+            Debug.Log($"Using reference floor tile: {referenceFloorTile.name}");
+            return referenceFloorTile;
+        }
+            
+        // Try to get from room prefab first (since instantiated room should have this)
+        LevelData currentLevel = GetCurrentLevelData();
+        if (currentLevel.universalRoomPrefab != null)
+        {
+            Room prefabRoom = currentLevel.universalRoomPrefab.GetComponent<Room>();
+            if (prefabRoom != null)
+            {
+                var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                TileBase prefabFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
+                if (prefabFloorTile != null)
+                {
+                    Debug.Log($"Using prefab floor tile: {prefabFloorTile.name}");
+                    return prefabFloorTile;
+                }
+                else
+                {
+                    Debug.LogWarning($"Room prefab {currentLevel.universalRoomPrefab.name} has no floor tile assigned!");
+                }
+            }
+        }
+        
+        // Fallback: try to get existing tile from room instance
+        var floorTileField2 = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        TileBase existingFloorTile = floorTileField2?.GetValue(room) as TileBase;
+        
+        if (existingFloorTile != null)
+        {
+            Debug.Log($"Using existing room floor tile: {existingFloorTile.name}");
+            return existingFloorTile;
+        }
+        
+        Debug.LogWarning("No floor tile found!");
+        return null;
+    }
+    
+    /// <summary>
+    /// Get the wall tile asset to use for rooms
+    /// </summary>
+    /// <param name="room">The room to get tiles for</param>
+    /// <returns>Wall tile asset</returns>
+    private TileBase GetWallTileAsset(Room room)
+    {
+        // If we have a reference tile set, use it (overrides everything)
+        if (referenceWallTile != null)
+        {
+            Debug.Log($"Using reference wall tile: {referenceWallTile.name}");
+            return referenceWallTile;
+        }
+            
+        // Try to get from room prefab first
+        LevelData currentLevel = GetCurrentLevelData();
+        if (currentLevel.universalRoomPrefab != null)
+        {
+            Room prefabRoom = currentLevel.universalRoomPrefab.GetComponent<Room>();
+            if (prefabRoom != null)
+            {
+                var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                TileBase prefabWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
+                if (prefabWallTile != null)
+                {
+                    Debug.Log($"Using prefab wall tile: {prefabWallTile.name}");
+                    return prefabWallTile;
+                }
+                else
+                {
+                    Debug.LogWarning($"Room prefab {currentLevel.universalRoomPrefab.name} has no wall tile assigned!");
+                }
+            }
+        }
+        
+        // Fallback: try to get existing tile from room instance
+        var wallTileField2 = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        TileBase existingWallTile = wallTileField2?.GetValue(room) as TileBase;
+        
+        if (existingWallTile != null)
+        {
+            Debug.Log($"Using existing room wall tile: {existingWallTile.name}");
+            return existingWallTile;
+        }
+        
+        Debug.LogWarning("No wall tile found!");
+        return null;
+    }
+    
+    /// <summary>
+    /// Get the door tile asset to use for rooms
+    /// </summary>
+    /// <param name="room">The room to get tiles for</param>
+    /// <returns>Door tile asset</returns>
+    private TileBase GetDoorTileAsset(Room room)
+    {
+        // If we have a reference tile set, use it (overrides everything)
+        if (referenceDoorTile != null)
+        {
+            Debug.Log($"Using reference door tile: {referenceDoorTile.name}");
+            return referenceDoorTile;
+        }
+            
+        // Try to get from room prefab first
+        LevelData currentLevel = GetCurrentLevelData();
+        if (currentLevel.universalRoomPrefab != null)
+        {
+            Room prefabRoom = currentLevel.universalRoomPrefab.GetComponent<Room>();
+            if (prefabRoom != null)
+            {
+                var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                TileBase prefabDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
+                if (prefabDoorTile != null)
+                {
+                    Debug.Log($"Using prefab door tile: {prefabDoorTile.name}");
+                    return prefabDoorTile;
+                }
+                // Door tile is optional, so don't warn if it's missing
+            }
+        }
+        
+        // Fallback: try to get existing tile from room instance
+        var doorTileField2 = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        TileBase existingDoorTile = doorTileField2?.GetValue(room) as TileBase;
+        
+        if (existingDoorTile != null)
+        {
+            Debug.Log($"Using existing room door tile: {existingDoorTile.name}");
+            return existingDoorTile;
+        }
+        
+        // Door tile is optional
+        return null;
+    }
+    
+    /// <summary>
+    /// Automatically extract tile assets from room prefab (called at startup)
+    /// </summary>
+    private void AutoExtractTileAssetsFromPrefab()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        if (currentLevel.universalRoomPrefab == null)
+        {
+            Debug.LogWarning($"DungeonGenerator: No room prefab assigned in current level data - cannot auto-extract tile assets");
+            return;
+        }
+        
+        Room prefabRoom = currentLevel.universalRoomPrefab.GetComponent<Room>();
+        if (prefabRoom == null)
+        {
+            Debug.LogWarning($"DungeonGenerator: Room prefab {currentLevel.universalRoomPrefab.name} doesn't have a Room component - cannot auto-extract tile assets");
+            return;
+        }
+        
+        // Extract tile assets from prefab only if reference tiles are not already set
+        var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        if (referenceFloorTile == null)
+        {
+            referenceFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
+        }
+        
+        if (referenceWallTile == null)
+        {
+            referenceWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
+        }
+        
+        if (referenceDoorTile == null)
+        {
+            referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
+        }
+        
+        Debug.Log($"DungeonGenerator: Auto-extracted tile assets from '{currentLevel.levelName}' (Level {currentLevel.levelNumber}) room prefab '{currentLevel.universalRoomPrefab.name}':");
+        Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"}");
+        Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"}");
+        Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"}");
+    }
+    
+    /// <summary>
+    /// Extract tile references for a new level (called during level transitions)
+    /// </summary>
+    private void ExtractTileReferencesForNewLevel()
+    {
+        LevelData newLevel = GetCurrentLevelData();
+        if (newLevel.universalRoomPrefab == null)
+        {
+            Debug.LogWarning($"No room prefab assigned for level {currentLevelIndex + 1} - keeping previous tile references");
+            return;
+        }
+        
+        Room prefabRoom = newLevel.universalRoomPrefab.GetComponent<Room>();
+        if (prefabRoom == null)
+        {
+            Debug.LogWarning($"Room prefab for level {currentLevelIndex + 1} doesn't have a Room component - keeping previous tile references");
+            return;
+        }
+        
+        // Store previous tile references for comparison
+        TileBase previousFloorTile = referenceFloorTile;
+        TileBase previousWallTile = referenceWallTile;
+        TileBase previousDoorTile = referenceDoorTile;
+        
+        // Extract new tile assets from new level's prefab
+        var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        referenceFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
+        referenceWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
+        referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
+        
+        // Log tile reference changes
+        Debug.Log($"Updated tile references for Level {currentLevelIndex + 1} ('{newLevel.levelName}'):");
+        
+        if (referenceFloorTile != previousFloorTile)
+        {
+            Debug.Log($"  Floor Tile: {previousFloorTile?.name ?? "null"} → {referenceFloorTile?.name ?? "null"}");
+        }
+        else
+        {
+            Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"} (unchanged)");
+        }
+        
+        if (referenceWallTile != previousWallTile)
+        {
+            Debug.Log($"  Wall Tile: {previousWallTile?.name ?? "null"} → {referenceWallTile?.name ?? "null"}");
+        }
+        else
+        {
+            Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"} (unchanged)");
+        }
+        
+        if (referenceDoorTile != previousDoorTile)
+        {
+            Debug.Log($"  Door Tile: {previousDoorTile?.name ?? "null"} → {referenceDoorTile?.name ?? "null"}");
+        }
+        else
+        {
+            Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"} (unchanged)");
+        }
+    }
+    
+    /// <summary>
+    /// Extract tile assets from room prefab and set as reference tiles
+    /// </summary>
+    [ContextMenu("Extract Tile Assets From Room Prefab")]
+    public void ExtractTileAssetsFromRoomPrefab()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        if (currentLevel.universalRoomPrefab == null)
+        {
+            Debug.LogError("No room prefab assigned in current level data!");
+            return;
+        }
+        
+        Room prefabRoom = currentLevel.universalRoomPrefab.GetComponent<Room>();
+        if (prefabRoom == null)
+        {
+            Debug.LogError("Room prefab doesn't have a Room component!");
+            return;
+        }
+        
+        // Extract tile assets from prefab (always overwrite when called manually)
+        var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        referenceFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
+        referenceWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
+        referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
+        
+        Debug.Log($"Manually extracted tile assets from room prefab '{currentLevel.universalRoomPrefab.name}':");
+        Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"}");
+        Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"}");
+        Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"}");
+    }
+    
+    /// <summary>
+    /// Configure tile assets for all existing rooms in the dungeon
+    /// </summary>
+    [ContextMenu("Configure All Room Tile Assets")]
+    public void ConfigureAllRoomTileAssets()
+    {
+        if (roomGrid == null)
+        {
+            Debug.LogError("No dungeon generated yet! Generate a dungeon first.");
+            return;
+        }
+        
+        int configuredCount = 0;
+        
+        for (int row = 0; row < gridRows; row++)
+        {
+            for (int col = 0; col < gridCols; col++)
+            {
+                Room room = roomGrid[row, col];
+                if (room != null)
+                {
+                    ConfigureRoomTileAssets(room);
+                    configuredCount++;
+                }
+            }
+        }
+        
+        Debug.Log($"Configured tile assets for {configuredCount} rooms in the dungeon.");
+    }
+    
+    /// <summary>
+    /// Validate that all rooms have proper tile assets assigned
+    /// </summary>
+    [ContextMenu("Validate Room Tile Assets")]
+    public void ValidateRoomTileAssets()
+    {
+        if (roomGrid == null)
+        {
+            Debug.LogError("No dungeon generated yet!");
+            return;
+        }
+        
+        int validRooms = 0;
+        int invalidRooms = 0;
+        
+        var floorTileField = typeof(Room).GetField("floorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        
+        Debug.Log("=== Room Tile Asset Validation ===");
+        
+        for (int row = 0; row < gridRows; row++)
+        {
+            for (int col = 0; col < gridCols; col++)
+            {
+                Room room = roomGrid[row, col];
+                if (room != null)
+                {
+                    TileBase floorTile = floorTileField?.GetValue(room) as TileBase;
+                    TileBase wallTile = wallTileField?.GetValue(room) as TileBase;
+                    TileBase doorTile = doorTileField?.GetValue(room) as TileBase;
+                    
+                    bool isValid = floorTile != null && wallTile != null;
+                    
+                    if (isValid)
+                    {
+                        validRooms++;
+                        Debug.Log($"✓ {room.name}: Floor={floorTile.name}, Wall={wallTile.name}, Door={doorTile?.name ?? "null"}");
+                    }
+                    else
+                    {
+                        invalidRooms++;
+                        Debug.LogError($"✗ {room.name}: Floor={floorTile?.name ?? "MISSING"}, Wall={wallTile?.name ?? "MISSING"}, Door={doorTile?.name ?? "null"}");
+                    }
+                }
+            }
+        }
+        
+        Debug.Log($"Validation complete: {validRooms} valid rooms, {invalidRooms} invalid rooms.");
+        
+        if (invalidRooms > 0)
+        {
+            Debug.LogWarning("Some rooms have missing tile assets. Use 'Configure All Room Tile Assets' to fix this.");
+        }
+    }
+    
     [ContextMenu("Next Level")]
     public void GenerateNextLevel()
     {
         if (currentLevelIndex < levels.Count - 1)
         {
             currentLevelIndex++;
+            int displayLevel = currentLevelIndex + 1;
+            Debug.Log($"Moving to Level {displayLevel}");
+            
+            // Extract new tile references from the next level's room prefab
+            if (autoExtractTileAssets)
+            {
+                ExtractTileReferencesForNewLevel();
+            }
+            
             ClearAndRegenerate();
         }
         else
         {
-            Debug.Log("Already at the last level!");
+            int currentDisplayLevel = currentLevelIndex + 1;
+            Debug.Log($"Already at the last level (Level {currentDisplayLevel})!");
         }
     }
     
@@ -196,11 +685,20 @@ public class DungeonGenerator : MonoBehaviour
         if (currentLevelIndex > 0)
         {
             currentLevelIndex--;
+            int displayLevel = currentLevelIndex + 1;
+            Debug.Log($"Moving to Level {displayLevel}");
+            
+            // Extract new tile references from the previous level's room prefab
+            if (autoExtractTileAssets)
+            {
+                ExtractTileReferencesForNewLevel();
+            }
+            
             ClearAndRegenerate();
         }
         else
         {
-            Debug.Log("Already at the first level!");
+            Debug.Log("Already at the first level (Level 1)!");
         }
     }
     
@@ -249,6 +747,8 @@ public class DungeonGenerator : MonoBehaviour
         return "UNKNOWN";
     }
     
+
+    
     public void GenerateDungeon()
     {
         ClearExistingDungeon();
@@ -285,12 +785,45 @@ public class DungeonGenerator : MonoBehaviour
         Debug.Log($"Cleared existing dungeon layout for level regeneration");
     }
     
-    public void SetCurrentLevel(int levelIndex)
+
+    
+
+    
+    /// <summary>
+    /// Set current level using 1-based level number (Level 1, Level 2, etc.)
+    /// </summary>
+    /// <param name="levelNumber">1-based level number (1 = first level)</param>
+    public void SetCurrentLevel(int levelNumber)
+    {
+        int levelIndex = levelNumber - 1; // Convert to 0-based index
+        if (levelIndex >= 0 && levelIndex < levels.Count)
+        {
+            currentLevelIndex = levelIndex;
+            
+            // Extract new tile references from the selected level's room prefab
+            if (autoExtractTileAssets)
+            {
+                ExtractTileReferencesForNewLevel();
+            }
+            
+            Debug.Log($"Set current level to Level {levelNumber}: {GetCurrentLevelData().levelName}");
+        }
+        else
+        {
+            Debug.LogError($"Invalid level number: {levelNumber}. Valid range: 1-{levels.Count}");
+        }
+    }
+    
+    /// <summary>
+    /// Set current level using 0-based array index (for internal use)
+    /// </summary>
+    /// <param name="levelIndex">0-based array index</param>
+    public void SetCurrentLevelByIndex(int levelIndex)
     {
         if (levelIndex >= 0 && levelIndex < levels.Count)
         {
             currentLevelIndex = levelIndex;
-            Debug.Log($"Set current level to: {GetCurrentLevelData().levelName}");
+            Debug.Log($"Set current level to index {levelIndex}: {GetCurrentLevelData().levelName}");
         }
         else
         {
@@ -308,12 +841,17 @@ public class DungeonGenerator : MonoBehaviour
         
         if (currentLevelIndex >= 0 && currentLevelIndex < levels.Count)
         {
-            return levels[currentLevelIndex];
+            LevelData selectedLevel = levels[currentLevelIndex];
+            int displayLevelNumber = currentLevelIndex + 1; // Convert to 1-based for display
+            Debug.Log($"DungeonGenerator: Using Level {displayLevelNumber} (index {currentLevelIndex}): '{selectedLevel.levelName}'");
+            return selectedLevel;
         }
         
-        Debug.LogWarning($"Invalid current level index: {currentLevelIndex}. Using first level.");
+        Debug.LogWarning($"Invalid current level index: {currentLevelIndex}. Using Level 1 (first level).");
         currentLevelIndex = 0;
-        return levels[0];
+        LevelData firstLevel = levels[0];
+        Debug.Log($"DungeonGenerator: Fallback to Level 1: '{firstLevel.levelName}'");
+        return firstLevel;
     }
     
     private LevelData CreateDefaultLevelData()
@@ -1035,6 +1573,9 @@ public class DungeonGenerator : MonoBehaviour
         roomGrid[gridPos.x, gridPos.y] = room;
         roomObj.name = $"{roomName}_{gridPos.x}_{gridPos.y}";
         
+        // Configure tile assets for the room
+        ConfigureRoomTileAssets(room);
+        
         return room;
     }
     
@@ -1067,6 +1608,9 @@ public class DungeonGenerator : MonoBehaviour
         bossRoom.SetGridPosition(gridPos);
         bossRoom.SetRoomType(RoomType.Boss);
         bossRoomObj.name = $"BossRoom_{gridPos.x}_{gridPos.y}";
+        
+        // Configure tile assets for the boss room
+        ConfigureRoomTileAssets(bossRoom);
         
         Debug.Log($"Created custom boss room from prefab: {bossRoomPrefab.name}");
         return bossRoom;
