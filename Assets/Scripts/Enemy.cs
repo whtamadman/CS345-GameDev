@@ -74,6 +74,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float wallDetectionDistance = 1.5f;
     [SerializeField] private float stuckThreshold = 0.1f; // Velocity threshold to consider "stuck"
     [SerializeField] private float stuckTime = 0.5f; // Time stuck before trying to go around
+
+    [Header("Food Drop")]
+    public GameObject powerUpPrefab;
+    private float foodDropChance = 0.1f;
     
     // Wall avoidance tracking
     private Vector2 lastPosition;
@@ -599,6 +603,16 @@ public class Enemy : MonoBehaviour
             Die();
         }
     }
+
+    private void SpawnFood() {
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Food");
+        int randomFoodIndex;
+        randomFoodIndex = Random.Range(0, food.Length);
+        PowerUpEffect foodChosen = food[randomFoodIndex];
+        GameObject foodGO = Instantiate(powerUpPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+        PowerUp foodPower = foodGO.GetComponent<PowerUp>();
+        foodPower.effect = foodChosen;
+    }
     
     protected virtual void Die()
     {
@@ -611,6 +625,11 @@ public class Enemy : MonoBehaviour
                 Player.Instance.GiveGold(goldAmount);
                 Debug.Log($"Enemy {gameObject.name} dropped {goldAmount} gold!");
             }
+        }
+
+        if (dropsGold && Random.value <= foodDropChance) {
+            Debug.Log("Should Spawn Food");
+            SpawnFood();
         }
         
         // Notify listeners that this enemy has died

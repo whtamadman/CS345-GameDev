@@ -158,21 +158,23 @@ public class PowerUp : MonoBehaviour {
     }
 
     private void AddPowerUpToSide() {
-        Transform container;
-        if (effect.isMeleeWeapon) {
-            if (meleeContainer.childCount > 0)
-                Destroy(meleeContainer.GetChild(0).gameObject);
-            container = meleeContainer;
-        } else if (effect.isRangeWeapon) {
-            if (rangeContainer.childCount > 0)
-                Destroy(rangeContainer.GetChild(0).gameObject);
-            container = rangeContainer;
-        } else {
-            container = powerUpContainer;
+        if (!effect.isHealth) {
+            Transform container;
+            if (effect.isMeleeWeapon) {
+                if (meleeContainer.childCount > 0)
+                    Destroy(meleeContainer.GetChild(0).gameObject);
+                container = meleeContainer;
+            } else if (effect.isRangeWeapon) {
+                if (rangeContainer.childCount > 0)
+                    Destroy(rangeContainer.GetChild(0).gameObject);
+                container = rangeContainer;
+            } else {
+                container = powerUpContainer;
+            }
+            GameObject sideSprite = Instantiate(powerUpSprite, container);
+            sideSprite.GetComponent<Image>().sprite = effect.itemSprite;
+            PowerUpSprite iconComponent = sideSprite.GetComponent<PowerUpSprite>();
+            iconComponent.SetData((string)effect.powerUpName, (string)effect.description);
         }
-        GameObject sideSprite = Instantiate(powerUpSprite, container);
-        sideSprite.GetComponent<Image>().sprite = effect.itemSprite;
-        PowerUpSprite iconComponent = sideSprite.GetComponent<PowerUpSprite>();
-        iconComponent.SetData((string)effect.powerUpName, (string)effect.description);
     }
 }
