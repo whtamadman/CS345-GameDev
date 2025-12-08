@@ -148,6 +148,7 @@ MonoBehaviour:
   wallDetectionDistance: 1.5
   stuckThreshold: 0.1
   stuckTime: 0.5
+  powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
   chaseDist: 2
   roamDist: 5
   shootDist: 1
