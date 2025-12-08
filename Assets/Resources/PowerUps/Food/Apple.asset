@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Apple
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Apple
-  description: A nice crisp apple. +2 Health
+  description: A nice crisp apple. Restores 3 Health
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
@@ -21,7 +21,7 @@ MonoBehaviour:
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
-  health: 2
+  health: 3
   maxHealth: 0
   reloadTime: 0
   cost: 0

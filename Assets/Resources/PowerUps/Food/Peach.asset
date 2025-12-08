@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Peach
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Apple
-  description: A nice crisp apple. +2 Health
+  description: One bite and the world gets softer. Restores 2 Health
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   maxHealth: 0
   reloadTime: 0
   cost: 0
-  itemSprite: {fileID: 21300000, guid: 61d01e8616313344b978a6518fd86ed6, type: 3}
+  itemSprite: {fileID: 21300068, guid: 142ff8784e552734f9d6a895491d0ae8, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 0
   isHealth: 1

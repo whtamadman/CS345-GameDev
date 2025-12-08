@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Waffles
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Apple
-  description: A nice crisp apple. +2 Health
+  powerUpName: Waffles
+  description: "Crispy outside, soft inside\u2014balanced breakfast, balanced life.
+    Restores 2 Health"
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
@@ -25,7 +26,7 @@ MonoBehaviour:
   maxHealth: 0
   reloadTime: 0
   cost: 0
-  itemSprite: {fileID: 21300000, guid: 61d01e8616313344b978a6518fd86ed6, type: 3}
+  itemSprite: {fileID: 21300098, guid: 142ff8784e552734f9d6a895491d0ae8, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 0
   isHealth: 1
