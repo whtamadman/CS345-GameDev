@@ -20,7 +20,7 @@ public class PowerUp : MonoBehaviour {
     private SpriteRenderer sr;
     public GameObject hoverPopUp;
     public GameObject powerUpPrefab;
-    private static GameObject popup;
+    private GameObject popup;
     public PowerUpEffect startingMelee;
     public PowerUpEffect startingRange;
     
@@ -94,12 +94,22 @@ public class PowerUp : MonoBehaviour {
                     AudioManager.Instance.PlayPlayerPickup();
                 }
                 Destroy(gameObject);
+                Destroy(popup);
             } else {
+                popUpExist = true;
+                Destroy(popup);
                 popup = Instantiate(popupTextPrefab);
                 popup.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
+                Debug.Log($"PowerUp {gameObject.name}: Set popup parent to {hudCanvas.name}");
+                RectTransform popupRT = popup.GetComponent<RectTransform>();
+                popupRT.anchorMin = new Vector2(1, 1);
+                popupRT.anchorMax = new Vector2(1, 1);
+                popupRT.pivot = new Vector2(1, 1);
+                popupRT.anchoredPosition = new Vector2(-170, -10); // offset from corner
                 var textComponent = popup.GetComponentInChildren<TMP_Text>();
                 textComponent.text = "Not enough cash stranger";
                 Destroy(popup, 2f);
+                popUpExist = false;
             }
         }
     }
@@ -132,13 +142,13 @@ public class PowerUp : MonoBehaviour {
 
     private void OnTriggerExit2D(Collider2D other) {
         if(hasBeenPickedUp) return; // Don't process if already picked up
-        Destroy(popup, 0.5f);
-        popUpExist = false;
         Debug.Log($"PowerUp {gameObject.name}: Trigger exited by {other.gameObject.name} with tag '{other.tag}'");
         
         if(other.CompareTag("Player")) {
             Debug.Log($"PowerUp {gameObject.name}: Player left trigger area");
+            popUpExist = false;
             inTrigger = false;
+            Destroy(popup);
         }
     }
 

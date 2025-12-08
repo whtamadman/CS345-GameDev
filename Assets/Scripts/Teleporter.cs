@@ -534,6 +534,7 @@ public class Teleporter : MonoBehaviour
             Debug.LogWarning("Teleporter: Popup prefab or HUD canvas not assigned!");
             return;
         }
+
         popup = Instantiate(popupTextPrefab);
         popup.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
         RectTransform popupRT = popup.GetComponent<RectTransform>();
@@ -563,6 +564,7 @@ public class Teleporter : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
+        hudCanvas = GameObject.Find("HUD").transform;
         if (other.CompareTag("Player"))
         {
             Debug.Log("On Teleporter");
@@ -580,10 +582,11 @@ public class Teleporter : MonoBehaviour
     /// </summary>
     private void OnTriggerExit2D(Collider2D other)
     {
-        Destroy(popup);
         if (other.CompareTag("Player"))
         {
             inTrigger = false;
+            popUpExists = false;
+            Destroy(popup);
         }
 
     }
