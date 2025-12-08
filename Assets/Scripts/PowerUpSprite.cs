@@ -21,12 +21,16 @@ public class PowerUpSprite : MonoBehaviour {
     }
 
     void Update() {
-
         Vector2 mousePos = Input.mousePosition;
         if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, mousePos)) {
             if (hoverPopUp == null) {
                 hoverPopUp = Instantiate(popupTextPrefab);
-                hoverPopUp.transform.SetParent(transform.root, false);
+                hoverPopUp.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
+                RectTransform popupRT = hoverPopUp.GetComponent<RectTransform>();
+                popupRT.anchorMin = new Vector2(1, 1);
+                popupRT.anchorMax = new Vector2(1, 1);
+                popupRT.pivot = new Vector2(1, 1);
+                popupRT.anchoredPosition = new Vector2(-170, -10); // offset from corner
                 var textComponent = hoverPopUp.GetComponentInChildren<TMP_Text>();
                 if (textComponent != null) {
                     textComponent.text = localName + "\n" + description;

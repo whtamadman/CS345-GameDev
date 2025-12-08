@@ -430,6 +430,7 @@ MonoBehaviour:
   sfxSource: {fileID: 0}
   maxConcurrentSFX: 10
   backgroundMusic: {fileID: 0}
+  menuMusic: {fileID: 0}
   playMusicOnStart: 1
   musicVolume: 0.5
   sfxVolume: 0.7
@@ -448,6 +449,8 @@ MonoBehaviour:
   teleporterSound: {fileID: 0}
   doorOpenSound: {fileID: 0}
   coinPickupSound: {fileID: 0}
+  buttonHover: {fileID: 0}
+  buttonClick: {fileID: 0}
 --- !u!4 &370167983
 Transform:
   m_ObjectHideFlags: 0
@@ -2365,6 +2368,7 @@ MonoBehaviour:
   endingLocation: {x: 0, y: 0, z: 0}
   useEndingLocation: 0
   destroyAfterTeleport: 0
+  shop: {fileID: 0}
 --- !u!1001 &926027619
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3674,6 +3678,7 @@ MonoBehaviour:
   endingLocation: {x: -14.69, y: 2.91, z: 0}
   useEndingLocation: 1
   destroyAfterTeleport: 0
+  shop: {fileID: 0}
 --- !u!212 &1915040557
 SpriteRenderer:
   m_ObjectHideFlags: 0

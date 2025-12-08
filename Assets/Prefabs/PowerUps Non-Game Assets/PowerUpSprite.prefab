@@ -88,6 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f03a7d1027584794f9970d1bd3e9404a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpSprite
-  name: 
+  localName: 
   description: 
-  popupTextPrefab: {fileID: 7379756527978743064, guid: ab224593bdd151242aab17179b8f4114, type: 3}
+  popupTextPrefab: {fileID: 6976437996048805830, guid: 0f74fe0883413e2408ba13008dddb773, type: 3}

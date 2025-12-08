@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
 
     public static Player Instance;
     public Animator animator;
-    private bool canAttack, canShoot, invincibility, inEnemy;
+    private bool canAttack, canShoot, invincibility;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
@@ -45,7 +45,6 @@ public class Player : MonoBehaviour {
         canAttack = true;
         Health.Instance.InitHealthSprites();
         animator = GetComponent<Animator>();
-        inEnemy = false;
         canShoot = true;
         initWeapons();
         // Store original layer and get all colliders
@@ -187,19 +186,6 @@ public class Player : MonoBehaviour {
         Debug.Log("Invince False");
         invincibility = false;
     }
-
-    // private void OnTriggerEnter2D(Collider2D other) {
-    //     if (other.CompareTag("Enemy") && !inEnemy) {
-    //         takeDamage();
-    //         inEnemy = true;
-    //     }
-    // }
-
-    //     private void OnTriggerExit2D(Collider2D other) {
-    //     if (other.CompareTag("Enemy") && inEnemy) {
-    //         inEnemy = false;
-    //     }
-    // }
     
     /// <summary>
     /// Handle visual effect for invisibility - blue tint that fades back to white

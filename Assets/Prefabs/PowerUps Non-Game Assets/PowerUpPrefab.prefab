@@ -104,10 +104,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c827e99bbfa69274bb36d32be536ca70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  popupTextPrefab: {fileID: 7379756527978743064, guid: ab224593bdd151242aab17179b8f4114, type: 3}
+  popupTextPrefab: {fileID: 6976437996048805830, guid: 0f74fe0883413e2408ba13008dddb773, type: 3}
   powerUpSprite: {fileID: 7265280159183308830, guid: b7c7a90a89fdf7f41ac72d33af34bb4b, type: 3}
-  effect: {fileID: 11400000, guid: bcd8e82930ad5c342a212c81b7fba3d7, type: 2}
+  effect: {fileID: 11400000, guid: 2a539972e6737744aaab8ba0dea46d1a, type: 2}
+  hudCanvas: {fileID: 0}
+  hoverPopUp: {fileID: 0}
   powerUpPrefab: {fileID: 1059502666910262663}
+  startingMelee: {fileID: 0}
+  startingRange: {fileID: 0}
 --- !u!61 &26342280698817303
 BoxCollider2D:
   m_ObjectHideFlags: 0

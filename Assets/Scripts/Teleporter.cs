@@ -22,6 +22,7 @@ public class Teleporter : MonoBehaviour
     public Transform hudCanvas; // Canvas for UI elements
     public string teleporterName = "Teleporter:";
     public string interactionText = "Press E to go to the next floor";
+    private static GameObject popup;
     
     [Header("Visual Effects")]
     public GameObject teleportEffectPrefab; // Optional teleport effect
@@ -533,18 +534,19 @@ public class Teleporter : MonoBehaviour
             Debug.LogWarning("Teleporter: Popup prefab or HUD canvas not assigned!");
             return;
         }
-        
-        GameObject popup = Instantiate(popupTextPrefab);
-        popup.transform.SetParent(hudCanvas, false);
+        popup = Instantiate(popupTextPrefab);
+        popup.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
+        RectTransform popupRT = popup.GetComponent<RectTransform>();
+        popupRT.anchorMin = new Vector2(1, 1);
+        popupRT.anchorMax = new Vector2(1, 1);
+        popupRT.pivot = new Vector2(1, 1);
+        popupRT.anchoredPosition = new Vector2(-170, -10); // offset from corner
         
         TMP_Text textComponent = popup.GetComponentInChildren<TMP_Text>();
         if (textComponent != null)
         {
             textComponent.text = teleporterName + "\n" + interactionText;
         }
-        
-        Destroy(popup, 2f);
-        StartCoroutine(UpdateResetVar(2f));
     }
     
     /// <summary>
@@ -578,10 +580,12 @@ public class Teleporter : MonoBehaviour
     /// </summary>
     private void OnTriggerExit2D(Collider2D other)
     {
+        Destroy(popup);
         if (other.CompareTag("Player"))
         {
             inTrigger = false;
         }
+
     }
     
     /// <summary>

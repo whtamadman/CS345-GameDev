@@ -47,8 +47,13 @@ public class PowerUp : MonoBehaviour {
         popup = Instantiate(popupTextPrefab);
         Debug.Log($"PowerUp {gameObject.name}: Created popup: {popup.name}");
         
-        popup.transform.SetParent(hudCanvas, false);
+        popup.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
         Debug.Log($"PowerUp {gameObject.name}: Set popup parent to {hudCanvas.name}");
+        RectTransform popupRT = popup.GetComponent<RectTransform>();
+        popupRT.anchorMin = new Vector2(1, 1);
+        popupRT.anchorMax = new Vector2(1, 1);
+        popupRT.pivot = new Vector2(1, 1);
+        popupRT.anchoredPosition = new Vector2(-170, -10); // offset from corner
         
         var textComponent = popup.GetComponentInChildren<TMP_Text>();
         if (textComponent != null) {
@@ -91,7 +96,7 @@ public class PowerUp : MonoBehaviour {
                 Destroy(gameObject);
             } else {
                 popup = Instantiate(popupTextPrefab);
-                popup.transform.SetParent(hudCanvas, false);
+                popup.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
                 var textComponent = popup.GetComponentInChildren<TMP_Text>();
                 textComponent.text = "Not enough cash stranger";
                 Destroy(popup, 2f);
