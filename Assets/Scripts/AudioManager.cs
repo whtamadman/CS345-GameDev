@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Centralized audio manager for playing sound effects and music throughout the game
@@ -15,6 +16,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Music")]
     [SerializeField] private AudioClip backgroundMusic;
+    [SerializeField] private AudioClip menuMusic;
     [SerializeField] private bool playMusicOnStart = true;
     [SerializeField] [Range(0f, 1f)] private float musicVolume = 0.5f;
 
@@ -44,6 +46,10 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip doorOpenSound;
     [SerializeField] private AudioClip coinPickupSound;
 
+    [Header("Menu Sounds")]
+    [SerializeField] private AudioClip buttonHover;
+    [SerializeField] private AudioClip buttonClick;
+
     // Track active sound effects to limit concurrent playback
     private Queue<AudioSource> activeSFXSources = new Queue<AudioSource>();
     private List<AudioSource> pooledSFXSources = new List<AudioSource>();
@@ -65,9 +71,11 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        if (playMusicOnStart && backgroundMusic != null)
+        if (playMusicOnStart && backgroundMusic != null && SceneManager.GetActiveScene().name == "Main Scene")
         {
             PlayMusic(backgroundMusic);
+        } else if (playMusicOnStart && menuMusic != null && SceneManager.GetActiveScene().name == "Main Menu") {
+            PlayMusic(menuMusic);
         }
     }
 
@@ -226,6 +234,9 @@ public class AudioManager : MonoBehaviour
     public void PlayTeleporter() => PlaySFX(teleporterSound);
     public void PlayDoorOpen() => PlaySFX(doorOpenSound);
     public void PlayCoinPickup() => PlaySFX(coinPickupSound);
+
+    public void ButtonClick() => PlaySFX(buttonClick);
+    public void ButtonHover() => PlaySFX(buttonHover);
 
     /// <summary>
     /// Set music volume (0-1)
