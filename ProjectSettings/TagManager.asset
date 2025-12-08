@@ -50,13 +50,13 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: New Layer 1
+  - name: TitleAndButtons
     uniqueID: 2429013257
     locked: 0
-  - name: New Layer 2
+  - name: Rain
     uniqueID: 3631823207
     locked: 0
-  - name: New Layer 3
+  - name: Background
     uniqueID: 3248970513
     locked: 0
   m_RenderingLayers:
