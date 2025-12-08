@@ -150,7 +150,7 @@ MonoBehaviour:
   stuckTime: 0.5
   chaseDist: 2
   roamDist: 5
-  shootDist: 1
+  shootDist: 5
 --- !u!50 &9027981668078158315
 Rigidbody2D:
   serializedVersion: 5

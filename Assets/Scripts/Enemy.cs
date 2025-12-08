@@ -421,14 +421,12 @@ public class Enemy : MonoBehaviour
             if (!IsWallInDirection(testDir))
             {
                 avoidanceDirection = testDir.normalized;
-                Debug.Log($"Enemy {gameObject.name} avoiding wall, moving {avoidanceDirection}");
                 return;
             }
         }
         
         // If all directions blocked, move backward
         avoidanceDirection = -blockedDirection.normalized;
-        Debug.Log($"Enemy {gameObject.name} all directions blocked, moving backward");
     }
     
     /// <summary>
@@ -474,7 +472,6 @@ public class Enemy : MonoBehaviour
             // If any ray hits a wall before reaching the target, line of sight is blocked
             if (hit.collider != null && IsWallCollider(hit.collider))
             {
-                Debug.Log($"Enemy {gameObject.name} line of sight blocked by {hit.collider.gameObject.name} at distance {hit.distance}");
                 return false; // Line of sight blocked by wall
             }
         }
@@ -834,7 +831,6 @@ public class Enemy : MonoBehaviour
                 {
                     player.takeDamage();
                 }
-                Debug.Log($"Enemy {gameObject.name}: Charge attack hit player for {chargeAttackDamage} damage!");
             }
             
             // End charge attack after hitting player
@@ -843,7 +839,6 @@ public class Enemy : MonoBehaviour
         else
         {
             // Hit wall or obstacle - end charge attack
-            Debug.Log($"Enemy {gameObject.name}: Charge attack hit obstacle, ending charge");
             EndChargeAttack();
         }
     }

@@ -1708,11 +1708,19 @@ public class DungeonGenerator : MonoBehaviour
         if (unreachableRooms.Count > 0)
         {
             Debug.LogWarning($"Found {unreachableRooms.Count} unreachable non-boss rooms. Fixing connectivity...");
+            foreach (Room unreachableRoom in unreachableRooms)
+            {
+                Debug.LogWarning($"  - Unreachable room: {unreachableRoom.name} at ({unreachableRoom.gridPos.x},{unreachableRoom.gridPos.y})");
+            }
             ConnectUnreachableRooms(unreachableRooms, reachableRooms);
+            
+            // Re-validate after fix
+            HashSet<Room> reachableAfterFix = GetReachableNonBossRooms(startRoom);
+            Debug.Log($"After connectivity fix: {reachableAfterFix.Count}/{allNonBossRooms.Count} rooms reachable");
         }
         else
         {
-            Debug.Log("All non-boss rooms are accessible!");
+            Debug.Log($"All {allNonBossRooms.Count} non-boss rooms are accessible from start room!");
         }
     }
     
@@ -1730,6 +1738,8 @@ public class DungeonGenerator : MonoBehaviour
             Vector2Int pos = currentRoom.gridPos;
             
             // Check all four directions for connected non-boss rooms
+            // gridPos.x = row, gridPos.y = col, so:
+            // North: row + 1, South: row - 1, East: col + 1, West: col - 1
             CheckNeighborForConnectivity(pos.x + 1, pos.y, currentRoom.hasNorthExit, "south", visited, toVisit);
             CheckNeighborForConnectivity(pos.x - 1, pos.y, currentRoom.hasSouthExit, "north", visited, toVisit);
             CheckNeighborForConnectivity(pos.x, pos.y + 1, currentRoom.hasEastExit, "west", visited, toVisit);
@@ -1875,6 +1885,7 @@ public class DungeonGenerator : MonoBehaviour
         Vector2Int pos = unreachableRoom.gridPos;
         
         // Try to connect to adjacent reachable rooms
+        // gridPos: x = row, y = col
         Vector2Int[] directions = { new Vector2Int(1, 0), new Vector2Int(-1, 0), new Vector2Int(0, 1), new Vector2Int(0, -1) };
         string[] exitNames = { "north", "south", "east", "west" };
         
@@ -1889,16 +1900,25 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     // Create bidirectional connection
                     CreateBidirectionalConnection(unreachableRoom, adjacentRoom, exitNames[i]);
+                    Debug.Log($"Connected unreachable room at ({pos.x},{pos.y}) to reachable room at ({adjacentPos.x},{adjacentPos.y}) via {exitNames[i]} exit");
                     return;
                 }
             }
         }
+        
+        Debug.LogWarning($"Could not find any adjacent reachable rooms for unreachable room at ({pos.x},{pos.y})");
     }
     
     private void CreateBidirectionalConnection(Room room1, Room room2, string direction)
     {
         // Don't modify boss room exits
-        if (room1 == bossRoom || room2 == bossRoom) return;
+        if (room1 == bossRoom || room2 == bossRoom) 
+        {
+            Debug.LogWarning($"Skipping connection modification for boss room: {room1?.name} <-> {room2?.name}");
+            return;
+        }
+        
+        Debug.Log($"Creating bidirectional connection: {room1.name} ({room1.gridPos}) <-> {room2.name} ({room2.gridPos}) via {direction}");
         
         // Add exit to room1 in the specified direction
         bool north1 = room1.hasNorthExit || direction == "north";
@@ -1916,6 +1936,8 @@ public class DungeonGenerator : MonoBehaviour
         bool west2 = room2.hasWestExit || oppositeDirection == "west";
         
         room2.ConfigureExits(north2, south2, east2, west2);
+        
+        Debug.Log($"Connection created: {room1.name} exits({north1},{south1},{east1},{west1}) <-> {room2.name} exits({north2},{south2},{east2},{west2})");
     }
     
     private string GetOppositeDirection(string direction)

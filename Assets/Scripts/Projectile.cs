@@ -244,6 +244,69 @@ public class Projectile : MonoBehaviour
             }
         }
         
+        // Check for projectile-to-projectile collision
+        Projectile otherProjectile = other.GetComponent<Projectile>();
+        if (otherProjectile != null)
+        {
+            // Special case: Both are boomerangs - destroy both
+            if (isBoomerang && otherProjectile.isBoomerang)
+            {
+                Debug.Log("Two boomerangs collided - destroying both");
+                
+                // Clean up both boomerang trackings
+                if (otherProjectile.shooter != null)
+                {
+                    if (activeBoomerangs.ContainsKey(otherProjectile.shooter) && activeBoomerangs[otherProjectile.shooter] == otherProjectile)
+                    {
+                        activeBoomerangs.Remove(otherProjectile.shooter);
+                    }
+                }
+                if (shooter != null)
+                {
+                    if (activeBoomerangs.ContainsKey(shooter) && activeBoomerangs[shooter] == this)
+                    {
+                        activeBoomerangs.Remove(shooter);
+                    }
+                }
+                
+                Destroy(other.gameObject);
+                Destroy(gameObject);
+                return;
+            }
+            
+            // This is a boomerang hitting a regular projectile - destroy only the regular projectile
+            if (isBoomerang && !otherProjectile.isBoomerang)
+            {
+                Debug.Log("Boomerang destroyed regular projectile");
+                Destroy(other.gameObject);
+                return; // Boomerang continues
+            }
+            
+            // Regular projectile hitting a boomerang - destroy only the regular projectile
+            if (!isBoomerang && otherProjectile.isBoomerang)
+            {
+                Debug.Log("Regular projectile destroyed by boomerang");
+                Destroy(gameObject);
+                return; // Boomerang continues
+            }
+            
+            // Both are regular projectiles - determine if they're from different teams
+            bool thisIsPlayerProjectile = (shooter != null && shooter.GetComponent<Player>() != null) || 
+                                        (shooter == null && target != null && target.CompareTag("Enemy"));
+            bool otherIsPlayerProjectile = (otherProjectile.shooter != null && otherProjectile.shooter.GetComponent<Player>() != null) || 
+                                         (otherProjectile.shooter == null && otherProjectile.target != null && otherProjectile.target.CompareTag("Enemy"));
+            
+            // If one is player projectile and other is enemy projectile, destroy both
+            if ((thisIsPlayerProjectile && !otherIsPlayerProjectile) || (!thisIsPlayerProjectile && otherIsPlayerProjectile))
+            {
+                Debug.Log("Player and enemy projectiles collided - destroying both");
+                
+                Destroy(other.gameObject);
+                Destroy(gameObject);
+                return;
+            }
+        }
+
         // Don't collide with shooter or any of its colliders
         if (shooter != null)
         {
