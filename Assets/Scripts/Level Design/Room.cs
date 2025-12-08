@@ -98,6 +98,7 @@ public class Room : MonoBehaviour
     // Boss tracking
     private GameObject currentBoss;
     private Enemy currentBossEnemy;
+    private VirusBoss currentVirusBoss;
     
     [Header("Item Room Configuration (Item Rooms Only)")]
     [SerializeField] protected GameObject[] itemPrefabs; // Array of possible items to spawn
@@ -1832,15 +1833,23 @@ public class Room : MonoBehaviour
         // Spawn the boss
         currentBoss = Instantiate(bossToSpawn, spawnPos, Quaternion.identity);
         currentBossEnemy = currentBoss.GetComponent<Enemy>();
+        currentVirusBoss = currentBoss.GetComponent<VirusBoss>();
         
         if (currentBossEnemy != null)
         {
-            // Subscribe to boss death event
+            // Subscribe to Enemy boss death event
             currentBossEnemy.OnDeath += OnBossDefeated;
+            Debug.Log($"Boss Room {gameObject.name}: Subscribed to Enemy.OnDeath for {bossToSpawn.name}");
+        }
+        else if (currentVirusBoss != null)
+        {
+            // Subscribe to VirusBossIndependent death event
+            currentVirusBoss.OnBossDeath += OnVirusBossDefeated;
+            Debug.Log($"Boss Room {gameObject.name}: Subscribed to VirusBoss.OnBossDeath for {bossToSpawn.name}");
         }
         else
         {
-            Debug.LogWarning($"Boss Room {gameObject.name}: Boss prefab {bossToSpawn.name} doesn't have Enemy component!");
+            Debug.LogWarning($"Boss Room {gameObject.name}: Boss prefab {bossToSpawn.name} doesn't have Enemy or VirusBoss component!");
         }
         
         bossSpawned = true;
@@ -1887,6 +1896,31 @@ public class Room : MonoBehaviour
         specificBossIndex = 0;
         
         Debug.Log($"Room {gameObject.name}: Configured with boss prefab {prefab.name}");
+    }
+    
+    /// <summary>
+    /// Called when a VirusBoss is defeated
+    /// </summary>
+    private void OnVirusBossDefeated(VirusBoss defeatedBoss)
+    {
+        if (defeatedBoss != currentVirusBoss) return; // Not our boss
+        
+        bossDefeated = true;
+        isCleared = true;
+        
+        Debug.Log($"Boss Room {gameObject.name}: VirusBoss defeated! Room cleared.");
+        
+        // Spawn boss defeat prefab
+        SpawnBossDefeatPrefab();
+        
+        // Unsubscribe from death event
+        if (currentVirusBoss != null)
+        {
+            currentVirusBoss.OnBossDeath -= OnVirusBossDefeated;
+        }
+        
+        // Handle room clearing
+        OnBossRoomCleared();
     }
     
     /// <summary>
@@ -2092,9 +2126,16 @@ public class Room : MonoBehaviour
         }
         
         // Unsubscribe from boss events if this is a boss room
-        if (roomType == RoomType.Boss && currentBossEnemy != null)
+        if (roomType == RoomType.Boss)
         {
-            currentBossEnemy.OnDeath -= OnBossDefeated;
+            if (currentBossEnemy != null)
+            {
+                currentBossEnemy.OnDeath -= OnBossDefeated;
+            }
+            if (currentVirusBoss != null)
+            {
+                currentVirusBoss.OnBossDeath -= OnVirusBossDefeated;
+            }
         }
         
         // Clean up boss entrance indicators

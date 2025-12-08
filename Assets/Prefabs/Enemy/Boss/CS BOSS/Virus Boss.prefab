@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8526121753282760371}
   - component: {fileID: 5687978464464189493}
-  - component: {fileID: 1779949973935370593}
   - component: {fileID: 3039716005129391353}
   - component: {fileID: 8809092711150968885}
   - component: {fileID: 2500281116465832326}
+  - component: {fileID: 1178198043180623962}
   m_Layer: 0
-  m_Name: Art_Ranged_Enemy
+  m_Name: Virus Boss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 100
+  m_SortingOrder: 99
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -94,65 +94,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1779949973935370593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3520070930834900833}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 10
-  projectiles:
-  - {fileID: 4882793194262094371, guid: 92fa1df44d5ba6c4c89a022c89a7ba4f, type: 3}
-  - {fileID: -9052243024403750158, guid: 025195ce345f6c54f827e39da9a21d18, type: 3}
-  - {fileID: -5932711585266594365, guid: 992f99ad14743a946962e574475b345c, type: 3}
-  opponentTag: Player
-  type: 1
-  moveSpeed: 0.75
-  shootForce: 3
-  reloadTime: 0.5
-  friction: 0.15
-  canAttackWhileMoving: 0
-  minMovementThreshold: 0.1
-  allowShooting: 1
-  enableBurstFire: 1
-  burstCount: 3
-  burstDelay: 0.2
-  longReloadTime: 2
-  enableContactDamage: 1
-  contactDamage: 1
-  contactDamageCooldown: 1
-  dropsGold: 1
-  goldDropChance: 0.469
-  minGoldDrop: 1
-  maxGoldDrop: 7
-  enableChargeAttack: 0
-  chargeUpTime: 2
-  chargeSpeed: 8
-  chargeDuration: 1.5
-  chargeAttackCooldown: 5
-  chargeAttackDamage: 2
-  chargeAttackRange: 10
-  rangedDistance: 3
-  enableMovement: 1
-  enableChasing: 1
-  enableRoaming: 1
-  wallLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  requireLineOfSight: 1
-  enableWallAvoidance: 1
-  wallDetectionDistance: 1.5
-  stuckThreshold: 0.1
-  stuckTime: 0.5
-  chaseDist: 2
-  roamDist: 5
-  shootDist: 5
 --- !u!50 &3039716005129391353
 Rigidbody2D:
   serializedVersion: 5
@@ -210,7 +151,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -238,3 +179,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2345b0d3da854097b2344a4d8b7f7ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OutOfBounds
+--- !u!114 &1178198043180623962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520070930834900833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90913600147a3da4f82a69b5aea38a46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirusBossIndependent
+  maxHealth: 50
+  currentHealth: 0
+  opponentTag: Player
+  isStatic: 1
+  enableContactDamage: 1
+  contactDamage: 2
+  contactDamageCooldown: 1
+  dropsGold: 1
+  goldDropChance: 1
+  minGoldDrop: 50
+  maxGoldDrop: 100
+  attackCooldown: 3
+  attackRange: 15
+  showAttackTelegraph: 1
+  burstfireTelegraphDuration: 1.2
+  minionTelegraphDuration: 2
+  teleportTelegraphDuration: 1.5
+  burstfireTelegraphColor: {r: 1, g: 0, b: 0, a: 1}
+  minionTelegraphColor: {r: 0, g: 1, b: 0, a: 1}
+  teleportTelegraphColor: {r: 1, g: 0, b: 1, a: 1}
+  burstfireProjectilePrefab: {fileID: 4949801295180883561, guid: 992f99ad14743a946962e574475b345c, type: 3}
+  minBurstfireProjectileCount: 2
+  maxBurstfireProjectileCount: 5
+  burstfireProjectileDelay: 0.3
+  burstfireProjectileSpeed: 3
+  burstfireAttackCooldown: 4
+  phase1MinionPrefabs:
+  - {fileID: 3520070930834900833, guid: 226c4d1630a582141890cfc5bf9f5769, type: 3}
+  phase2MinionPrefabs:
+  - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
+  - {fileID: 3520070930834900833, guid: 226c4d1630a582141890cfc5bf9f5769, type: 3}
+  phase3MinionPrefabs:
+  - {fileID: 3520070930834900833, guid: f937dc2b5a44be4438eb7d3ba94d55f6, type: 3}
+  - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
+  - {fileID: 3520070930834900833, guid: 226c4d1630a582141890cfc5bf9f5769, type: 3}
+  minionsPerSpawn: 2
+  minionSpawnRadius: 1
+  maxMinionsAlive: 6
+  minionSpawnCooldown: 7
+  teleportCount: 3
+  teleportDelay: 1.5
+  teleportContactDamage: 1
+  teleportRange: 0.25
+  teleportAttackCooldown: 15
+  phase2HealthThreshold: 0.66
+  phase3HealthThreshold: 0.33
+  phase2CooldownMultiplier: 0.8
+  phase3CooldownMultiplier: 0.6
+  phase2SpeedMultiplier: 1.2
+  phase3SpeedMultiplier: 1.5
+  enableBurstfireAttack: 1
+  enableMinionSpawnAttack: 1
+  enableTeleportAttack: 1
