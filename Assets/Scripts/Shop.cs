@@ -12,6 +12,9 @@ public class Shop : MonoBehaviour {
 
     public void SpawnInShopItems() {
 
+        Player.Instance.health = Player.Instance.maxHealth;
+        Health.Instance.UpdateHealthSprites();
+
         itemSpot1 = new Vector2(-18.191f,14.192f);
         itemSpot2 = new Vector2(-17.397f,14.192f);
         itemSpot3 = new Vector2(-16.594f,14.192f);
