@@ -249,6 +249,7 @@ public class Teleporter : MonoBehaviour
             
             // Check if next level exists
             bool hasNextLevel = dungeonGen.HasNextLevel();
+            shop.DestroyNotPickedItems();
             
             if (!hasNextLevel && useEndingLocation)
             {
