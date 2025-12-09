@@ -5,7 +5,7 @@ public class PowerUpEffect : ScriptableObject
 {
     public string powerUpName;
     public string description;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxFrames, health, maxHealth, reloadTime, invinceTimer, hitboxRange, coinMultiplier;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxFrames, health, maxHealth, reloadTime, invinceTimer, hitboxRange, coinMultiplier, itemHealthFindMultiplier;
     public int cost;
     public Sprite itemSprite;
     public Projectile projectile;
@@ -47,5 +47,6 @@ public class PowerUpEffect : ScriptableObject
         player.invinceTimer += invinceTimer;
         player.hitboxRange += hitboxRange;
         player.coinMultiplier += coinMultiplier;
+        player.itemHealthFindMultiplier += itemHealthFindMultiplier;
     }
 }

@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
     public static Player Instance;
     public Animator animator;
     private bool canAttack, canShoot, invincibility, activatedDevWeapon;
+    public bool death;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
@@ -15,7 +16,7 @@ public class Player : MonoBehaviour {
     public int coins = 0; // Player's gold/currency
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime, coinMultiplier;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime, coinMultiplier, itemHealthFindMultiplier;
     public Projectile projectile;
     public PowerUpEffect startingMelee;
     public PowerUpEffect startingRange;
@@ -59,6 +60,7 @@ public class Player : MonoBehaviour {
         invinceTimer = 2f;
         moveSpeed = 2f;
         coinMultiplier = 1f;
+        itemHealthFindMultiplier = 1f;
         activatedDevWeapon = false;
     }
     void Awake(){
@@ -103,12 +105,14 @@ public class Player : MonoBehaviour {
         if (Input.GetKey(KeyCode.R)) {
             activatedDevWeapon = false;
         }
-        if(Input.GetMouseButton(0) && canAttack) {
-            StartCoroutine(MeleeAttack());
-        }
-        if(Input.GetMouseButton(1) && canShoot) {
-            canShoot = false;
-            StartCoroutine(Shoot());
+        if (Time.timeScale == 1) {
+            if(Input.GetMouseButton(0) && canAttack) {
+                StartCoroutine(MeleeAttack());
+            }
+            if(Input.GetMouseButton(1) && canShoot) {
+                canShoot = false;
+                StartCoroutine(Shoot());
+            }
         }
     }
 
@@ -184,7 +188,7 @@ public class Player : MonoBehaviour {
             }
             
             if(health<=0) {
-                Time.timeScale = 0;
+                death = true;
             }
             Health.Instance.UpdateHealthSprites();
             StartCoroutine(iFrames(invinceTimer));

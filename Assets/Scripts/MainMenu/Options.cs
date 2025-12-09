@@ -11,6 +11,8 @@ public class Options : MonoBehaviour
     public GameObject pauseScreen;
     public GameObject confirmationWindow;
     public GameObject howToPlay;
+    public GameObject deathScreen;
+    public GameObject player;
     private bool pauseScreenActive;
     public Slider musicSlider;
     public Slider sfxSlider;
@@ -19,8 +21,11 @@ public class Options : MonoBehaviour
         pauseScreen.SetActive(false);
         pauseScreenActive = false;
         confirmationWindow.SetActive(false);
+        deathScreen.SetActive(false);
         howToPlay.SetActive(true);
         Time.timeScale = 0f;
+        musicSlider.onValueChanged.AddListener(AudioManager.Instance.SetMusicVolume);
+        sfxSlider.onValueChanged.AddListener(AudioManager.Instance.SetSFXVolume);
         musicSlider.value = AudioManager.Instance.GetMusicVolume();
         sfxSlider.value = AudioManager.Instance.GetSFXVolume();
     }
@@ -36,6 +41,11 @@ public class Options : MonoBehaviour
             pauseScreenActive = false;
             pauseScreen.SetActive(false);
             Time.timeScale = 1f;
+        }
+        if (Player.Instance.death == true) {
+            deathScreen.SetActive(true);
+            player.SetActive(false);
+            Time.timeScale = 0;
         }
     }
 
@@ -68,6 +78,10 @@ public class Options : MonoBehaviour
         AudioManager.Instance.ButtonClick();
         howToPlay.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    public void Yes() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 }

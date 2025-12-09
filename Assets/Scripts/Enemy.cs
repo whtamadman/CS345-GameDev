@@ -98,9 +98,13 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float pathSampleDistance = 2f;
     [SerializeField] private float pathRepathInterval = 0.25f;
 
-    [Header("Food Drop")]
+    [Header("Item Drop Chance")]
     public GameObject powerUpPrefab;
-    private float foodDropChance = 0.18f;
+    [SerializeField] private float foodMisc = 0.06f;
+    [SerializeField] private float foodHealth = 0.17f;
+    [SerializeField] private float foodMelee = 0.09f;
+    [SerializeField] private float foodRange = 0.09f;
+
     
     // Wall avoidance tracking
     private Vector2 lastPosition;
@@ -806,8 +810,38 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void SpawnFood() {
-        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Food");
+    private void SpawnFruit() {
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Fruits");
+        int randomFoodIndex;
+        randomFoodIndex = Random.Range(0, food.Length);
+        PowerUpEffect foodChosen = food[randomFoodIndex];
+        GameObject foodGO = Instantiate(powerUpPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+        PowerUp foodPower = foodGO.GetComponent<PowerUp>();
+        foodPower.effect = foodChosen;
+    }
+
+    private void SpawnSweet() {
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Meat");
+        int randomFoodIndex;
+        randomFoodIndex = Random.Range(0, food.Length);
+        PowerUpEffect foodChosen = food[randomFoodIndex];
+        GameObject foodGO = Instantiate(powerUpPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+        PowerUp foodPower = foodGO.GetComponent<PowerUp>();
+        foodPower.effect = foodChosen;
+    }
+
+    private void SpawnMeat() {
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Sweets");
+        int randomFoodIndex;
+        randomFoodIndex = Random.Range(0, food.Length);
+        PowerUpEffect foodChosen = food[randomFoodIndex];
+        GameObject foodGO = Instantiate(powerUpPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+        PowerUp foodPower = foodGO.GetComponent<PowerUp>();
+        foodPower.effect = foodChosen;
+    }
+    
+    private void SpawnMisc() {
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Misc");
         int randomFoodIndex;
         randomFoodIndex = Random.Range(0, food.Length);
         PowerUpEffect foodChosen = food[randomFoodIndex];
@@ -829,9 +863,14 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if (dropsGold && Random.value <= foodDropChance) {
-            Debug.Log("Should Spawn Food");
-            SpawnFood();
+        if (dropsGold && Random.value <= foodMisc) {
+            SpawnMisc();
+        } else if (dropsGold && Random.value <= Player.Instance.itemHealthFindMultiplier*foodHealth) {
+            SpawnSweet();
+        } else if (dropsGold && Random.value <= foodMelee) {
+            SpawnMeat();
+        } else if (dropsGold && Random.value <= foodRange) {
+            SpawnFruit();
         }
         
         // Notify listeners that this enemy has died
