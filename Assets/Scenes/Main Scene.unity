@@ -5545,6 +5545,7 @@ GameObject:
   - component: {fileID: 1915040558}
   - component: {fileID: 1915040557}
   - component: {fileID: 1915040556}
+  - component: {fileID: 1915040561}
   m_Layer: 0
   m_Name: Return Teleporter
   m_TagString: Untagged
@@ -5566,8 +5567,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Teleporter
   teleportDestination: {x: 0, y: 0, z: 0}
   useLocalOffset: 0
-  popupTextPrefab: {fileID: 0}
-  hudCanvas: {fileID: 0}
+  popupTextPrefab: {fileID: 6976437996048805830, guid: 0f74fe0883413e2408ba13008dddb773, type: 3}
+  hudCanvas: {fileID: 5009182073943480822}
   teleporterName: Teleporter
   interactionText: Press E to teleport
   teleportEffectPrefab: {fileID: 0}
@@ -5677,7 +5678,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.00805378, y: -0.062119484}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -5687,7 +5688,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.74001884, y: 0.5766659}
   m_EdgeRadius: 0
 --- !u!114 &1915040559
 MonoBehaviour:
@@ -5732,6 +5733,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 654211654}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1915040561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915040555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403aebafc3a07054d903b1e8ef29d310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shop
+  powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
 --- !u!1 &1920439541
 GameObject:
   m_ObjectHideFlags: 0
@@ -6837,9 +6851,10 @@ MonoBehaviour:
   baseRangeModifier: 0
   hitboxFrames: 0.5
   meleeCooldown: 1
-  invinceTimer: 3
+  invinceTimer: 2
   hitboxRange: 1
   reloadTime: 0
+  coinMultiplier: 0
   projectile: {fileID: -1438696601868216135, guid: cd7e7d22263141240b88052d99f56f95, type: 3}
   startingMelee: {fileID: 11400000, guid: bcd8e82930ad5c342a212c81b7fba3d7, type: 2}
   startingRange: {fileID: 11400000, guid: e5264a72a0f16d34b9bf93e9bf4a1db4, type: 2}
