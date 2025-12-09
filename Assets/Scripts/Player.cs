@@ -77,7 +77,6 @@ public class Player : MonoBehaviour {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 aimDirection = (mouseWorldPos - transform.position).normalized;
         if(Input.GetMouseButton(0) && canAttack) {
-            animator.SetTrigger("Attack");
             StartCoroutine(MeleeAttack());
         }
         if(Input.GetMouseButton(1) && canShoot) {
@@ -121,10 +120,12 @@ public class Player : MonoBehaviour {
         }
         
         //How long the attack stays out for
+        StartCoroutine(MeleeCooldown());
         yield return new WaitForSeconds(hitboxFrames);
         Destroy(hitbox);
-       // animator.SetBool("attacking" = false);
-        //Melee Cooldown
+    }
+
+    protected IEnumerator MeleeCooldown() {
         yield return new WaitForSeconds(meleeCooldown); 
         canAttack = true;
     }

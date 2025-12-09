@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Clock
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Lunch Tray
-  description: The cafeteria classic, sturdy and reliable. Slam it down to deal +6
-    damage.
+  powerUpName: Essence of Clock
+  description: Would you look at the time? This clock does 5 damage, but takes a
+    while to wind up
   moveSpeed: 0
-  baseMeleeDamage: 6
+  baseMeleeDamage: 5
   damageMeleeModifier: 0
   baseRangeDamage: 0
   baseRangeModifier: 0
-  meleeCooldown: 1.2
-  hitboxRange: 0.8
+  meleeCooldown: 1.6
+  hitboxFrames: 0.5
   health: 0
   maxHealth: 0
   reloadTime: 0
   cost: 1
-  itemSprite: {fileID: 4570557276618288168, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  itemSprite: {fileID: -5440158969457709437, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
   isMeleeWeapon: 1
   isRangeWeapon: 0
+  isHealth: 0

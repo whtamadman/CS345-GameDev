@@ -6838,9 +6838,8 @@ MonoBehaviour:
   hitboxFrames: 0.5
   meleeCooldown: 1
   invinceTimer: 3
-  hitboxRange: 0
+  hitboxRange: 1
   reloadTime: 0
-  weapon: {fileID: 0}
   projectile: {fileID: -1438696601868216135, guid: cd7e7d22263141240b88052d99f56f95, type: 3}
   startingMelee: {fileID: 11400000, guid: bcd8e82930ad5c342a212c81b7fba3d7, type: 2}
   startingRange: {fileID: 11400000, guid: e5264a72a0f16d34b9bf93e9bf4a1db4, type: 2}

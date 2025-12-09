@@ -12,21 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Rocket
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Spitball
-  description: All that practice from middle school made a spitball pro. Fast but
-    does 1 damage
+  powerUpName: Rocket
+  description: Cause why not
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 999
   baseRangeModifier: 0
   meleeCooldown: 0
-  hitboxRange: 0
+  hitboxFrames: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
+  reloadTime: 0.4
   cost: 1
-  itemSprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
+  itemSprite: {fileID: -9158349384845336690, guid: d8b6733ef295c4b1b99cf35935a49551, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
   isHealth: 0

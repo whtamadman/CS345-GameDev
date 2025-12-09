@@ -16,12 +16,12 @@ MonoBehaviour:
   description: A heavy bag carried through every class. Its hefty swing deals +5
     damage
   moveSpeed: 0
-  baseMeleeDamage: 5
+  baseMeleeDamage: 7
   damageMeleeModifier: 0
   baseRangeDamage: 0
   baseRangeModifier: 0
-  meleeCooldown: 1.2
-  hitboxFrames: 0
+  meleeCooldown: 2
+  hitboxFrames: 0.6
   health: 0
   maxHealth: 0
   reloadTime: 0

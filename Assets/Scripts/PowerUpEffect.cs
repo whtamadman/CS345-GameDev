@@ -16,6 +16,7 @@ public class PowerUpEffect : ScriptableObject
             player.baseMeleeDamage = baseMeleeDamage;
             player.meleeCooldown = meleeCooldown;
             player.hitboxFrames = hitboxFrames;
+            player.hitboxRange = 1f;
         } else if (isRangeWeapon) {
             player.baseRangeDamage = baseRangeDamage;
             player.reloadTime = reloadTime;

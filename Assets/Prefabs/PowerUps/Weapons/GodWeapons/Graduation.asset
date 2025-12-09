@@ -12,16 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Graduation
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: The Ruler
-  description: Straight and precise, always measures up. Its sharp swing deals +2
-    damage
+  powerUpName: Graduation Cap
+  description: You've played these games before. College is a joke now.
   moveSpeed: 0
-  baseMeleeDamage: 2
+  baseMeleeDamage: 999
   damageMeleeModifier: 0
   baseRangeDamage: 0
   baseRangeModifier: 0
-  meleeCooldown: 0.8
-  hitboxRange: 1.2
+  meleeCooldown: 0.1
+  hitboxFrames: 0.1
   health: 0
   maxHealth: 0
   reloadTime: 0
@@ -29,3 +28,4 @@ MonoBehaviour:
   itemSprite: {fileID: -5193274847877074898, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
   isMeleeWeapon: 1
   isRangeWeapon: 0
+  isHealth: 0
