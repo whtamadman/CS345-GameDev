@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
 
     public static Player Instance;
     public Animator animator;
-    private bool canAttack, canShoot, invincibility;
+    private bool canAttack, canShoot, invincibility, activatedDevWeapon;
     public GameObject meleeHitbox;
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
@@ -19,6 +19,8 @@ public class Player : MonoBehaviour {
     public Projectile projectile;
     public PowerUpEffect startingMelee;
     public PowerUpEffect startingRange;
+    public PowerUpEffect devMelee;
+    public PowerUpEffect devRange;
     public Transform meleeContainer;
     public Transform rangeContainer;
     public GameObject powerUpSprite;
@@ -57,6 +59,7 @@ public class Player : MonoBehaviour {
         invinceTimer = 2f;
         moveSpeed = 2f;
         coinMultiplier = 1f;
+        activatedDevWeapon = false;
     }
     void Awake(){
         if(Instance == null){
@@ -80,6 +83,26 @@ public class Player : MonoBehaviour {
         }
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 aimDirection = (mouseWorldPos - transform.position).normalized;
+        if(Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.E) && Input.GetKey(KeyCode.V) && !activatedDevWeapon) {
+            activatedDevWeapon = true;
+            if (meleeContainer.childCount > 0)
+                Destroy(meleeContainer.GetChild(0).gameObject);
+            if (rangeContainer.childCount > 0)
+                Destroy(rangeContainer.GetChild(0).gameObject);
+            GameObject meleeSprite = Instantiate(powerUpSprite, meleeContainer);
+            meleeSprite.GetComponent<Image>().sprite = devMelee.itemSprite;
+            PowerUpSprite iconComponent1 = meleeSprite.GetComponent<PowerUpSprite>();
+            iconComponent1.SetData((string)devMelee.powerUpName, (string)devMelee.description);
+            devMelee.Apply(this);
+            GameObject rangeSprite = Instantiate(powerUpSprite, rangeContainer);
+            rangeSprite.GetComponent<Image>().sprite = devRange.itemSprite;
+            PowerUpSprite iconComponent2 = rangeSprite.GetComponent<PowerUpSprite>();
+            iconComponent2.SetData((string)devRange.powerUpName, (string)devRange.description);
+            devRange.Apply(this);
+        }
+        if (Input.GetKey(KeyCode.R)) {
+            activatedDevWeapon = false;
+        }
         if(Input.GetMouseButton(0) && canAttack) {
             StartCoroutine(MeleeAttack());
         }
@@ -100,7 +123,6 @@ public class Player : MonoBehaviour {
         PowerUpSprite iconComponent2 = rangeSprite.GetComponent<PowerUpSprite>();
         iconComponent2.SetData((string)startingRange.powerUpName, (string)startingRange.description);
         startingRange.Apply(this);
-        
     }
 
     protected IEnumerator MeleeAttack() {

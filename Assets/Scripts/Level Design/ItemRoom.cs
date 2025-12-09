@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ItemRoom : Room
 {
@@ -92,8 +93,17 @@ public class ItemRoom : Room
         
         // Choose random item from available prefabs
         PowerUpEffect[] effects = Resources.LoadAll<PowerUpEffect>("PowerUps/DropItems");
-        int randomIndex = Random.Range(0, effects.Length);
-        PowerUpEffect itemToSpawnEffect = effects[randomIndex];
+        int randomIndex;
+        PowerUpEffect itemToSpawnEffect = null;
+        List<PowerUpEffect> weaponsObtained = Player.Instance.weaponsObtained;
+
+        while (weaponsObtained.Contains(itemToSpawnEffect) || !itemToSpawnEffect) {
+            randomIndex = Random.Range(0, effects.Length);;
+            itemToSpawnEffect = effects[randomIndex];
+        }
+
+        weaponsObtained.Add(itemToSpawnEffect);
+
         GameObject itemToSpawn = itemPrefabs[0];
         // Debug.Log($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex}: {(itemToSpawn != null ? itemToSpawn.name : "null")}");
         
@@ -108,6 +118,9 @@ public class ItemRoom : Room
         Vector3 spawnPosition = itemSpawnPoint.position;
         // Debug.Log($"ItemRoom {gameObject.name}: Spawning item {itemToSpawn.name} at position {spawnPosition}");
         currentItem = Instantiate(itemToSpawn, spawnPosition, Quaternion.identity, transform);
+
+        SpriteRenderer sr1 = currentItem.GetComponent<SpriteRenderer>();
+        currentItem.transform.localScale = new Vector2(2.0f,2.0f);
         
         itemSpawned = true;
         // Debug.Log($"ItemRoom {gameObject.name}: Item spawning completed successfully! Item: {currentItem.name}");

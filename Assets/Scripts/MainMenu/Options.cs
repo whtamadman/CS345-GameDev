@@ -10,6 +10,7 @@ public class Options : MonoBehaviour
 
     public GameObject pauseScreen;
     public GameObject confirmationWindow;
+    public GameObject howToPlay;
     private bool pauseScreenActive;
     public Slider musicSlider;
     public Slider sfxSlider;
@@ -18,6 +19,8 @@ public class Options : MonoBehaviour
         pauseScreen.SetActive(false);
         pauseScreenActive = false;
         confirmationWindow.SetActive(false);
+        howToPlay.SetActive(true);
+        Time.timeScale = 0f;
         musicSlider.value = AudioManager.Instance.GetMusicVolume();
         sfxSlider.value = AudioManager.Instance.GetSFXVolume();
     }
@@ -27,7 +30,7 @@ public class Options : MonoBehaviour
             AudioManager.Instance.ButtonClick();
             pauseScreenActive = true;
             pauseScreen.SetActive(true);
-            // Time.timeScale = 0.000001f;
+            Time.timeScale = 0f;
             Debug.Log("Game Paused");
         } else if (pauseScreenActive && Input.GetKeyDown(KeyCode.Escape)) {
             pauseScreenActive = false;
@@ -59,6 +62,12 @@ public class Options : MonoBehaviour
     public void confirmExit() {
         AudioManager.Instance.ButtonClick();
         SceneManager.LoadScene("Main Menu");
+    }
+
+    public void Close() {
+        AudioManager.Instance.ButtonClick();
+        howToPlay.SetActive(false);
+        Time.timeScale = 1f;
     }
 
 }
