@@ -69,11 +69,11 @@ MonoBehaviour:
   isCleared: 0
   playerInRoom: 0
   enemyPrefabs:
-  - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
+  - {fileID: 3520070930834900833, guid: d4afe8c574c32484a9032be4d7186bfb, type: 3}
   - {fileID: 7857972497118599685, guid: 77d0b0a562fd0bf48a124c3b384b47d0, type: 3}
   minEnemySpawnCount: 4
   maxEnemySpawnCount: 5
-  spawnDelay: 1.5
+  spawnDelay: 2
   timeBetweenWaves: 3
   minNumberOfWaves: 1
   maxNumberOfWaves: 2
