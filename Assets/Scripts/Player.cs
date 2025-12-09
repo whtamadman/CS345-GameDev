@@ -326,6 +326,11 @@ public class Player : MonoBehaviour {
             newBullet.SetTarget(this.gameObject, this.gameObject);
             yield return new WaitForSeconds(reloadTime);
             canShoot = true;
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayProjectileShoot();
+                
+            }
     }
 
 }
