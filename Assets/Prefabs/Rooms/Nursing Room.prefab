@@ -59,7 +59,7 @@ MonoBehaviour:
   floorTilemapName: Floor TM
   spawnIndicatorTilemapName: Decal TM
   floorTile: {fileID: 11400000, guid: 172c28567c088754d83e5be9abf39bf9, type: 2}
-  wallTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
+  wallTile: {fileID: 11400000, guid: 5c68ac031e5c35c40ab5750646a6d6a9, type: 2}
   doorTile: {fileID: 11400000, guid: 1154c77dbca06cf48be2df8da2d45707, type: 2}
   hasNorthExit: 0
   hasSouthExit: 0

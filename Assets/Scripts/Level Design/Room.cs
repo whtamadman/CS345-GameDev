@@ -891,8 +891,6 @@ public class Room : MonoBehaviour
 
     
 
-    
-
 
     
     private void SetupRoomTrigger()
@@ -1531,9 +1529,26 @@ public class Room : MonoBehaviour
     {
         // Clean up any null references from manually deleted enemies
         enemiesInRoom.RemoveAll(enemy => enemy == null);
-        
+
         Debug.Log($"Room {gameObject.name}: CheckRoomClearCondition - Enemies remaining: {enemiesInRoom.Count}, Current wave: {currentWave}/{actualNumberOfWaves}, All waves completed: {allWavesCompleted}, Is cleared: {isCleared}");
-        
+
+        // Boss room: only clear when bossDefeated is true
+        if (roomType == RoomType.Boss)
+        {
+            if (!bossSpawned)
+            {
+                Debug.Log($"Room {gameObject.name}: Boss room - skipping clear check, boss not spawned yet.");
+                return;
+            }
+            if (bossDefeated && !isCleared)
+            {
+                Debug.Log($"Room {gameObject.name}: Boss defeated - marking room as cleared.");
+                MarkCleared();
+            }
+            // If boss is not defeated, do not clear the room even if enemiesInRoom is empty
+            return;
+        }
+
         // Room is cleared when all enemies are defeated and all waves are completed
         if (enemiesInRoom.Count == 0 && !isCleared)
         {
