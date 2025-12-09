@@ -24,7 +24,7 @@ MonoBehaviour:
   health: 0
   maxHealth: 0
   reloadTime: 0
-  cost: 1
+  cost: 45
   itemSprite: {fileID: 9008839350885070855, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
   isMeleeWeapon: 1
   isRangeWeapon: 0

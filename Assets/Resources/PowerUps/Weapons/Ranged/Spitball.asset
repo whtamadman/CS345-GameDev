@@ -13,20 +13,24 @@ MonoBehaviour:
   m_Name: Spitball
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Spitball
-  description: All that practice from middle school made a spitball pro. Fast but
-    does 1 damage
+  description: All that practice from middle school made you a spitball pro. Fast
+    but does 1 damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
   baseRangeDamage: 2
   baseRangeModifier: 0
   meleeCooldown: 0
-  hitboxRange: 0
+  hitboxFrames: 0
   health: 0
   maxHealth: 0
   reloadTime: 1
+  invinceTimer: 0
+  hitboxRange: 0
+  coinMultiplier: 0
   cost: 1
   itemSprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
   isHealth: 0
+  isBossRoomItem: 0

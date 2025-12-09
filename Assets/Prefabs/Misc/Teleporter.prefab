@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8793964165642677042}
   - component: {fileID: 5551308099959332144}
   - component: {fileID: -6439220151295692256}
+  - component: {fileID: -3287776336266869074}
   m_Layer: 0
   m_Name: Teleporter
   m_TagString: Untagged
@@ -214,3 +215,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shop
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
+--- !u!114 &-3287776336266869074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645930204465908015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403aebafc3a07054d903b1e8ef29d310, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shop
+  powerUpPrefab: {fileID: 0}
