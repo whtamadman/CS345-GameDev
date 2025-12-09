@@ -12,19 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Clipboard
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Clipboard
-  description: Clipboard Text
+  powerUpName: Clipboard Text
+  description: Using Wayne Technology, this clipboard comes back to you and deals
+    3 damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 3
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
-  cost: 1
+  reloadTime: 1.2
+  cost: 30
   itemSprite: {fileID: -7627237033547488594, guid: aed4e9dcc24234f58a3a41b87c80924e, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
+  isHealth: 0

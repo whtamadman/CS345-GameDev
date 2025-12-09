@@ -13,18 +13,20 @@ MonoBehaviour:
   m_Name: Binary
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Binary Code
-  description: Binary Code Text
+  description: Harness the power of Computer Science! This projectile shoots really
+    fast, but can do 1 damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 1
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
-  cost: 1
+  reloadTime: 0.4
+  cost: 50
   itemSprite: {fileID: 4605327048217919700, guid: 452119d7b2d3b4381b6f3ff5cc809d4a, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
+  isHealth: 0

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: Eraser
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Spitball
-  description: All that practice from middle school made a spitball pro
+  powerUpName: Eraser
+  description: It's time to erase some enemies. Throwing erasers deals 2 damage,
+    and is pretty fast
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
@@ -24,7 +25,8 @@ MonoBehaviour:
   health: 0
   maxHealth: 0
   reloadTime: 1
-  cost: 1
-  itemSprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
+  cost: 35
+  itemSprite: {fileID: 8859225441076862958, guid: 36c07d63a51e9c548bdca980d23f519d, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
+  isHealth: 0

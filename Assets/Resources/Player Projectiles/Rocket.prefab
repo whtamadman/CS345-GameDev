@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7664488370675003462}
   - component: {fileID: -1743497282305284914}
   m_Layer: 0
-  m_Name: Spitball
+  m_Name: Rocket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 100
-  m_Sprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
+  m_Sprite: {fileID: -9158349384845336690, guid: d8b6733ef295c4b1b99cf35935a49551, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   lifeTime: 2
-  speed: 3
+  speed: 9
   isBoomerang: 0
   boomerangReturnDelay: 0.5
   boomerangReturnSpeed: 12
@@ -177,7 +177,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.19, y: 0.19}
+    oldSize: {x: 0.33, y: 0.27}
     newSize: {x: 0.13, y: 0.22}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
