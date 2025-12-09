@@ -17,13 +17,13 @@ MonoBehaviour:
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 3
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
+  reloadTime: 1.1
   cost: 35
   itemSprite: {fileID: 8439780439698852830, guid: 3eac3e4b1e8a28f499ed4cebc097cf12, type: 3}
   isMeleeWeapon: 0

@@ -10,22 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: LunchTray
+  m_Name: Rocket
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Lunch Tray
-  description: The cafeteria classic, sturdy and reliable. Slam it down to deal +6
-    damage.
+  powerUpName: Spitball
+  description: All that practice from middle school made a spitball pro. Fast but
+    does 1 damage
   moveSpeed: 0
-  baseMeleeDamage: 6
+  baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 0
+  baseRangeDamage: 2
   baseRangeModifier: 0
-  meleeCooldown: 1.2
-  hitboxRange: 0.8
+  meleeCooldown: 0
+  hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 0
+  reloadTime: 1
   cost: 1
-  itemSprite: {fileID: 4570557276618288168, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
-  isMeleeWeapon: 1
-  isRangeWeapon: 0
+  itemSprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
+  isMeleeWeapon: 0
+  isRangeWeapon: 1
+  isHealth: 0

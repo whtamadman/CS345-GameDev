@@ -5,7 +5,7 @@ public class PowerUpEffect : ScriptableObject
 {
     public string powerUpName;
     public string description;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxRange, health, maxHealth, reloadTime;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxFrames, health, maxHealth, reloadTime;
     public int cost;
     public Sprite itemSprite;
     public bool isMeleeWeapon, isRangeWeapon, isHealth;
@@ -15,7 +15,7 @@ public class PowerUpEffect : ScriptableObject
         if (isMeleeWeapon) {
             player.baseMeleeDamage = baseMeleeDamage;
             player.meleeCooldown = meleeCooldown;
-            player.hitboxRange = hitboxRange;
+            player.hitboxFrames = hitboxFrames;
         } else if (isRangeWeapon) {
             player.baseRangeDamage = baseRangeDamage;
             player.reloadTime = reloadTime;

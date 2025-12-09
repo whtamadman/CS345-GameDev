@@ -16,7 +16,6 @@ public class Player : MonoBehaviour {
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
     public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime;
-    public GameObject weapon;
     public Projectile projectile;
     public PowerUpEffect startingMelee;
     public PowerUpEffect startingRange;

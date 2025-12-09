@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: TheRuler
+  m_Name: Ruler
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: The Ruler
   description: Straight and precise, always measures up. Its sharp swing deals +2
