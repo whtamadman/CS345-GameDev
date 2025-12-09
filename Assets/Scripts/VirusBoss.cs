@@ -104,6 +104,9 @@ public class VirusBoss : MonoBehaviour
     private BossPhase currentPhase = BossPhase.Phase1;
     private int attackCounter = 0;
     private Color originalColor = Color.white;
+    private bool isTeleportFlickering = false;
+    private float spawnTime;
+   [SerializeField] private float spawnDelay = 2.0f;
     
     // Events
     public System.Action<VirusBoss> OnBossDeath;
@@ -116,6 +119,7 @@ public class VirusBoss : MonoBehaviour
         
         // Initialize boss
         currentHealth = maxHealth;
+        spawnTime = Time.time;
         
         // Store original color for visual effects
         if (spriteRenderer != null)
@@ -181,6 +185,12 @@ public class VirusBoss : MonoBehaviour
     private bool CanAttack()
     {
         if (isAttacking || isDead) 
+        {
+            return false;
+        }
+        
+        // Wait for spawn delay before attacking
+        if (Time.time - spawnTime < spawnDelay)
         {
             return false;
         }
@@ -765,10 +775,10 @@ public class VirusBoss : MonoBehaviour
             // Teleport to new position
             transform.position = teleportPos;
             
-            // Visual effect after teleport - keep teleport color
-            if (spriteRenderer != null)
+            // Visual effect after teleport - start flickering purple (only start once)
+            if (spriteRenderer != null && !isTeleportFlickering)
             {
-                spriteRenderer.color = teleportTelegraphColor; // Keep teleport color while teleporting
+                StartCoroutine(FlickerPurple());
             }
             
             Debug.Log($"Boss teleported to {teleportPos} near player (attempt {i+1}/{teleportCount})");
@@ -781,12 +791,12 @@ public class VirusBoss : MonoBehaviour
                 player.takeDamage((int)teleportContactDamage);
                 Debug.Log($"Teleport attack dealt {teleportContactDamage} damage to player!");
                 
-                // Visual damage effect
+                // Visual damage effect - brief red flash but return to purple flicker
                 if (spriteRenderer != null)
                 {
                     spriteRenderer.color = Color.red;
                     yield return new WaitForSeconds(0.1f);
-                    spriteRenderer.color = teleportTelegraphColor; // Return to teleport color
+                    // Purple flicker will continue from the coroutine
                 }
             }
             
@@ -803,16 +813,50 @@ public class VirusBoss : MonoBehaviour
         // Re-enable regular contact damage
         enableContactDamage = originalContactDamage;
         
-        // Final visual effect - return to normal color but stay at current position
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = originalColor; // Return to normal color
-        }
+        // Stop purple flickering and return to normal color
+        StopTeleportFlickering();
         
         Debug.Log("Teleportation attack completed - boss stays at new position");
     }
     
-
+    /// <summary>
+    /// Flicker purple color during teleportation
+    /// </summary>
+    private IEnumerator FlickerPurple()
+    {
+        isTeleportFlickering = true;
+        
+        while (isTeleportFlickering)
+        {
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = teleportTelegraphColor; // Purple
+                yield return new WaitForSeconds(0.15f);
+                
+                if (isTeleportFlickering) // Check again in case it was stopped
+                {
+                    spriteRenderer.color = Color.Lerp(teleportTelegraphColor, Color.white, 0.5f); // Lighter purple
+                    yield return new WaitForSeconds(0.15f);
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Stop teleport flickering and return to normal color
+    /// </summary>
+    private void StopTeleportFlickering()
+    {
+        isTeleportFlickering = false;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = originalColor;
+        }
+    }
     
     /// <summary>
     /// Handle minion death

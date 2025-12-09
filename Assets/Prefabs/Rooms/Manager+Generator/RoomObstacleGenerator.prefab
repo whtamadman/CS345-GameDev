@@ -90,6 +90,87 @@ MonoBehaviour:
     - {x: 3, y: 1}
     - {x: 3, y: 2}
     layoutPreview: "##   \n#    \n   ##\n    #"
+  - layoutName: Diamond Pattern
+    obstaclePositions:
+    - {x: 0, y: -3}
+    - {x: -1, y: -1}
+    - {x: 1, y: -1}
+    - {x: -2, y: 0}
+    - {x: 2, y: 0}
+    - {x: -1, y: 1}
+    - {x: 1, y: 1}
+    - {x: 0, y: 3}
+    layoutPreview: "  #  \n # # \n#   #\n # # \n  #  "
+  - layoutName: Maze Walls
+    obstaclePositions:
+    - {x: -2, y: -2}
+    - {x: -2, y: -1}
+    - {x: -2, y: 0}
+    - {x: 0, y: -2}
+    - {x: 0, y: 0}
+    - {x: 0, y: 2}
+    - {x: 2, y: -1}
+    - {x: 2, y: 0}
+    - {x: 2, y: 1}
+    layoutPreview: '# # #
+
+      #   #
+
+      # # #'
+  - layoutName: U-Shape
+    obstaclePositions:
+    - {x: -3, y: -2}
+    - {x: -3, y: -1}
+    - {x: -3, y: 0}
+    - {x: -3, y: 1}
+    - {x: -2, y: 1}
+    - {x: -1, y: 1}
+    - {x: 1, y: 1}
+    - {x: 2, y: 1}
+    - {x: 3, y: 1}
+    - {x: 3, y: 0}
+    - {x: 3, y: -1}
+    - {x: 3, y: -2}
+    layoutPreview: '#     #
+
+      #     #
+
+      #######'
+  - layoutName: Checkered
+    obstaclePositions:
+    - {x: -2, y: -2}
+    - {x: 0, y: -2}
+    - {x: 2, y: -2}
+    - {x: -1, y: 0}
+    - {x: 1, y: 0}
+    - {x: -2, y: 2}
+    - {x: 0, y: 2}
+    - {x: 2, y: 2}
+    layoutPreview: "# # #\n # # \n# # #"
+  - layoutName: Arrow Pattern
+    obstaclePositions:
+    - {x: 0, y: 2}
+    - {x: -1, y: 1}
+    - {x: 1, y: 1}
+    - {x: -2, y: 0}
+    - {x: 2, y: 0}
+    - {x: 0, y: 0}
+    - {x: 0, y: -1}
+    - {x: 0, y: -2}
+    layoutPreview: "  #  \n # # \n# # #\n  #  \n  #  "
+  - layoutName: Ring Formation
+    obstaclePositions:
+    - {x: -1, y: 2}
+    - {x: 0, y: 2}
+    - {x: 1, y: 2}
+    - {x: -2, y: 1}
+    - {x: 2, y: 1}
+    - {x: -2, y: -1}
+    - {x: 2, y: -1}
+    - {x: -1, y: -2}
+    - {x: 0, y: -2}
+    - {x: 1, y: -2}
+    layoutPreview: " ### \n#   #\n     \n#   #\n ### "
   useFixedLayouts: 1
   minObstacleWidth: 1
   maxObstacleWidth: 3

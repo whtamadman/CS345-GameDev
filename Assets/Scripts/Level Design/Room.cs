@@ -100,6 +100,14 @@ public class Room : MonoBehaviour
     private Enemy currentBossEnemy;
     private VirusBoss currentVirusBoss;
     
+    // Wave display
+    private TMPro.TextMeshProUGUI waveDisplayText;
+    private bool hasBeenInitiallyEntered = false;
+    
+    // Boss image display
+    private GameObject currentBossImageUI;
+    private bool bossImageShown = false;
+    
     [Header("Item Room Configuration (Item Rooms Only)")]
     [SerializeField] protected GameObject[] itemPrefabs; // Array of possible items to spawn
     [SerializeField] private bool spawnItemAtCenter = true; // Spawn item at room center
@@ -156,6 +164,13 @@ public class Room : MonoBehaviour
         
         SetupTilemapComponents();
         SetupRoomTrigger();
+        
+        // Get UI references from DungeonGenerator
+        DungeonGenerator dungeonGen = FindObjectOfType<DungeonGenerator>();
+        if (dungeonGen != null)
+        {
+            waveDisplayText = dungeonGen.GetWaveDisplayText();
+        }
     }
     
     protected virtual void Start()
@@ -281,12 +296,172 @@ public class Room : MonoBehaviour
 
     
 
+    // Update wave display text with fade animation
+    private void UpdateWaveDisplay()
+    {
+        if (waveDisplayText != null && actualNumberOfWaves > 0)
+        {
+            StartCoroutine(FadeWaveDisplay($"Wave {currentWave}/{actualNumberOfWaves}"));
+        }
+        else if (waveDisplayText != null)
+        {
+            waveDisplayText.text = "";
+            waveDisplayText.color = new Color(waveDisplayText.color.r, waveDisplayText.color.g, waveDisplayText.color.b, 0f);
+        }
+    }
     
-
+    // Fade in and fade out animation for wave display
+    private IEnumerator FadeWaveDisplay(string displayText)
+    {
+        if (waveDisplayText == null) yield break;
+        
+        // Set text and start with transparent
+        waveDisplayText.text = displayText;
+        Color originalColor = waveDisplayText.color;
+        waveDisplayText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        
+        // Fade in over 0.5 seconds
+        float fadeTime = 0.5f;
+        for (float t = 0; t < fadeTime; t += Time.deltaTime)
+        {
+            float alpha = t / fadeTime;
+            waveDisplayText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            yield return null;
+        }
+        
+        // Ensure fully opaque
+        waveDisplayText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+        
+        // Hold for configurable duration
+        DungeonGenerator dungeonGen = FindObjectOfType<DungeonGenerator>();
+        float holdDuration = dungeonGen != null ? dungeonGen.GetWaveDisplayDuration() : 2f;
+        yield return new WaitForSeconds(holdDuration);
+        
+        // Fade out over 0.5 seconds
+        for (float t = 0; t < fadeTime; t += Time.deltaTime)
+        {
+            float alpha = 1f - (t / fadeTime);
+            waveDisplayText.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            yield return null;
+        }
+        
+        // Ensure fully transparent and clear text
+        waveDisplayText.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        waveDisplayText.text = "";
+    }
     
-
+    // Display boss image with fade animation
+    private void DisplayBossImage()
+    {
+        if (roomType == RoomType.Boss && !bossImageShown)
+        {
+            DungeonGenerator dungeonGen = FindObjectOfType<DungeonGenerator>();
+            if (dungeonGen != null)
+            {
+                GameObject bossImagePrefab = dungeonGen.GetCurrentBossImagePrefab();
+                Transform parentTransform = dungeonGen.GetBossImageParent();
+                
+                if (bossImagePrefab != null && parentTransform != null)
+                {
+                    bossImageShown = true;
+                    currentBossImageUI = Instantiate(bossImagePrefab, parentTransform);
+                    StartCoroutine(FadeBossImageUI(currentBossImageUI));
+                }
+            }
+        }
+    }
     
-
+    // Fade in and fade out animation for boss UI element
+    private IEnumerator FadeBossImageUI(GameObject bossImageUI)
+    {
+        if (bossImageUI == null) yield break;
+        
+        DungeonGenerator dungeonGen = FindObjectOfType<DungeonGenerator>();
+        if (dungeonGen == null) yield break;
+        
+        float fadeTime = dungeonGen.GetBossImageFadeTime();
+        float holdDuration = dungeonGen.GetBossImageDisplayDuration();
+        
+        // Get all Image components in the UI element (including children)
+        UnityEngine.UI.Image[] images = bossImageUI.GetComponentsInChildren<UnityEngine.UI.Image>();
+        TMPro.TextMeshProUGUI[] texts = bossImageUI.GetComponentsInChildren<TMPro.TextMeshProUGUI>();
+        
+        // Store original colors
+        Color[] originalImageColors = new Color[images.Length];
+        Color[] originalTextColors = new Color[texts.Length];
+        
+        for (int i = 0; i < images.Length; i++)
+        {
+            originalImageColors[i] = images[i].color;
+            images[i].color = new Color(originalImageColors[i].r, originalImageColors[i].g, originalImageColors[i].b, 0f);
+        }
+        
+        for (int i = 0; i < texts.Length; i++)
+        {
+            originalTextColors[i] = texts[i].color;
+            texts[i].color = new Color(originalTextColors[i].r, originalTextColors[i].g, originalTextColors[i].b, 0f);
+        }
+        
+        // Make sure the UI is active
+        bossImageUI.SetActive(true);
+        
+        // Fade in
+        for (float t = 0; t < fadeTime; t += Time.deltaTime)
+        {
+            float alpha = t / fadeTime;
+            
+            for (int i = 0; i < images.Length; i++)
+            {
+                images[i].color = new Color(originalImageColors[i].r, originalImageColors[i].g, originalImageColors[i].b, alpha * originalImageColors[i].a);
+            }
+            
+            for (int i = 0; i < texts.Length; i++)
+            {
+                texts[i].color = new Color(originalTextColors[i].r, originalTextColors[i].g, originalTextColors[i].b, alpha * originalTextColors[i].a);
+            }
+            
+            yield return null;
+        }
+        
+        // Ensure fully opaque
+        for (int i = 0; i < images.Length; i++)
+        {
+            images[i].color = originalImageColors[i];
+        }
+        
+        for (int i = 0; i < texts.Length; i++)
+        {
+            texts[i].color = originalTextColors[i];
+        }
+        
+        // Hold for duration
+        yield return new WaitForSeconds(holdDuration);
+        
+        // Fade out
+        for (float t = 0; t < fadeTime; t += Time.deltaTime)
+        {
+            float alpha = 1f - (t / fadeTime);
+            
+            for (int i = 0; i < images.Length; i++)
+            {
+                images[i].color = new Color(originalImageColors[i].r, originalImageColors[i].g, originalImageColors[i].b, alpha * originalImageColors[i].a);
+            }
+            
+            for (int i = 0; i < texts.Length; i++)
+            {
+                texts[i].color = new Color(originalTextColors[i].r, originalTextColors[i].g, originalTextColors[i].b, alpha * originalTextColors[i].a);
+            }
+            
+            yield return null;
+        }
+        
+        // Clean up - destroy the instantiated UI element
+        if (currentBossImageUI != null)
+        {
+            Destroy(currentBossImageUI);
+            currentBossImageUI = null;
+        }
+    }
     
     // Automatically find global tilemaps in the scene
     private void FindGlobalTilemaps()
@@ -740,7 +915,62 @@ public class Room : MonoBehaviour
     {
         // Find all enemies that are children of this room
         Enemy[] enemies = GetComponentsInChildren<Enemy>();
-        enemiesInRoom.AddRange(enemies);
+        
+        foreach (Enemy enemy in enemies)
+        {
+            // Skip projectiles - they shouldn't be tracked for room completion
+            if (enemy.GetComponent<Projectile>() != null)
+            {
+                Debug.Log($"Skipping projectile {enemy.name} from room tracking");
+                continue;
+            }
+            
+            // For boss rooms, only track the main boss, not minions or projectiles
+            if (roomType == RoomType.Boss)
+            {
+                // Only add VirusBoss (or other boss types) to room tracking
+                VirusBoss virusBoss = enemy.GetComponent<VirusBoss>();
+                if (virusBoss != null)
+                {
+                    enemiesInRoom.Add(enemy);
+                    Debug.Log($"Boss room: Added boss {enemy.name} to room tracking");
+                }
+                else
+                {
+                    Debug.Log($"Boss room: Skipping minion/projectile {enemy.name} from room tracking");
+                }
+            }
+            else
+            {
+                // For non-boss rooms, add all enemies except projectiles
+                enemiesInRoom.Add(enemy);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Make a boss a child of this room for proper tracking
+    /// </summary>
+    public void SetBossAsChild(GameObject bossObject)
+    {
+        if (roomType == RoomType.Boss && bossObject != null)
+        {
+            bossObject.transform.SetParent(transform);
+            Debug.Log($"Boss {bossObject.name} is now a child of room {gameObject.name}");
+            
+            // Refresh enemy tracking to include the new boss
+            enemiesInRoom.Clear();
+            FindEnemiesInRoom();
+            
+            // Subscribe to boss death events
+            foreach (Enemy enemy in enemiesInRoom)
+            {
+                if (enemy != null)
+                {
+                    enemy.OnDeath += OnEnemyDeath;
+                }
+            }
+        }
     }
     
     // Enemy spawning methods
@@ -781,6 +1011,9 @@ public class Room : MonoBehaviour
     private IEnumerator SpawnWave(int waveNumber)
     {
         Debug.Log($"Room {gameObject.name}: Starting wave {waveNumber}/{actualNumberOfWaves}");
+        
+        // Update wave display
+        UpdateWaveDisplay();
         
         // Wait for initial spawn delay (first wave) or time between waves
         float delayTime = (waveNumber == 1) ? spawnDelay : timeBetweenWaves;
@@ -1108,6 +1341,24 @@ public class Room : MonoBehaviour
             Debug.Log($"Room {gameObject.name}: Player entered room - Type: {roomType}, Will lock: {!ShouldSkipExitLocking()}, Will spawn: {ShouldSpawnEnemies()}");
         }
         
+        // Display boss image for boss rooms (only on initial entry)
+        if (roomType == RoomType.Boss && !isCleared && !hasBeenInitiallyEntered)
+        {
+            hasBeenInitiallyEntered = true;
+            DisplayBossImage();
+        }
+        // Update wave display for rooms with enemies (only on initial entry)
+        else if (ShouldSpawnEnemies() && !isCleared && !hasBeenInitiallyEntered)
+        {
+            hasBeenInitiallyEntered = true;
+            UpdateWaveDisplay();
+        }
+        else if (waveDisplayText != null)
+        {
+            // Clear wave display for non-combat rooms or cleared rooms
+            waveDisplayText.text = "";
+        }
+        
         // Lock exits if room is not cleared, unless it's a starting room or item room
         bool shouldLockExits = !isCleared && !ShouldSkipExitLocking();
         Debug.Log($"Room {gameObject.name}: Door locking check - IsCleared: {isCleared}, ShouldSkipLocking: {ShouldSkipExitLocking()}, WillLock: {shouldLockExits}");
@@ -1180,7 +1431,19 @@ public class Room : MonoBehaviour
         isCleared = true;
         UnlockExits();
         
+        // Clear wave display when room is completed
+        if (waveDisplayText != null)
+        {
+            waveDisplayText.text = "";
+        }
+        
         Debug.Log($"Room {gameObject.name}: Room cleared! Doors unlocked.");
+        
+        // Clear wave display
+        if (waveDisplayText != null)
+        {
+            waveDisplayText.text = "";
+        }
         
         // Check for adjacent boss rooms and place entrance indicators
         CheckForBossRoomConnections();
@@ -1832,8 +2095,26 @@ public class Room : MonoBehaviour
         
         // Spawn the boss
         currentBoss = Instantiate(bossToSpawn, spawnPos, Quaternion.identity);
+        
+        // Make boss a child of this room immediately after spawning
+        currentBoss.transform.SetParent(transform);
+        Debug.Log($"Boss {currentBoss.name} is now a child of room {gameObject.name}");
+        
         currentBossEnemy = currentBoss.GetComponent<Enemy>();
         currentVirusBoss = currentBoss.GetComponent<VirusBoss>();
+        
+        // Refresh enemy tracking to include the new boss
+        enemiesInRoom.Clear();
+        FindEnemiesInRoom();
+        
+        // Subscribe to enemy death events
+        foreach (Enemy enemy in enemiesInRoom)
+        {
+            if (enemy != null)
+            {
+                enemy.OnDeath += OnEnemyDeath;
+            }
+        }
         
         if (currentBossEnemy != null)
         {

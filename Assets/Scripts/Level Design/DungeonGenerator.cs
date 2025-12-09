@@ -16,6 +16,8 @@ public class LevelData
     public GameObject bossPrefab;
     [Tooltip("Optional: Custom boss room prefab. If null, uses default room layout with boss spawning.")]
     public GameObject bossRoomPrefab; // Optional custom boss room
+    [Tooltip("UI element prefab to display when entering boss room")]
+    public GameObject bossImagePrefab; // Boss entrance UI element
     
     [Header("Item Settings")]
     public GameObject[] itemPrefabs;
@@ -77,6 +79,15 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private Room bossRoom;
     [SerializeField] private Room itemRoom;
     [SerializeField] private List<Room> fightRooms = new List<Room>();
+    
+    [Header("UI References")]
+    [SerializeField] private TMPro.TextMeshProUGUI waveDisplayText; // Text element to show wave info
+    [SerializeField] private float waveDisplayDuration = 2f; // How long the wave popup shows (in seconds)
+    
+    [Header("Boss Room Display")]
+    [SerializeField] private Transform bossImageParent; // Parent object to spawn boss UI elements under
+    [SerializeField] private float bossImageDisplayDuration = 3f; // How long the boss image shows (in seconds)
+    [SerializeField] private float bossImageFadeTime = 1f; // Fade in/out duration for boss image
     
     private List<Vector2Int> availablePositions = new List<Vector2Int>();
     
@@ -2219,6 +2230,55 @@ public class DungeonGenerator : MonoBehaviour
     {
         LevelData currentLevel = GetCurrentLevelData();
         return currentLevel.bossRoomPrefab != null;
+    }
+    
+    /// <summary>
+    /// Get the wave display text reference for rooms to use
+    /// </summary>
+    public TMPro.TextMeshProUGUI GetWaveDisplayText()
+    {
+        return waveDisplayText;
+    }
+    
+    /// <summary>
+    /// Get the duration for wave display popup
+    /// </summary>
+    public float GetWaveDisplayDuration()
+    {
+        return waveDisplayDuration;
+    }
+    
+    /// <summary>
+    /// Get the boss image parent for spawning boss UI elements
+    /// </summary>
+    public Transform GetBossImageParent()
+    {
+        return bossImageParent;
+    }
+    
+    /// <summary>
+    /// Get the boss image prefab for the current level
+    /// </summary>
+    public GameObject GetCurrentBossImagePrefab()
+    {
+        LevelData currentLevel = GetCurrentLevelData();
+        return currentLevel?.bossImagePrefab;
+    }
+    
+    /// <summary>
+    /// Get the boss image display duration
+    /// </summary>
+    public float GetBossImageDisplayDuration()
+    {
+        return bossImageDisplayDuration;
+    }
+    
+    /// <summary>
+    /// Get the boss image fade time
+    /// </summary>
+    public float GetBossImageFadeTime()
+    {
+        return bossImageFadeTime;
     }
     
     /// <summary>
