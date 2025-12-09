@@ -63,6 +63,7 @@ public class Shop : MonoBehaviour {
         SpriteRenderer sr3 = itemToSpawn2.GetComponent<SpriteRenderer>();
 
         itemToSpawn1.transform.localScale = new Vector2(1.0f,1.0f);
+        itemToSpawn3.transform.localScale = new Vector2(1.0f,1.0f);
 
         sr1.sortingOrder = 20;
         sr2.sortingOrder = 20;
@@ -70,11 +71,11 @@ public class Shop : MonoBehaviour {
         
         BoxCollider2D col1 = itemToSpawn1.GetComponent<BoxCollider2D>();
         // BoxCollider2D col2 = itemToSpawn2.GetComponent<BoxCollider2D>();
-        // BoxCollider2D col3 = itemToSpawn2.GetComponent<BoxCollider2D>();
+        BoxCollider2D col3 = itemToSpawn3.GetComponent<BoxCollider2D>();
 
         col1.size = new Vector2(0.5f, 0.5f);
         // col2.size = new Vector2(2.0f, 2.0f);
-        // col3.size = new Vector2(1f,1f);
+        col3.size = new Vector2(0.5f,0.5f);
 
         PowerUp p1 = itemToSpawn1.GetComponent<PowerUp>();
         PowerUp p2 = itemToSpawn2.GetComponent<PowerUp>();
