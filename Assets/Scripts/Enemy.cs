@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
     public int health;
+    [SerializeField] protected int maxHealth = 5;
     public Projectile[] projectiles;
     public string opponentTag;
     public static Vector3 initialLocation;
@@ -75,6 +76,28 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float stuckThreshold = 0.1f; // Velocity threshold to consider "stuck"
     [SerializeField] private float stuckTime = 0.5f; // Time stuck before trying to go around
 
+    [Header("Advanced AI")]
+    [SerializeField] private bool enableStrafing = true;
+    [SerializeField] private float strafeDistance = 5f;
+    [SerializeField] private float strafeSpeedMultiplier = 0.85f;
+    [SerializeField] private float strafeSwitchInterval = 1.5f;
+    [SerializeField] private bool enableSeparation = true;
+    [SerializeField] private float separationRadius = 1.5f;
+    [SerializeField] private float separationForce = 2.5f;
+    [SerializeField] private bool enablePredictiveAim = true;
+    [SerializeField] private float predictiveLeadTime = 0.25f;
+    [SerializeField] private bool enableRetreat = true;
+    [SerializeField] [Range(0f,1f)] private float lowHealthRetreatThreshold = 0.25f;
+    [SerializeField] private float retreatDistance = 6f;
+    [SerializeField] private float retreatSpeedMultiplier = 1.2f;
+
+    [Header("Pathfinding")]
+    [SerializeField] private bool enableLocalPathfinding = true;
+    [SerializeField] private int pathSamples = 7; // must be odd to sample both sides evenly
+    [SerializeField] private float pathSampleAngle = 15f;
+    [SerializeField] private float pathSampleDistance = 2f;
+    [SerializeField] private float pathRepathInterval = 0.25f;
+
     [Header("Food Drop")]
     public GameObject powerUpPrefab;
     private float foodDropChance = 0.18f;
@@ -86,6 +109,10 @@ public class Enemy : MonoBehaviour
     private Vector2 avoidanceDirection = Vector2.zero;
     private float avoidanceTimer = 0f;
     private float avoidanceDuration = 1.5f;
+    private float lastStrafeSwitchTime = 0f;
+    private int strafeDirectionSign = 1;
+    private Vector2 cachedPathDirection = Vector2.zero;
+    private float lastPathTime = 0f;
     
     // Event for room system integration
     public System.Action<Enemy> OnDeath;
@@ -167,26 +194,27 @@ public class Enemy : MonoBehaviour
         // Check if movement is disabled or enemy is static type
         if (!enableMovement || type == EnemyType.Static)
         {
-            rigidBody.linearVelocity = Vector2.zero;
+            rigidBody.linearVelocity = Vector2.Lerp(rigidBody.linearVelocity, Vector2.zero, friction * Time.fixedDeltaTime);
             return;
         }
         
         // Handle charge attack movement
         if (isCharging)
         {
-            rigidBody.linearVelocity = chargeDirection * chargeSpeed;
+            Vector2 targetVelocity = chargeDirection * chargeSpeed;
+            rigidBody.linearVelocity = Vector2.MoveTowards(rigidBody.linearVelocity, targetVelocity, moveSpeed * 10f * Time.fixedDeltaTime);
         }
         else if (isChargingUp)
         {
-            // Stop moving while charging up
-            rigidBody.linearVelocity = Vector2.zero;
-        }
-        else if(moveDirection.magnitude > 0.01f) {
-            rigidBody.linearVelocity = moveDirection * moveSpeed;
+            // Smoothly stop while charging up
+            rigidBody.linearVelocity = Vector2.Lerp(rigidBody.linearVelocity, Vector2.zero, friction * 2f * Time.fixedDeltaTime);
         }
         else
         {
-            rigidBody.linearVelocity = Vector2.Lerp(rigidBody.linearVelocity, Vector2.zero, friction);
+            // Smooth acceleration/deceleration for normal movement
+            Vector2 targetVelocity = moveDirection * moveSpeed;
+            float acceleration = moveDirection.magnitude > 0.01f ? moveSpeed * 8f : friction * 10f;
+            rigidBody.linearVelocity = Vector2.MoveTowards(rigidBody.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
         }
         
         // Only rotate if moving
@@ -208,12 +236,12 @@ public class Enemy : MonoBehaviour
             // Check line of sight before shooting
             if (HasLineOfSight(player.transform))
             {
-                rigidBody.linearVelocity = Vector2.zero;
-                moveDirection = Vector2.zero;
+                // Don't stop movement completely - let them continue smoothly
+                // This prevents stuttering when entering/exiting shoot range
                 if(CanAttackNow()){
                     StartCoroutine(Shoot(moveDirection,shootForce));
                 }
-                return;
+                // Continue with normal movement calculation below instead of returning
             }
             // If no line of sight, continue with normal state behavior below
         }
@@ -280,6 +308,13 @@ public class Enemy : MonoBehaviour
             {
                 targetPosition = player.transform.position;
                 
+            // Retreat if low health
+            if (enableRetreat && health > 0 && health <= maxHealth * lowHealthRetreatThreshold)
+            {
+                Vector2 retreatDir = (transform.position - player.transform.position).normalized;
+                targetPosition = transform.position + (Vector3)retreatDir * retreatDistance;
+            }
+            
                 // Check if we should initiate charge attack
                 if (CanInitiateChargeAttack(distanceToPlayer))
                 {
@@ -324,15 +359,45 @@ public class Enemy : MonoBehaviour
         {
             desiredDirection = direction.normalized;
         }
+
+        // Ranged: strafe around player when in shoot range
+        if (type == EnemyType.Ranged && enableStrafing && currentState == State.Shoot && player != null)
+        {
+            desiredDirection = GetStrafeDirection(player.transform.position);
+            desiredDirection *= strafeSpeedMultiplier;
+        }
+        
+        // Ranged: maintain preferred distance
+        if (type == EnemyType.Ranged && player != null)
+        {
+            float dist = Vector2.Distance(transform.position, player.transform.position);
+            // Move closer if too far, back off if too close
+            if (dist > shootDist * 1.1f)
+            {
+                desiredDirection = (player.transform.position - transform.position).normalized;
+            }
+            else if (dist < strafeDistance * 0.8f)
+            {
+                desiredDirection = (transform.position - player.transform.position).normalized;
+            }
+        }
+        
+        // Separation to reduce clustering
+        if (enableSeparation)
+        {
+            desiredDirection = ApplySeparation(desiredDirection);
+        }
+
+        // Local pathfinding to pick a clear nearby direction
+        desiredDirection = FindPathDirection(desiredDirection);
         
         // Apply wall avoidance if in chase mode and wall avoidance is enabled
         if (currentState == State.Chase && enableWallAvoidance && enableMovement)
         {
-            moveDirection = HandleWallAvoidance(desiredDirection);
+            desiredDirection = HandleWallAvoidance(desiredDirection);
         }
         else
         {
-            moveDirection = desiredDirection;
             // Reset avoidance when not chasing or movement disabled
             if (isAvoidingWall)
             {
@@ -340,6 +405,117 @@ public class Enemy : MonoBehaviour
                 stuckTimer = 0f;
             }
         }
+        
+        // Smooth direction changes to avoid stutter - apply AFTER all calculations
+        if (desiredDirection.magnitude < 0.01f)
+        {
+            // Smoothly decelerate when no direction
+            moveDirection = Vector2.Lerp(moveDirection, Vector2.zero, friction * Time.deltaTime);
+        }
+        else
+        {
+            // Smoothly interpolate to new direction (higher value = faster response, but still smooth)
+            float smoothSpeed = 8f * Time.deltaTime;
+            moveDirection = Vector2.Lerp(moveDirection, desiredDirection, smoothSpeed);
+            
+            // Normalize to maintain consistent speed
+            if (moveDirection.magnitude > 0.01f)
+            {
+                moveDirection = moveDirection.normalized;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Try to find a nearby clear direction around obstacles (local pathfinding)
+    /// </summary>
+    private Vector2 FindPathDirection(Vector2 desiredDirection)
+    {
+        if (!enableLocalPathfinding || desiredDirection.magnitude < 0.01f) return desiredDirection;
+        
+        // Reuse recent path if still valid
+        bool blocked = Physics2D.Raycast(transform.position, desiredDirection, pathSampleDistance, wallLayers);
+        if (!blocked && Time.time - lastPathTime < pathRepathInterval && cachedPathDirection != Vector2.zero)
+        {
+            return cachedPathDirection;
+        }
+        
+        // Sample directions: desired, then alternating left/right by angle steps
+        int samples = Mathf.Max(3, pathSamples | 1); // ensure odd
+        float halfSamples = (samples - 1) * 0.5f;
+        Vector2 bestDir = desiredDirection;
+        
+        for (int i = 0; i < samples; i++)
+        {
+            int step = i - (int)halfSamples;
+            float angle = step * pathSampleAngle;
+            Vector2 candidate = Quaternion.Euler(0, 0, angle) * desiredDirection;
+            
+            bool hit = Physics2D.Raycast(transform.position, candidate, pathSampleDistance, wallLayers);
+            if (!hit)
+            {
+                bestDir = candidate.normalized;
+                cachedPathDirection = bestDir;
+                lastPathTime = Time.time;
+                return bestDir;
+            }
+        }
+        
+        // No clear path found, fall back to original direction
+        cachedPathDirection = desiredDirection.normalized;
+        lastPathTime = Time.time;
+        return cachedPathDirection;
+    }
+    
+    /// <summary>
+    /// Calculate a strafe direction around the player
+    /// </summary>
+    private Vector2 GetStrafeDirection(Vector3 playerPos)
+    {
+        Vector2 toPlayer = (playerPos - transform.position).normalized;
+        // Switch strafe direction periodically
+        if (Time.time - lastStrafeSwitchTime >= strafeSwitchInterval)
+        {
+            strafeDirectionSign = Random.value > 0.5f ? 1 : -1;
+            lastStrafeSwitchTime = Time.time;
+        }
+        Vector2 perpendicular = new Vector2(-toPlayer.y, toPlayer.x) * strafeDirectionSign;
+        return perpendicular.normalized;
+    }
+    
+    /// <summary>
+    /// Push away from nearby enemies to reduce clustering
+    /// </summary>
+    private Vector2 ApplySeparation(Vector2 desiredDirection)
+    {
+        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        Vector2 separationVector = Vector2.zero;
+        int count = 0;
+        
+        foreach (Enemy other in enemies)
+        {
+            if (other == null || other == this) continue;
+            float dist = Vector2.Distance(transform.position, other.transform.position);
+            if (dist > 0.001f && dist < separationRadius)
+            {
+                Vector2 away = (Vector2)(transform.position - other.transform.position);
+                separationVector += away.normalized * (1f / dist);
+                count++;
+            }
+        }
+        
+        if (count > 0)
+        {
+            separationVector /= count;
+            Vector2 combined = desiredDirection + separationVector * separationForce;
+            if (combined.magnitude > 1f)
+            {
+                combined = combined.normalized;
+            }
+            return combined;
+        }
+        
+        return desiredDirection;
     }
     
     /// <summary>
@@ -550,11 +726,7 @@ public class Enemy : MonoBehaviour
             // Burst fire mode - shoot multiple projectiles with delay between them
             for (int i = 0; i < burstCount; i++)
             {
-                // Fire a projectile
-                int rand = Random.Range(0, projectiles.Length);
-                Projectile newBullet = Instantiate(projectiles[rand], transform.position, Quaternion.identity);
-                newBullet.gameObject.tag = "Enemy"; // Set enemy tag for collision detection
-                newBullet.SetTarget(GameObject.FindWithTag("Player"), this.gameObject);
+                FireProjectileWithPrediction();
                 
                 // Wait between burst shots (but not after the last one)
                 if (i < burstCount - 1)
@@ -569,16 +741,46 @@ public class Enemy : MonoBehaviour
         else
         {
             // Single shot mode (original behavior)
-            int rand = Random.Range(0, projectiles.Length);
-            Projectile newBullet = Instantiate(projectiles[rand], transform.position, Quaternion.identity);
-            newBullet.gameObject.tag = "Enemy"; // Set enemy tag for collision detection
-            newBullet.SetTarget(GameObject.FindWithTag("Player"), this.gameObject);
+            FireProjectileWithPrediction();
             
             // Use normal reload time
             yield return new WaitForSeconds(reloadTime);
         }
         
         canShoot = true;
+    }
+
+    /// <summary>
+    /// Fire a projectile aiming with optional prediction toward the player
+    /// </summary>
+    private void FireProjectileWithPrediction()
+    {
+        int rand = Random.Range(0, projectiles.Length);
+        Projectile newBullet = Instantiate(projectiles[rand], transform.position, Quaternion.identity);
+        newBullet.gameObject.tag = "Enemy"; // Set enemy tag for collision detection
+        
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null && enablePredictiveAim)
+        {
+            Vector3 targetPos = playerObj.transform.position;
+            
+            // Predict future position based on player velocity
+            Rigidbody2D playerRb = playerObj.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                targetPos += (Vector3)(playerRb.linearVelocity * predictiveLeadTime);
+            }
+            
+            GameObject tempTarget = new GameObject("TempPredictedTarget");
+            tempTarget.transform.position = targetPos;
+            tempTarget.tag = playerObj.tag; // Preserve target tag for collision checks
+            newBullet.SetTarget(tempTarget, this.gameObject);
+            Destroy(tempTarget, 0.1f);
+        }
+        else
+        {
+            newBullet.SetTarget(playerObj, this.gameObject);
+        }
     }
 
     public void TakeDamage(int damage)
