@@ -12,17 +12,22 @@ public class PowerUpSprite : MonoBehaviour {
     private Transform hudCanvas;
     private RectTransform rectTransform;
     GameObject hoverPopUp;
+    private bool playedOnce;
 
     void Start() {
         hudCanvas = GameObject.Find("HUD").transform;
         transform.SetAsLastSibling();
         rectTransform = GetComponent<RectTransform>();
-        
+        playedOnce = false;
     }
 
     void Update() {
         Vector2 mousePos = Input.mousePosition;
         if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, mousePos)) {
+            if (!playedOnce) {
+                AudioManager.Instance.ButtonHover();
+                playedOnce = true;
+            }
             if (hoverPopUp == null) {
                 hoverPopUp = Instantiate(popupTextPrefab);
                 hoverPopUp.transform.SetParent(hudCanvas.GetComponent<RectTransform>(), false);
@@ -40,6 +45,7 @@ public class PowerUpSprite : MonoBehaviour {
         else {
             if (hoverPopUp != null) {
                 Destroy(hoverPopUp);
+                playedOnce = false;
             }
         }
     }

@@ -12,19 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
   m_Name: PaperAirplane
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Spitball
-  description: All that practice from middle school made a spitball pro
+  powerUpName: Paper Airplane
+  description: Although these planes take a while to make, they soar and do 5 damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 5
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
-  cost: 1
-  itemSprite: {fileID: 697581383156857709, guid: 75464bae25968f64caebcea06310fb6e, type: 3}
+  reloadTime: 1.8
+  cost: 50
+  itemSprite: {fileID: 3713775884313767022, guid: 6250a5a72d8506a46a022e02f136ad40, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
+  isHealth: 0

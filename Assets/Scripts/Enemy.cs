@@ -77,7 +77,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Food Drop")]
     public GameObject powerUpPrefab;
-    private float foodDropChance = 0.1f;
+    private float foodDropChance = 0.18f;
     
     // Wall avoidance tracking
     private Vector2 lastPosition;

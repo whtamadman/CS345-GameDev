@@ -211,7 +211,7 @@ MonoBehaviour:
   burstfireTelegraphColor: {r: 1, g: 0, b: 0, a: 1}
   minionTelegraphColor: {r: 0, g: 1, b: 0, a: 1}
   teleportTelegraphColor: {r: 1, g: 0, b: 1, a: 1}
-  burstfireProjectilePrefab: {fileID: 4949801295180883561, guid: 992f99ad14743a946962e574475b345c, type: 3}
+  burstfireProjectilePrefab: {fileID: 2127840061553230285, guid: 2d91dc1b93e81054ab99c087b5408c6d, type: 3}
   minBurstfireProjectileCount: 2
   maxBurstfireProjectileCount: 5
   burstfireProjectileDelay: 0.3
@@ -227,7 +227,7 @@ MonoBehaviour:
   - {fileID: 7857972497118599685, guid: b36ea5a05cbd2405dbd63708a9f2a2ff, type: 3}
   - {fileID: 3520070930834900833, guid: 226c4d1630a582141890cfc5bf9f5769, type: 3}
   minionsPerSpawn: 2
-  minionSpawnRadius: 1
+  minionSpawnRadius: 0
   maxMinionsAlive: 6
   minionSpawnCooldown: 7
   teleportCount: 3

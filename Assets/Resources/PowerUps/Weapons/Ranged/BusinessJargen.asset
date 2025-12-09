@@ -13,18 +13,20 @@ MonoBehaviour:
   m_Name: BusinessJargen
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Binary Code
-  description: Binary Code Text
+  description: They say words can never hurt you, but these do. Does 4 damage but
+    pretty slow
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
-  baseRangeDamage: 2
+  baseRangeDamage: 4
   baseRangeModifier: 0
   meleeCooldown: 0
   hitboxRange: 0
   health: 0
   maxHealth: 0
-  reloadTime: 1
-  cost: 1
-  itemSprite: {fileID: -8477071223308182605, guid: 61370aa79a1ef4e25899ca1fe67a95fa, type: 3}
+  reloadTime: 1.5
+  cost: 40
+  itemSprite: {fileID: -4367260351526330946, guid: 61370aa79a1ef4e25899ca1fe67a95fa, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
+  isHealth: 0
