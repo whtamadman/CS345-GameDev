@@ -50,8 +50,8 @@ MonoBehaviour:
   maxObstacles: 5
   useLevelBasedTiles: 1
   obstaclesTilesByLevel:
-  - {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
-  - {fileID: 11400000, guid: 465881806c5ea7444a23950ebe49271a, type: 2}
+  - {fileID: 11400000, guid: 0e0e4ecc613d3bf4da535494ca158c47, type: 2}
+  - {fileID: 11400000, guid: a529553a8b7501a4583ac9eca3d4b892, type: 2}
   - {fileID: 11400000, guid: 7635fdc404be7cc43936b9fc6121fd89, type: 2}
   fallbackObstacleTile: {fileID: 11400000, guid: 61a02ef9b1f09af46a3bd268e0095398, type: 2}
   fixedLayouts:
