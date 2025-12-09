@@ -841,6 +841,74 @@ public class RoomObstacleGenerator : MonoBehaviour
                     new Vector2Int(2, 1), new Vector2Int(3, 1), new Vector2Int(3, 2)
                 },
                 layoutPreview = "##   \n#    \n   ##\n    #"
+            },
+            new RoomLayout
+            {
+                layoutName = "Diamond Pattern",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(0, -3), new Vector2Int(-1, -1), new Vector2Int(1, -1),
+                    new Vector2Int(-2, 0), new Vector2Int(2, 0),
+                    new Vector2Int(-1, 1), new Vector2Int(1, 1), new Vector2Int(0, 3)
+                },
+                layoutPreview = "  #  \n # # \n#   #\n # # \n  #  "
+            },
+            new RoomLayout
+            {
+                layoutName = "Maze Walls",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(-2, -2), new Vector2Int(-2, -1), new Vector2Int(-2, 0),
+                    new Vector2Int(0, -2), new Vector2Int(0, 0), new Vector2Int(0, 2),
+                    new Vector2Int(2, -1), new Vector2Int(2, 0), new Vector2Int(2, 1)
+                },
+                layoutPreview = "# # #\n#   #\n# # #"
+            },
+            new RoomLayout
+            {
+                layoutName = "U-Shape",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(-3, -2), new Vector2Int(-3, -1), new Vector2Int(-3, 0),
+                    new Vector2Int(-3, 1), new Vector2Int(-2, 1), new Vector2Int(-1, 1),
+                    new Vector2Int(1, 1), new Vector2Int(2, 1), new Vector2Int(3, 1),
+                    new Vector2Int(3, 0), new Vector2Int(3, -1), new Vector2Int(3, -2)
+                },
+                layoutPreview = "#     #\n#     #\n#######"
+            },
+            new RoomLayout
+            {
+                layoutName = "Checkered",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(-2, -2), new Vector2Int(0, -2), new Vector2Int(2, -2),
+                    new Vector2Int(-1, 0), new Vector2Int(1, 0),
+                    new Vector2Int(-2, 2), new Vector2Int(0, 2), new Vector2Int(2, 2)
+                },
+                layoutPreview = "# # #\n # # \n# # #"
+            },
+            new RoomLayout
+            {
+                layoutName = "Arrow Pattern",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(0, 2), new Vector2Int(-1, 1), new Vector2Int(1, 1),
+                    new Vector2Int(-2, 0), new Vector2Int(2, 0), new Vector2Int(0, 0),
+                    new Vector2Int(0, -1), new Vector2Int(0, -2)
+                },
+                layoutPreview = "  #  \n # # \n# # #\n  #  \n  #  "
+            },
+            new RoomLayout
+            {
+                layoutName = "Ring Formation",
+                obstaclePositions = new Vector2Int[]
+                {
+                    new Vector2Int(-1, 2), new Vector2Int(0, 2), new Vector2Int(1, 2),
+                    new Vector2Int(-2, 1), new Vector2Int(2, 1),
+                    new Vector2Int(-2, -1), new Vector2Int(2, -1),
+                    new Vector2Int(-1, -2), new Vector2Int(0, -2), new Vector2Int(1, -2)
+                },
+                layoutPreview = " ### \n#   #\n     \n#   #\n ### "
             }
         };
         

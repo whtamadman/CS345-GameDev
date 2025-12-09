@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8809092711150968885}
   - component: {fileID: 2500281116465832326}
   m_Layer: 0
-  m_Name: Small Virus Charge
+  m_Name: CS_Ranged_Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 100
-  m_Sprite: {fileID: 675299803751806077, guid: 90aa672f309467840b9bcb298456a893, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,20 +106,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 3
+  health: 10
   projectiles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: -1438696601868216135, guid: cd7e7d22263141240b88052d99f56f95, type: 3}
+  - {fileID: 4642211910491477642, guid: 6477c9164e50d1c4896dafe98a1333d5, type: 3}
   opponentTag: Player
   type: 1
-  moveSpeed: 1.5
-  shootForce: 3
-  reloadTime: 0.5
+  moveSpeed: 0.75
+  shootForce: 2
+  reloadTime: 1
   friction: 0.15
-  canAttackWhileMoving: 1
+  canAttackWhileMoving: 0
   minMovementThreshold: 0.1
-  allowShooting: 0
+  allowShooting: 1
   enableBurstFire: 0
   burstCount: 3
   burstDelay: 0.2
@@ -127,11 +126,11 @@ MonoBehaviour:
   enableContactDamage: 1
   contactDamage: 1
   contactDamageCooldown: 1
-  dropsGold: 0
-  goldDropChance: 0.257
+  dropsGold: 1
+  goldDropChance: 0.469
   minGoldDrop: 1
-  maxGoldDrop: 4
-  enableChargeAttack: 1
+  maxGoldDrop: 7
+  enableChargeAttack: 0
   chargeUpTime: 2
   chargeSpeed: 8
   chargeDuration: 1.5
@@ -145,15 +144,15 @@ MonoBehaviour:
   wallLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  requireLineOfSight: 0
+  requireLineOfSight: 1
   enableWallAvoidance: 1
   wallDetectionDistance: 1.5
   stuckThreshold: 0.1
   stuckTime: 0.5
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
-  chaseDist: 999
+  chaseDist: 2
   roamDist: 5
-  shootDist: 1
+  shootDist: 3
 --- !u!50 &3039716005129391353
 Rigidbody2D:
   serializedVersion: 5
@@ -215,17 +214,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.21133333}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.15, y: 0.15}
+    pivot: {x: 0.5, y: 0.28866667}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.25, y: 0.25}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &2500281116465832326
 MonoBehaviour:
