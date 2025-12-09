@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4347993153004392964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7578152774635034871}
+  - component: {fileID: 4392383747398610007}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7578152774635034871
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4347993153004392964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.72237, y: -0.24267, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4392383747398610007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4347993153004392964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90965cc1419924942b26d6274927d9d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  maxConcurrentSFX: 10
+  backgroundMusic: {fileID: 8300000, guid: 06906d718be5b6a4cb2df8732bf39832, type: 3}
+  menuMusic: {fileID: 8300000, guid: 1f2ad53bacc245642854dbdc8ea71a9b, type: 3}
+  bossMusic: {fileID: 8300000, guid: 35967e8a4dfb1664e9b066939272c0a4, type: 3}
+  playMusicOnStart: 1
+  musicVolume: 0.5
+  sfxVolume: 0.7
+  playerAttackSound: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
+  playerHitSound: {fileID: 8300000, guid: b31abebe929a6476a9fdc2ccaa86f89d, type: 3}
+  playerDeathSound: {fileID: 8300000, guid: 1d2f348735857f047b7a5defd60d930a, type: 3}
+  playerPickupSound: {fileID: 8300000, guid: 35fbad8cdde724f11ba6481f1e64af71, type: 3}
+  enemyShootSound: {fileID: 8300000, guid: 881e3f52c86c94f26a60718d35627cd8, type: 3}
+  enemyHitSound: {fileID: 8300000, guid: effe6d71cfa2d4689a4262969473dd08, type: 3}
+  enemyDeathSound: {fileID: 8300000, guid: e75f6b054523348dfb3b28e2698ddb91, type: 3}
+  enemyChargeSound: {fileID: 8300000, guid: 4e1ff8faed12a475eba9be0e46072269, type: 3}
+  projectileShootSound: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
+  projectileHitSound: {fileID: 0}
+  projectileWallHitSound: {fileID: 0}
+  tileBreakSound: {fileID: 0}
+  teleporterSound: {fileID: 8300000, guid: 84e427d6b66ab4066b6a4dcd0ce819ee, type: 3}
+  doorOpenSound: {fileID: 8300000, guid: 38b1fb7602bfdc0448dea17ef345395f, type: 3}
+  coinPickupSound: {fileID: 0}
+  buttonHover: {fileID: 8300000, guid: 81652031b64c342cc8dbc59c138d77c5, type: 3}
+  buttonClick: {fileID: 8300000, guid: b43d102aac6b145468dcaa94a5cccae1, type: 3}

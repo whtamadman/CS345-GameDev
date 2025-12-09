@@ -28,7 +28,7 @@ MonoBehaviour:
   hitboxRange: 0
   coinMultiplier: 0
   cost: 80
-  itemSprite: {fileID: -344713574537320093, guid: f9bee2a7655379441a47822ede35b14b, type: 3}
+  itemSprite: {fileID: -2688541246075090829, guid: 05e3e63dc67684d429af99bfd53caaa9, type: 3}
   projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0

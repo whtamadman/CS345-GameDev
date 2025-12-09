@@ -25,10 +25,11 @@ MonoBehaviour:
   maxHealth: 0
   reloadTime: 0
   invinceTimer: 0
-  hitboxRange: 0.4
+  hitboxRange: 0
   coinMultiplier: 0.2
-  cost: 55
-  itemSprite: {fileID: 2729080120496881211, guid: 279e0b631d0c5cc499a70b3e4e826ede, type: 3}
+  itemHealthFindMultiplier: 0
+  cost: 65
+  itemSprite: {fileID: -7406195808056417272, guid: 24ef81e9bae93c0428a53ec974b25beb, type: 3}
   projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0

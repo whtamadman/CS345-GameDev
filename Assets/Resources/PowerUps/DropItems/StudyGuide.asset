@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Study Guide
   description: Someone took good notes. This guide buffs your melee and range damage
-    by 2
-  moveSpeed: 0
+    by 2 and slightly increases movement speed
+  moveSpeed: 0.1
   baseMeleeDamage: 0
   damageMeleeModifier: 2
   baseRangeDamage: 0

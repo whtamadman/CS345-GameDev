@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Melee Manifesto
   description: Who wrote this? Regardless, reading this seems to give you 3 more
-    melee damage
-  moveSpeed: 0
+    melee damage and more movement speed
+  moveSpeed: 0.2
   baseMeleeDamage: 0
   damageMeleeModifier: 3
   baseRangeDamage: 0

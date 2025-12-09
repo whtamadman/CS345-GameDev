@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Physics Textbook
   description: This textbooks allows you to remember kinematics. Gives you 3 more
-    range damage
-  moveSpeed: 0
+    range damage and move faster
+  moveSpeed: 0.2
   baseMeleeDamage: 0
   damageMeleeModifier: 0
   baseRangeDamage: 0
