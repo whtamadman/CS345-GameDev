@@ -10,27 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: HonorRollCert
+  m_Name: PhysicsTextbook
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Honor Roll Certificate
-  description: Having good grades comes with its benefits. Get more cash per enemy.
+  powerUpName: Physics Textbook
+  description: This textbooks allows you to remember kinematics. Gives you 3 more
+    range damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
   baseRangeDamage: 0
-  baseRangeModifier: 0
+  baseRangeModifier: 3
   meleeCooldown: 0
   hitboxFrames: 0
   health: 0
   maxHealth: 0
   reloadTime: 0
   invinceTimer: 0
-  hitboxRange: 0.4
-  coinMultiplier: 0.2
-  cost: 55
-  itemSprite: {fileID: 2729080120496881211, guid: 279e0b631d0c5cc499a70b3e4e826ede, type: 3}
+  hitboxRange: 0
+  coinMultiplier: 0
+  cost: 0
+  itemSprite: {fileID: 3054499914914214840, guid: c378d16ced922ca42ac2383aaa9688e3, type: 3}
   projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0
   isHealth: 0
-  isBossRoomItem: 1
+  isBossRoomItem: 0

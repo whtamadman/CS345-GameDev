@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: HonorRollCert
+  m_Name: Eggs
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Honor Roll Certificate
-  description: Having good grades comes with its benefits. Get more cash per enemy.
+  powerUpName: Eggs
+  description: Sunny side up eggs to brighten your melee. Gives you 1 more damage
+    to your melee
   moveSpeed: 0
   baseMeleeDamage: 0
-  damageMeleeModifier: 0
+  damageMeleeModifier: 1
   baseRangeDamage: 0
   baseRangeModifier: 0
   meleeCooldown: 0
@@ -25,12 +26,12 @@ MonoBehaviour:
   maxHealth: 0
   reloadTime: 0
   invinceTimer: 0
-  hitboxRange: 0.4
-  coinMultiplier: 0.2
-  cost: 55
-  itemSprite: {fileID: 2729080120496881211, guid: 279e0b631d0c5cc499a70b3e4e826ede, type: 3}
+  hitboxRange: 0
+  coinMultiplier: 0
+  cost: 0
+  itemSprite: {fileID: 21300000, guid: 9eaa6d95a1d94ed41866b52732c3f08b, type: 3}
   projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0
   isHealth: 0
-  isBossRoomItem: 1
+  isBossRoomItem: 0

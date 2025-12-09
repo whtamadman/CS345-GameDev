@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
   powerUpName: Spitball
   description: All that practice from middle school made you a spitball pro. Fast
-    but does 1 damage
+    but does 2 damage
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0

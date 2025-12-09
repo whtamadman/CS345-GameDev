@@ -10,27 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69aa3f0e12c23244c9ed7b8a7be4a4db, type: 3}
-  m_Name: Glasses
+  m_Name: HealthTextbook
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpEffect
-  powerUpName: Glasses
-  description: Helps you see your target a tad better. Helps increases your range
-    attack by 2 damage
+  powerUpName: Health 101 Textbook
+  description: "Lessons in self-care and stamina \u2014 your maximum health increases
+    by 2"
   moveSpeed: 0
   baseMeleeDamage: 0
   damageMeleeModifier: 0
   baseRangeDamage: 0
-  baseRangeModifier: 2
+  baseRangeModifier: 0
   meleeCooldown: 0
   hitboxFrames: 0
   health: 0
-  maxHealth: 0
+  maxHealth: 2
   reloadTime: 0
   invinceTimer: 0
   hitboxRange: 0
   coinMultiplier: 0
-  cost: 55
-  itemSprite: {fileID: -1904283314014023129, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  cost: 0
+  itemSprite: {fileID: -823422419244896748, guid: d545cf230b23b0b47bedb2135fff21f1, type: 3}
+  projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0
   isHealth: 0
-  isBossRoomItem: 1
+  isBossRoomItem: 0

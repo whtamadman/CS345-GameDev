@@ -24,8 +24,13 @@ MonoBehaviour:
   health: 0
   maxHealth: 0
   reloadTime: 0
+  invinceTimer: 0
+  hitboxRange: 0
+  coinMultiplier: 0
   cost: 1
-  itemSprite: {fileID: -5193274847877074898, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  itemSprite: {fileID: 934628405701468196, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  projectile: {fileID: 0}
   isMeleeWeapon: 1
   isRangeWeapon: 0
   isHealth: 0
+  isBossRoomItem: 0
