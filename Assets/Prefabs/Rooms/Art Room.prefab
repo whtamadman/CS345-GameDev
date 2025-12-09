@@ -73,7 +73,7 @@ MonoBehaviour:
   - {fileID: 3520070930834900833, guid: 7c55adddb529dff479fe82f6150a710b, type: 3}
   minEnemySpawnCount: 5
   maxEnemySpawnCount: 6
-  spawnDelay: 1.5
+  spawnDelay: 2
   timeBetweenWaves: 3
   minNumberOfWaves: 1
   maxNumberOfWaves: 2
