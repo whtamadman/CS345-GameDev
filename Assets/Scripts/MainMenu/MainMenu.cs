@@ -14,6 +14,7 @@ public class MainMenu : MonoBehaviour
     void Start() {
         TitlesAndButtons.SetActive(true);
         OptionMenu.SetActive(false);
+        AudioManager.Instance.PlayMenuMusic();
     }
 
     public void Play()

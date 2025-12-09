@@ -17,6 +17,7 @@ public class AudioManager : MonoBehaviour
     [Header("Music")]
     [SerializeField] private AudioClip backgroundMusic;
     [SerializeField] private AudioClip menuMusic;
+    [SerializeField] private AudioClip bossMusic;
     [SerializeField] private bool playMusicOnStart = true;
     [SerializeField] [Range(0f, 1f)] private float musicVolume = 0.5f;
 
@@ -214,6 +215,10 @@ public class AudioManager : MonoBehaviour
         // Fallback to main SFX source
         return sfxSource;
     }
+
+    public void PlayBackgroundMusic() => PlayMusic(backgroundMusic);
+    public void PlayBossMusic() => PlayMusic(bossMusic);
+    public void PlayMenuMusic() => PlayMusic(menuMusic);
 
     // Convenience methods for common sounds
     public void PlayPlayerAttack() => PlaySFX(playerAttackSound);

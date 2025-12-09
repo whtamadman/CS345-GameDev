@@ -53,6 +53,7 @@ public class Player : MonoBehaviour {
         weaponsObtained = new List<PowerUpEffect>();
         weaponsObtained.Add(startingMelee);
         weaponsObtained.Add(startingRange);
+        AudioManager.Instance.PlayBackgroundMusic();
     }
     void Awake(){
         if(Instance == null){
@@ -132,6 +133,9 @@ public class Player : MonoBehaviour {
     public void takeDamage(int damage = 1){
         if (!invincibility) {
             health = health - damage;
+            if (health > maxHealth) {
+                health = maxHealth;
+            }
             
             // Play hit sound
             if (AudioManager.Instance != null)
@@ -323,14 +327,10 @@ public class Player : MonoBehaviour {
     protected IEnumerator Shoot()
     {
             Projectile newBullet = Instantiate(projectile, transform.position, Quaternion.identity);
+            AudioManager.Instance.PlayProjectileShoot();
             newBullet.SetTarget(this.gameObject, this.gameObject);
             yield return new WaitForSeconds(reloadTime);
             canShoot = true;
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayProjectileShoot();
-                
-            }
     }
 
 }

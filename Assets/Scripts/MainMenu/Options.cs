@@ -24,6 +24,7 @@ public class Options : MonoBehaviour
 
     void Update() {
         if (!pauseScreenActive && Input.GetKeyDown(KeyCode.Escape)) {
+            AudioManager.Instance.ButtonClick();
             pauseScreenActive = true;
             pauseScreen.SetActive(true);
             // Time.timeScale = 0.000001f;

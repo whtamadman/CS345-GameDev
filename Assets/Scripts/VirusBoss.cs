@@ -138,6 +138,9 @@ public class VirusBoss : MonoBehaviour
         Debug.Log($"Prefab assignments - Burstfire: {(burstfireProjectilePrefab != null ? "OK" : "MISSING")}, Phase1 Minions: {(phase1MinionPrefabs?.Length > 0 ? "OK" : "MISSING")}, Phase2 Minions: {(phase2MinionPrefabs?.Length > 0 ? "OK" : "MISSING")}, Phase3 Minions: {(phase3MinionPrefabs?.Length > 0 ? "OK" : "MISSING")}");
         Debug.Log($"Attack settings - Range: {attackRange}, Cooldown: {attackCooldown}");
         Debug.Log($"Boss GameObject tag: {gameObject.tag} (should be 'Enemy' for projectile damage)");
+
+        AudioManager.Instance.PlayBossMusic();
+
     }
     
     void Update()
@@ -984,7 +987,6 @@ public class VirusBoss : MonoBehaviour
         
         isDead = true;
         Debug.Log("Virus Boss defeated!");
-        
         StartCoroutine(DeathSequence());
     }
     
@@ -1034,6 +1036,8 @@ public class VirusBoss : MonoBehaviour
         
         // Destroy boss
         Destroy(gameObject);
+
+        AudioManager.Instance.PlayMenuMusic();
     }
     
     /// <summary>
