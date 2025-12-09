@@ -131,12 +131,19 @@ public class Player : MonoBehaviour {
     }
 
     public void takeDamage(int damage = 1){
-        if (!invincibility) {
+        if (damage < 0) {
             health = health - damage;
             if (health > maxHealth) {
                 health = maxHealth;
             }
-            
+            Health.Instance.UpdateHealthSprites();
+        }
+
+        if (!invincibility && damage > 0) {
+            health = health - damage;
+            if (health > maxHealth) {
+                health = maxHealth;
+            }
             // Play hit sound
             if (AudioManager.Instance != null)
             {
