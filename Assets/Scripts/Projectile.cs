@@ -423,6 +423,10 @@ public class Projectile : MonoBehaviour
         if (staticHasSettled)
         {
             rb.linearVelocity = Vector2.zero;
+            if (rotateWhileMoving)
+            {
+                transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
+            }
             return;
         }
 
@@ -435,6 +439,10 @@ public class Projectile : MonoBehaviour
             {
                 staticHoldCoroutine = StartCoroutine(StaticHoldTimer());
             }
+            if (rotateWhileMoving)
+            {
+                transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
+            }
             return;
         }
 
@@ -442,6 +450,10 @@ public class Projectile : MonoBehaviour
         rb.linearVelocity = travelDirection * staticTravelSpeed;
         float angle = Mathf.Atan2(travelDirection.y, travelDirection.x) * Mathf.Rad2Deg - 90f;
         transform.rotation = Quaternion.Euler(0, 0, angle);
+        if (rotateWhileMoving)
+        {
+            transform.Rotate(0, 0, rotationSpeed * Time.fixedDeltaTime);
+        }
     }
 
     private IEnumerator StaticHoldTimer()

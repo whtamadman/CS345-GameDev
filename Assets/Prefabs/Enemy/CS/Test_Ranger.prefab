@@ -110,6 +110,7 @@ MonoBehaviour:
   projectiles:
   - {fileID: 4642211910491477642, guid: 63a9410ca89523e4daa166f6bfbb66cc, type: 3}
   - {fileID: 4642211910491477642, guid: efe63a70af9cfaa4abc26091ac67404f, type: 3}
+  - {fileID: 4642211910491477642, guid: 0ce82f662b9411e4586cbb8cc30c5139, type: 3}
   opponentTag: Player
   type: 1
   moveSpeed: 0.75

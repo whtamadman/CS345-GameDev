@@ -107,12 +107,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   lifeTime: 4
   speed: 3
+  playerDamage: 1
   isBoomerang: 0
   boomerangReturnDelay: 0.5
   boomerangReturnSpeed: 12
-  damage: 1
   rotateWhileMoving: 1
-  rotationSpeed: 360
+  rotationSpeed: 1000
   isTrackingProjectile: 0
   trackingSpeed: 1
   trackingTurnSpeed: 720
