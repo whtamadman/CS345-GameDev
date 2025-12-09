@@ -58,7 +58,7 @@ MonoBehaviour:
   wallTilemapName: Collision TM
   floorTilemapName: Floor TM
   spawnIndicatorTilemapName: Decal TM
-  floorTile: {fileID: 11400000, guid: fda68607d6fd2f84fb1f435edebd9a45, type: 2}
+  floorTile: {fileID: 11400000, guid: b4d005befefed644b9680671b4dc9f39, type: 2}
   wallTile: {fileID: 11400000, guid: febcc4944fa618644b9231e310ed626e, type: 2}
   doorTile: {fileID: 11400000, guid: 1154c77dbca06cf48be2df8da2d45707, type: 2}
   hasNorthExit: 0

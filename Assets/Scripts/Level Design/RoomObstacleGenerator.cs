@@ -404,12 +404,12 @@ public class RoomObstacleGenerator : MonoBehaviour
         
         if (dungeonGenerator != null)
         {
-            // Get current level data and extract level number
-            var currentLevelData = dungeonGenerator.GetCurrentLevelData();
-            if (currentLevelData != null)
-            {
-                return currentLevelData.levelNumber;
-            }
+            // Use the current level index from DungeonGenerator and convert to 1-based level number
+            int currentLevelIndex = dungeonGenerator.GetCurrentLevelIndex();
+            int levelNumber = currentLevelIndex + 1; // Convert 0-based index to 1-based level number
+            
+            Debug.Log($"RoomObstacleGenerator: DungeonGenerator level index: {currentLevelIndex}, Level number: {levelNumber}");
+            return levelNumber;
         }
         
         // Default to level 1 if we can't get the current level
