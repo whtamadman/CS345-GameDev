@@ -21,12 +21,17 @@ MonoBehaviour:
   baseRangeDamage: 1
   baseRangeModifier: 0
   meleeCooldown: 0
-  hitboxRange: 0
+  hitboxFrames: 0
   health: 0
   maxHealth: 0
   reloadTime: 0.4
+  invinceTimer: 0
+  hitboxRange: 0
+  coinMultiplier: 0
   cost: 50
   itemSprite: {fileID: 4605327048217919700, guid: 452119d7b2d3b4381b6f3ff5cc809d4a, type: 3}
+  projectile: {fileID: -1438696601868216135, guid: 1a90929facd6cba4e89fea69dada3fe4, type: 3}
   isMeleeWeapon: 0
   isRangeWeapon: 1
   isHealth: 0
+  isBossRoomItem: 0

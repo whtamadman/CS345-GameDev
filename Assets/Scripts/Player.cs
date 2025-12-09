@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
     public int coins = 0; // Player's gold/currency
     [SerializeField]protected float friction;
     protected Vector2 moveDirection;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, hitboxFrames, meleeCooldown, invinceTimer, hitboxRange, reloadTime, coinMultiplier;
     public Projectile projectile;
     public PowerUpEffect startingMelee;
     public PowerUpEffect startingRange;
@@ -53,6 +53,10 @@ public class Player : MonoBehaviour {
         weaponsObtained.Add(startingMelee);
         weaponsObtained.Add(startingRange);
         AudioManager.Instance.PlayBackgroundMusic();
+        hitboxRange = 1f;
+        invinceTimer = 2f;
+        moveSpeed = 2f;
+        coinMultiplier = 1f;
     }
     void Awake(){
         if(Instance == null){
@@ -96,7 +100,7 @@ public class Player : MonoBehaviour {
         PowerUpSprite iconComponent2 = rangeSprite.GetComponent<PowerUpSprite>();
         iconComponent2.SetData((string)startingRange.powerUpName, (string)startingRange.description);
         startingRange.Apply(this);
-        projectile = Resources.Load<Projectile>("Player Projectiles/" + startingRange.powerUpName);
+        
     }
 
     protected IEnumerator MeleeAttack() {
@@ -280,7 +284,7 @@ public class Player : MonoBehaviour {
     {
         if (amount > 0)
         {
-            coins += amount;
+            coins += Mathf.RoundToInt(amount * coinMultiplier);
             Debug.Log($"Player received {amount} coins! Total: {coins}");
         }
     }

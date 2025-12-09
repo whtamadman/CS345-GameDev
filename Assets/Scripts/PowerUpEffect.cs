@@ -5,21 +5,25 @@ public class PowerUpEffect : ScriptableObject
 {
     public string powerUpName;
     public string description;
-    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxFrames, health, maxHealth, reloadTime;
+    public float moveSpeed, baseMeleeDamage, damageMeleeModifier, baseRangeDamage, baseRangeModifier, meleeCooldown, hitboxFrames, health, maxHealth, reloadTime, invinceTimer, hitboxRange, coinMultiplier;
     public int cost;
     public Sprite itemSprite;
-    public bool isMeleeWeapon, isRangeWeapon, isHealth;
+    public Projectile projectile;
+    public bool isMeleeWeapon, isRangeWeapon, isHealth, isBossRoomItem;
     
     public virtual void Apply(Player player)
     {
+        if (isMeleeWeapon || isRangeWeapon || isBossRoomItem) {
+            player.weaponsObtained.Add(this);
+        }
         if (isMeleeWeapon) {
             player.baseMeleeDamage = baseMeleeDamage;
             player.meleeCooldown = meleeCooldown;
             player.hitboxFrames = hitboxFrames;
-            player.hitboxRange = 1f;
         } else if (isRangeWeapon) {
             player.baseRangeDamage = baseRangeDamage;
             player.reloadTime = reloadTime;
+            player.projectile = projectile;
         }
         player.damageMeleeModifier += damageMeleeModifier;
         player.baseRangeModifier += baseRangeModifier;
@@ -40,5 +44,8 @@ public class PowerUpEffect : ScriptableObject
         }
         Health.Instance.UpdateHealthSprites();
         player.moveSpeed += moveSpeed;
+        player.invinceTimer += invinceTimer;
+        player.hitboxRange += hitboxRange;
+        player.coinMultiplier += coinMultiplier;
     }
 }
