@@ -29,7 +29,7 @@ MonoBehaviour:
   coinMultiplier: 0
   itemHealthFindMultiplier: 0
   cost: 65
-  itemSprite: {fileID: -1904283314014023129, guid: 08b8dfc67a41b1e479601bc1f050025e, type: 3}
+  itemSprite: {fileID: -4946682101202217058, guid: 3e594d08e339e784ab94fd9744422931, type: 3}
   projectile: {fileID: 0}
   isMeleeWeapon: 0
   isRangeWeapon: 0

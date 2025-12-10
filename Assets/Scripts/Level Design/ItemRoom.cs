@@ -104,7 +104,9 @@ public class ItemRoom : Room
 
         weaponsObtained.Add(itemToSpawnEffect);
 
-        GameObject itemToSpawn = itemPrefabs[0];
+        GameObject itemToSpawn = Resources.Load<GameObject>("PowerUpPrefab");
+
+        Debug.Log(itemToSpawn);
         // Debug.Log($"ItemRoom {gameObject.name}: Selected item prefab at index {randomIndex}: {(itemToSpawn != null ? itemToSpawn.name : "null")}");
         
         // if (itemToSpawn == null)
@@ -121,7 +123,9 @@ public class ItemRoom : Room
 
         SpriteRenderer sr1 = currentItem.GetComponent<SpriteRenderer>();
         currentItem.transform.localScale = new Vector2(2.0f,2.0f);
-        
+        BoxCollider2D bc = currentItem.GetComponent<BoxCollider2D>();
+        bc.size = new Vector2(0.3f,0.3f);
+
         itemSpawned = true;
         // Debug.Log($"ItemRoom {gameObject.name}: Item spawning completed successfully! Item: {currentItem.name}");
 
