@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7857972497118599685
+--- !u!1 &1657013882821303736
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5105642490380641019}
-  - component: {fileID: 5281760261242287335}
-  - component: {fileID: 5891705110754847468}
-  - component: {fileID: 730666939150347738}
-  - component: {fileID: 8139992207396022576}
-  - component: {fileID: 7544419418564987596}
+  - component: {fileID: 852748400913957423}
+  - component: {fileID: 7996056176111237953}
+  - component: {fileID: -4550974378873788961}
+  - component: {fileID: 4882793194262094371}
+  - component: {fileID: 3772087725032564089}
   m_Layer: 0
-  m_Name: CS_Melee_Enemy
-  m_TagString: Enemy
+  m_Name: TrackingCircle
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5105642490380641019
+--- !u!4 &852748400913957423
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
+  m_GameObject: {fileID: 1657013882821303736}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 2, y: 2, z: 0.3}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5281760261242287335
+--- !u!212 &7996056176111237953
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
+  m_GameObject: {fileID: 1657013882821303736}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -83,101 +82,24 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 100
-  m_Sprite: {fileID: 2425295166023543281, guid: 9da4c093288a74140b103d74ece823f6, type: 3}
+  m_Sprite: {fileID: 5453178202322227023, guid: c08955c6cadd54240b637f48a954302f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.33, y: 0.33}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5891705110754847468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  spawnAttackDelay: 1.5
-  health: 10
-  maxHealth: 5
-  projectiles: []
-  opponentTag: Player
-  type: 0
-  moveSpeed: 2
-  shootForce: 3
-  reloadTime: 0.5
-  friction: 0.15
-  canAttackWhileMoving: 1
-  minMovementThreshold: 0.1
-  allowShooting: 0
-  enableBurstFire: 0
-  burstCount: 3
-  burstDelay: 0.2
-  longReloadTime: 2
-  enableContactDamage: 1
-  contactDamage: 1
-  contactDamageCooldown: 1
-  dropsGold: 1
-  goldDropChance: 0.263
-  minGoldDrop: 1
-  maxGoldDrop: 3
-  enableChargeAttack: 0
-  chargeUpTime: 2
-  chargeSpeed: 8
-  chargeDuration: 1.5
-  chargeAttackCooldown: 5
-  chargeAttackDamage: 2
-  chargeAttackRange: 10
-  rangedDistance: 3
-  enableMovement: 1
-  enableChasing: 1
-  enableRoaming: 1
-  wallLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  requireLineOfSight: 1
-  enableWallAvoidance: 1
-  wallDetectionDistance: 1.5
-  stuckThreshold: 0.1
-  stuckTime: 0.5
-  enableStrafing: 1
-  strafeDistance: 5
-  strafeSpeedMultiplier: 0.85
-  strafeSwitchInterval: 1.5
-  enableSeparation: 1
-  separationRadius: 1.5
-  separationForce: 2.5
-  enablePredictiveAim: 1
-  predictiveLeadTime: 0.25
-  enableRetreat: 1
-  lowHealthRetreatThreshold: 0.25
-  retreatDistance: 6
-  retreatSpeedMultiplier: 1.2
-  enableLocalPathfinding: 1
-  pathSamples: 7
-  pathSampleAngle: 15
-  pathSampleDistance: 2
-  pathRepathInterval: 0.25
-  powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
-  chaseDist: 2
-  roamDist: 5
-  shootDist: 1
---- !u!61 &730666939150347738
+--- !u!61 &-4550974378873788961
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
+  m_GameObject: {fileID: 1657013882821303736}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -201,7 +123,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -209,30 +131,61 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.15, y: 0.15}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 0.33, y: 0.33}
+    newSize: {x: 0.33, y: 0.33}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.33, y: 0.33}
   m_EdgeRadius: 0
---- !u!50 &8139992207396022576
+--- !u!114 &4882793194262094371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657013882821303736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edcbc6c9476d4adf98ea71103e983a19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Projectile
+  lifeTime: 2
+  speed: 2
+  playerDamage: 1
+  isBoomerang: 1
+  boomerangReturnDelay: 1
+  boomerangReturnSpeed: 12
+  rotateWhileMoving: 0
+  rotationSpeed: 360
+  isTrackingProjectile: 0
+  trackingSpeed: 1
+  trackingTurnSpeed: 720
+  isBeamProjectile: 0
+  beamStopLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  isStaticProjectile: 0
+  staticTravelSpeed: 6
+  staticArrivalThreshold: 0.2
+  staticHoldDuration: 2
+--- !u!50 &3772087725032564089
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
+  m_GameObject: {fileID: 1657013882821303736}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.001
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0.005
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -244,15 +197,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &7544419418564987596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7857972497118599685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2345b0d3da854097b2344a4d8b7f7ec5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OutOfBounds

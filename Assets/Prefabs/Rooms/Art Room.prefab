@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b54dbf7f2c253de4da5049ca76063b2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
+  bossHealthBarPrefab: {fileID: 3302951824271027190, guid: a28ca1ce03927a9489223c3ad609253a, type: 3}
   interiorSize: {x: 14, y: 10}
   gridPos: {x: 0, y: 0}
   roomType: 0

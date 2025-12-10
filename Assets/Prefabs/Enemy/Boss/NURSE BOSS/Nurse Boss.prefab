@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8526121753282760371}
   - component: {fileID: 5687978464464189493}
-  - component: {fileID: 1779949973935370593}
   - component: {fileID: 3039716005129391353}
   - component: {fileID: 8809092711150968885}
   - component: {fileID: 2500281116465832326}
+  - component: {fileID: 556663136697675355}
   m_Layer: 0
-  m_Name: CS_Ranged_Enemy
+  m_Name: Nurse Boss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1}
-  m_LocalScale: {x: 2, y: 2, z: 0.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -82,8 +82,8 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 100
-  m_Sprite: {fileID: 2899022054932715812, guid: 96b642f271ff09e47b6d11001eb8b5ba, type: 3}
+  m_SortingOrder: 99
+  m_Sprite: {fileID: 21300000, guid: d9c7e21c03bb8364eb7c2c16b46c21c9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -94,85 +94,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1779949973935370593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3520070930834900833}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  spawnAttackDelay: 1.5
-  health: 10
-  maxHealth: 5
-  projectiles:
-  - {fileID: -1438696601868216135, guid: cd7e7d22263141240b88052d99f56f95, type: 3}
-  - {fileID: 4642211910491477642, guid: 6477c9164e50d1c4896dafe98a1333d5, type: 3}
-  opponentTag: Player
-  type: 1
-  moveSpeed: 0.75
-  shootForce: 3
-  reloadTime: 0.75
-  friction: 0.15
-  canAttackWhileMoving: 0
-  minMovementThreshold: 0.1
-  allowShooting: 1
-  enableBurstFire: 0
-  burstCount: 3
-  burstDelay: 0.2
-  longReloadTime: 2
-  enableContactDamage: 1
-  contactDamage: 1
-  contactDamageCooldown: 1
-  dropsGold: 1
-  goldDropChance: 0.469
-  minGoldDrop: 1
-  maxGoldDrop: 7
-  enableChargeAttack: 0
-  chargeUpTime: 2
-  chargeSpeed: 8
-  chargeDuration: 1.5
-  chargeAttackCooldown: 5
-  chargeAttackDamage: 2
-  chargeAttackRange: 10
-  rangedDistance: 3
-  enableMovement: 1
-  enableChasing: 1
-  enableRoaming: 1
-  wallLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  requireLineOfSight: 1
-  enableWallAvoidance: 1
-  wallDetectionDistance: 1.5
-  stuckThreshold: 0.1
-  stuckTime: 0.5
-  enableStrafing: 1
-  strafeDistance: 5
-  strafeSpeedMultiplier: 0.85
-  strafeSwitchInterval: 1.5
-  enableSeparation: 1
-  separationRadius: 1.5
-  separationForce: 2.5
-  enablePredictiveAim: 1
-  predictiveLeadTime: 0.25
-  enableRetreat: 1
-  lowHealthRetreatThreshold: 0.25
-  retreatDistance: 6
-  retreatSpeedMultiplier: 1.2
-  enableLocalPathfinding: 1
-  pathSamples: 7
-  pathSampleAngle: 15
-  pathSampleDistance: 2
-  pathRepathInterval: 0.25
-  powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
-  chaseDist: 10
-  roamDist: 10
-  shootDist: 10
 --- !u!50 &3039716005129391353
 Rigidbody2D:
   serializedVersion: 5
@@ -230,7 +151,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -238,13 +159,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.15, y: 0.15}
+    oldSize: {x: 0.8, y: 0.8}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.75, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &2500281116465832326
 MonoBehaviour:
@@ -258,3 +179,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2345b0d3da854097b2344a4d8b7f7ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OutOfBounds
+--- !u!114 &556663136697675355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520070930834900833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd2692b40d11aaf418d7136aa819a65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DrPepperBoss
+  maxHealth: 75
+  currentHealth: 0
+  opponentTag: Player
+  isStatic: 1
+  enableContactDamage: 1
+  contactDamage: 2
+  contactDamageCooldown: 1
+  dropsGold: 1
+  goldDropChance: 1
+  minGoldDrop: 50
+  maxGoldDrop: 100
+  attackCooldown: 2
+  attackRange: 15
+  showAttackTelegraph: 1
+  burstfireTelegraphDuration: 1
+  minionTelegraphDuration: 1.5
+  burstfireTelegraphColor: {r: 1, g: 0, b: 0, a: 1}
+  minionTelegraphColor: {r: 0, g: 1, b: 0, a: 1}
+  burstfireProjectilePrefabs:
+  - {fileID: 2127840061553230285, guid: efe63a70af9cfaa4abc26091ac67404f, type: 3}
+  - {fileID: 2127840061553230285, guid: 63a9410ca89523e4daa166f6bfbb66cc, type: 3}
+  burstfireProjectileChances:
+  - 0.15
+  - 0.85
+  minBurstfireProjectileCount: 3
+  maxBurstfireProjectileCount: 5
+  burstfireProjectileDelay: 1
+  burstfireProjectileSpeed: 4
+  burstfireAttackCooldown: 5
+  phase1MinionPrefabs:
+  - {fileID: 122719141970647196, guid: df97c0fae91f61d41a9a28d4008a1220, type: 3}
+  phase2MinionPrefabs:
+  - {fileID: 122719141970647196, guid: df97c0fae91f61d41a9a28d4008a1220, type: 3}
+  - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
+  phase3MinionPrefabs:
+  - {fileID: 122719141970647196, guid: 09d69b2bb14b3474a8192fb9ad2c7062, type: 3}
+  minionsPerSpawn: 3
+  minionSpawnRadius: 0
+  maxMinionsAlive: 4
+  minionSpawnCooldown: 10
+  phase2HealthThreshold: 0.66
+  phase3HealthThreshold: 0.33
+  phase2CooldownMultiplier: 0.8
+  phase3CooldownMultiplier: 0.6
+  phase2SpeedMultiplier: 1.2
+  phase3SpeedMultiplier: 1.5
+  enableBurstfireAttack: 1
+  enableMinionSpawnAttack: 1
+  spawnDelay: 4

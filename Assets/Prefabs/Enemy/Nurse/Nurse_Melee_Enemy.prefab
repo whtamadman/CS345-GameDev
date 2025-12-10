@@ -106,7 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  spawnAttackDelay: 1.5
   health: 10
+  maxHealth: 5
   projectiles:
   - {fileID: -7086934226340295845, guid: 5e93577c579834c58b1b3169d021379e, type: 3}
   opponentTag: Player
@@ -148,7 +150,29 @@ MonoBehaviour:
   wallDetectionDistance: 1.5
   stuckThreshold: 0.1
   stuckTime: 0.5
+  enableStrafing: 1
+  strafeDistance: 5
+  strafeSpeedMultiplier: 0.85
+  strafeSwitchInterval: 1.5
+  enableSeparation: 1
+  separationRadius: 1.5
+  separationForce: 2.5
+  enablePredictiveAim: 1
+  predictiveLeadTime: 0.25
+  enableRetreat: 1
+  lowHealthRetreatThreshold: 0.25
+  retreatDistance: 6
+  retreatSpeedMultiplier: 1.2
+  enableLocalPathfinding: 1
+  pathSamples: 7
+  pathSampleAngle: 15
+  pathSampleDistance: 2
+  pathRepathInterval: 0.25
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
+  foodMisc: 0.06
+  foodHealth: 0.17
+  foodMelee: 0.09
+  foodRange: 0.09
   chaseDist: 2
   roamDist: 5
   shootDist: 1
@@ -209,7 +233,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

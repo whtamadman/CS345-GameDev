@@ -3,8 +3,11 @@ using Random = UnityEngine.Random;
 using System.Collections;
 using System.Linq;
 
-public class Enemy : MonoBehaviour
-{
+public class Enemy : MonoBehaviour  {
+    [Header("Spawn Delay")]
+    [SerializeField] protected float spawnAttackDelay = 1.5f; // Delay after spawn before attacking
+    protected float spawnTime = 0f;
+
     protected Rigidbody2D rigidBody;
     protected SpriteRenderer spriteRenderer;
     public int health;
@@ -140,8 +143,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float chaseDist, roamDist, shootDist;
     State currentState;
 
-    void Start()
-    {
+    void Start(){
+        spawnTime = Time.time;
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         outOfBounds = GetComponent<OutOfBounds>();
@@ -231,10 +234,17 @@ public class Enemy : MonoBehaviour
     {
         var player = GameObject.FindWithTag("Player");
         if (player == null) return; // No player found, can't target
-        
+
+        // Prevent attacking for a delay after spawn
+        if (Time.time - spawnTime < spawnAttackDelay)
+        {
+            // Still in spawn delay, skip attack logic
+            return;
+        }
+
         // Use simple distance calculation for room-based gameplay
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        
+
         if (type == EnemyType.Ranged && distanceToPlayer <= shootDist)
         {
             // Check line of sight before shooting
@@ -249,9 +259,9 @@ public class Enemy : MonoBehaviour
             }
             // If no line of sight, continue with normal state behavior below
         }
-        
+
         bool hasLineOfSight = HasLineOfSight(player.transform);
-        
+
         // Static enemies don't change states, they only shoot
         if (type == EnemyType.Static)
         {
@@ -787,10 +797,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
+    private Coroutine flashCoroutine;
     public void TakeDamage(int damage)
     {
         health -= damage;
-        
+
         // Play hit sound
         if (AudioManager.Instance != null)
         {
@@ -803,11 +815,33 @@ public class Enemy : MonoBehaviour
                 AudioManager.Instance.PlayEnemyHit();
             }
         }
-        
+
         if (health <= 0)
         {
             Die();
+            return;
         }
+
+        if (spriteRenderer != null)
+        {
+            // Stop any existing flash coroutine before starting a new one
+            if (flashCoroutine != null)
+            {
+                StopCoroutine(flashCoroutine);
+            }
+            flashCoroutine = StartCoroutine(FlashColor(Color.red, 0.1f));
+        }
+    }
+
+    IEnumerator FlashColor(Color color, float duration)
+    {
+        if (spriteRenderer == null) yield break;
+
+        Color original = originalColor;
+        spriteRenderer.color = color;
+        yield return new WaitForSeconds(duration);
+        spriteRenderer.color = original;
+        flashCoroutine = null;
     }
 
     private void SpawnFruit() {

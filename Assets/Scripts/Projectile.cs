@@ -7,7 +7,7 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float lifeTime = 2f;
     [SerializeField] public float speed = 10f;
-        [SerializeField] private int playerDamage = 1; // Custom damage towards player (default 1)
+        [SerializeField] public int playerDamage = 1; // Custom damage towards player (default 1)
     [SerializeField] private bool isBoomerang = false;
     [SerializeField] private float boomerangReturnDelay = 0.5f; // Time before returning
     [SerializeField] private float boomerangReturnSpeed = 12f; // Speed when returning
@@ -273,11 +273,17 @@ public class Projectile : MonoBehaviour
         Projectile otherProjectile = other.GetComponent<Projectile>();
         if (otherProjectile != null)
         {
-            // Special case: Both are boomerangs - destroy both
+            // Special case: Both are boomerangs - only destroy both if from different teams
             if (isBoomerang && otherProjectile.isBoomerang)
             {
-                Debug.Log("Two boomerangs collided - destroying both");
-                
+                string thisTag = shooter != null ? shooter.tag : string.Empty;
+                string otherTag = otherProjectile.shooter != null ? otherProjectile.shooter.tag : string.Empty;
+                if (!string.IsNullOrEmpty(thisTag) && !string.IsNullOrEmpty(otherTag) && thisTag == otherTag)
+                {
+                    // Same team, ignore collision
+                    return;
+                }
+                Debug.Log("Two boomerangs from different teams collided - destroying both");
                 // Clean up both boomerang trackings
                 if (otherProjectile.shooter != null)
                 {
@@ -293,24 +299,41 @@ public class Projectile : MonoBehaviour
                         activeBoomerangs.Remove(shooter);
                     }
                 }
-                
                 Destroy(other.gameObject);
                 Destroy(gameObject);
                 return;
             }
             
-            // This is a boomerang hitting a regular projectile - destroy only the regular projectile
+            // This is a boomerang hitting a regular projectile - only destroy if from different teams
             if (isBoomerang && !otherProjectile.isBoomerang)
             {
-                Debug.Log("Boomerang destroyed regular projectile");
+                // Only destroy if both shooters exist and tags are different
+                if (shooter != null && otherProjectile.shooter != null)
+                {
+                    if (shooter.tag == otherProjectile.shooter.tag)
+                    {
+                        // Same team, ignore collision
+                        return;
+                    }
+                }
+                Debug.Log("Boomerang destroyed regular projectile (different teams or null shooter)");
                 Destroy(other.gameObject);
                 return; // Boomerang continues
             }
-            
-            // Regular projectile hitting a boomerang - destroy only the regular projectile
+
+            // Regular projectile hitting a boomerang - only destroy if from different teams
             if (!isBoomerang && otherProjectile.isBoomerang)
             {
-                Debug.Log("Regular projectile destroyed by boomerang");
+                // Only destroy if both shooters exist and tags are different
+                if (shooter != null && otherProjectile.shooter != null)
+                {
+                    if (shooter.tag == otherProjectile.shooter.tag)
+                    {
+                        // Same team, ignore collision
+                        return;
+                    }
+                }
+                Debug.Log("Regular projectile destroyed by boomerang (different teams or null shooter)");
                 Destroy(gameObject);
                 return; // Boomerang continues
             }
@@ -361,25 +384,55 @@ public class Projectile : MonoBehaviour
             }
         }
 
-        // If boomerang mode, don't destroy on target hit - let it return
+        // If boomerang mode, don't destroy or damage objects with the same tag as the shooter
         if (isBoomerang && !isReturning)
         {
+            // Prevent boomerang from damaging/destroying objects with the same tag as the shooter
+            if (shooter != null && other.tag == shooter.tag)
+            {
+                return;
+            }
             if (target != null && other.tag == target.tag)
             {
-                    other.GetComponent<Player>()?.takeDamage(playerDamage);
+                other.GetComponent<Player>()?.takeDamage(playerDamage);
+            }
+            // Also, always damage player if hit, even if tag doesn't match
+            var playerComp = other.GetComponent<Player>();
+            if (playerComp != null)
+            {
+                playerComp.takeDamage(playerDamage);
             }
             return;
         }
 
         // Normal projectile behavior - only hit the target tag
+        bool didDamage = false;
         if (target != null && other.tag == target.tag)
         {
-            other.GetComponent<Player>()?.takeDamage(playerDamage);
-            Debug.Log("Projectile hit player for " + playerDamage + " damage.");
+            var playerComp = other.GetComponent<Player>();
+            if (playerComp != null)
+            {
+                playerComp.takeDamage(playerDamage);
+                Debug.Log("Projectile hit player for " + playerDamage + " damage.");
+                didDamage = true;
+            }
             Destroy(gameObject);
         }
 
-        if (other.tag == "Enemy" && shooter.tag == "Player") {
+        // Always damage player if hit, even if tag doesn't match
+        if (!didDamage)
+        {
+            var playerComp = other.GetComponent<Player>();
+            if (playerComp != null)
+            {
+                playerComp.takeDamage(playerDamage);
+                Debug.Log("Projectile hit player for " + playerDamage + " damage (fallback).");
+                Destroy(gameObject);
+                return;
+            }
+        }
+
+        if (other.tag == "Enemy" && shooter != null && shooter.tag == "Player") {
             other.GetComponent<Enemy>()?.TakeDamage((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier);
             Debug.Log("Projectile hit enemy for " + ((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier) + " damage.");
             Destroy(gameObject);

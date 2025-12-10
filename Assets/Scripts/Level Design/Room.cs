@@ -99,6 +99,7 @@ public class Room : MonoBehaviour
     private GameObject currentBoss;
     private Enemy currentBossEnemy;
     private VirusBoss currentVirusBoss;
+    private DrPepperBoss currentDrPepperBoss;
     
     // Wave display
     private TMPro.TextMeshProUGUI waveDisplayText;
@@ -299,12 +300,15 @@ public class Room : MonoBehaviour
     // Update wave display text with fade animation
     private void UpdateWaveDisplay()
     {
+        Debug.Log($"[Room] UpdateWaveDisplay called in room '{gameObject.name}' | waveDisplayText null? {waveDisplayText == null} | actualNumberOfWaves: {actualNumberOfWaves}");
         if (waveDisplayText != null && actualNumberOfWaves > 0)
         {
+            Debug.Log($"[Room] Starting FadeWaveDisplay for Wave {currentWave}/{actualNumberOfWaves} in room '{gameObject.name}'");
             StartCoroutine(FadeWaveDisplay($"Wave {currentWave}/{actualNumberOfWaves}"));
         }
         else if (waveDisplayText != null)
         {
+            Debug.Log($"[Room] Clearing waveDisplayText in room '{gameObject.name}'");
             waveDisplayText.text = "";
             waveDisplayText.color = new Color(waveDisplayText.color.r, waveDisplayText.color.g, waveDisplayText.color.b, 0f);
         }
@@ -2117,6 +2121,7 @@ public class Room : MonoBehaviour
         
         currentBossEnemy = currentBoss.GetComponent<Enemy>();
         currentVirusBoss = currentBoss.GetComponent<VirusBoss>();
+        currentDrPepperBoss = currentBoss.GetComponent<DrPepperBoss>();
         
         // Refresh enemy tracking to include the new boss
         enemiesInRoom.Clear();
@@ -2143,9 +2148,15 @@ public class Room : MonoBehaviour
             currentVirusBoss.OnBossDeath += OnVirusBossDefeated;
             Debug.Log($"Boss Room {gameObject.name}: Subscribed to VirusBoss.OnBossDeath for {bossToSpawn.name}");
         }
+        else if (currentDrPepperBoss != null)
+        {
+            // Subscribe to DrPepperBoss death event
+            currentDrPepperBoss.OnBossDeath += OnDrPepperBossDefeated;
+            Debug.Log($"Boss Room {gameObject.name}: Subscribed to DrPepperBoss.OnBossDeath for {bossToSpawn.name}");
+        }
         else
         {
-            Debug.LogWarning($"Boss Room {gameObject.name}: Boss prefab {bossToSpawn.name} doesn't have Enemy or VirusBoss component!");
+            Debug.LogWarning($"Boss Room {gameObject.name}: Boss prefab {bossToSpawn.name} doesn't have Enemy, VirusBoss, or DrPepperBoss component!");
         }
         
         bossSpawned = true;
@@ -2215,6 +2226,28 @@ public class Room : MonoBehaviour
             currentVirusBoss.OnBossDeath -= OnVirusBossDefeated;
         }
         
+        // Handle room clearing
+        OnBossRoomCleared();
+    }
+
+    private void OnDrPepperBossDefeated(DrPepperBoss defeatedBoss)
+    {
+        if (defeatedBoss != currentDrPepperBoss) return; // Not our boss
+
+        bossDefeated = true;
+        isCleared = true;
+
+        Debug.Log($"Boss Room {gameObject.name}: DrPepperBoss defeated! Room cleared.");
+
+        // Spawn boss defeat prefab
+        SpawnBossDefeatPrefab();
+
+        // Unsubscribe from death event
+        if (currentDrPepperBoss != null)
+        {
+            currentDrPepperBoss.OnBossDeath -= OnDrPepperBossDefeated;
+        }
+
         // Handle room clearing
         OnBossRoomCleared();
     }
@@ -2431,6 +2464,10 @@ public class Room : MonoBehaviour
             if (currentVirusBoss != null)
             {
                 currentVirusBoss.OnBossDeath -= OnVirusBossDefeated;
+            }
+            if (currentDrPepperBoss != null)
+            {
+                currentDrPepperBoss.OnBossDeath -= OnDrPepperBossDefeated;
             }
         }
         

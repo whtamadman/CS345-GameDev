@@ -106,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  spawnAttackDelay: 1.5
   health: 10
   projectiles:
   - {fileID: 4882793194262094371, guid: 92fa1df44d5ba6c4c89a022c89a7ba4f, type: 3}
@@ -121,9 +122,9 @@ MonoBehaviour:
   minMovementThreshold: 0.1
   allowShooting: 1
   enableBurstFire: 1
-  burstCount: 3
-  burstDelay: 0.2
-  longReloadTime: 2
+  burstCount: 2
+  burstDelay: 0.5
+  longReloadTime: 4
   enableContactDamage: 1
   contactDamage: 1
   contactDamageCooldown: 1
@@ -152,7 +153,7 @@ MonoBehaviour:
   stuckTime: 0.5
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
   chaseDist: 2
-  roamDist: 5
+  roamDist: 10
   shootDist: 5
 --- !u!50 &3039716005129391353
 Rigidbody2D:

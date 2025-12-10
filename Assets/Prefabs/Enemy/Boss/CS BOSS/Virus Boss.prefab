@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90913600147a3da4f82a69b5aea38a46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirusBossIndependent
-  maxHealth: 50
+  maxHealth: 100
   currentHealth: 0
   opponentTag: Player
   isStatic: 1
