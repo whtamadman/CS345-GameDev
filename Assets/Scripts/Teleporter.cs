@@ -109,7 +109,6 @@ public class Teleporter : MonoBehaviour
         // Handle level progression if enabled (this will reposition player automatically)
         if (advanceToNextLevel)
         {
-            Debug.Log("Teleporter: Starting level progression...");
             HandleLevelProgression();
             
             // Wait for level progression to complete
@@ -117,7 +116,6 @@ public class Teleporter : MonoBehaviour
             
             // Skip normal teleportation when advancing levels
             isTeleporting = false;
-            Debug.Log("Teleporter: Level progression completed");
             yield break;
         }
         
@@ -127,7 +125,6 @@ public class Teleporter : MonoBehaviour
         // Handle dungeon clearing if enabled (for regular teleports)
         if (clearCurrentDungeon)
         {
-            Debug.Log("Teleporter: Clearing current dungeon before teleportation...");
             DungeonGenerator dungeonGen = FindFirstObjectByType<DungeonGenerator>();
             if (dungeonGen != null)
             {
@@ -135,7 +132,6 @@ public class Teleporter : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Teleporter: No DungeonGenerator found for dungeon clearing!");
             }
         }
         

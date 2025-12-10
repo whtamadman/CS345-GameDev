@@ -69,7 +69,7 @@ public class FloorManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("DungeonGenerator not found!");
+            // ...removed debug log...
         }
     }
     
@@ -77,7 +77,7 @@ public class FloorManager : MonoBehaviour
     {
         if (currentFloor >= maxFloors)
         {
-            Debug.Log("Maximum floor reached! Game complete!");
+            // ...removed debug log...
             OnGameComplete();
             return;
         }
@@ -88,12 +88,12 @@ public class FloorManager : MonoBehaviour
         // Generate new floor
         GenerateNewFloor(currentFloor);
         
-        Debug.Log($"Advanced to floor {currentFloor}");
+        // ...removed debug log...
     }
     
     public void RecreateLevel()
     {
-        Debug.Log("Recreating level at origin (0,0)...");
+        // ...removed debug log...
         
         // Move dungeon generator to origin
         if (dungeonGenerator != null)
@@ -110,7 +110,7 @@ public class FloorManager : MonoBehaviour
     {
         if (player == null || dungeonGenerator == null)
         {
-            Debug.LogError("Player or DungeonGenerator not found!");
+            // ...removed debug log...
             return;
         }
         
@@ -121,7 +121,7 @@ public class FloorManager : MonoBehaviour
             // GetCenter() appears to be calculating an incorrect offset
             Vector3 startPosition = startRoom.transform.position;
             
-            Debug.Log($"Using room transform position: {startPosition}");
+            // ...removed debug log...
             
             player.position = startPosition;
             
@@ -139,10 +139,7 @@ public class FloorManager : MonoBehaviour
                 mainCamera.transform.position = cameraPosition;
             }
         }
-        else
-        {
-            Debug.LogError("Start room not found!");
-        }
+
     }
     
     private void SubscribeToRoomEvents()
@@ -193,12 +190,12 @@ public class FloorManager : MonoBehaviour
         // Update camera to follow the room (use transform position instead of GetCenter)
         if (cameraController != null)
         {
-            Debug.Log($"   Updating camera to room position: {room.transform.position}");
+            // ...removed debug log...
             cameraController.SetRoomCenter(room.transform.position);
         }
         else
         {
-            Debug.LogWarning($"   No camera controller found! Using fallback camera movement.");
+            // ...removed debug log...
             // Fallback: Move main camera directly if no camera controller
             Camera mainCamera = Camera.main;
             if (mainCamera != null)
@@ -206,7 +203,7 @@ public class FloorManager : MonoBehaviour
                 Vector3 roomPosition = room.transform.position;
                 Vector3 cameraPosition = new Vector3(roomPosition.x, roomPosition.y, mainCamera.transform.position.z);
                 mainCamera.transform.position = cameraPosition;
-                Debug.Log($"   Camera moved directly to: {cameraPosition}");
+                // ...removed debug log...
             }
         }
         

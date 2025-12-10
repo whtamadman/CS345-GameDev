@@ -300,15 +300,15 @@ public class Room : MonoBehaviour
     // Update wave display text with fade animation
     private void UpdateWaveDisplay()
     {
-        Debug.Log($"[Room] UpdateWaveDisplay called in room '{gameObject.name}' | waveDisplayText null? {waveDisplayText == null} | actualNumberOfWaves: {actualNumberOfWaves}");
+        // ...removed debug log...
         if (waveDisplayText != null && actualNumberOfWaves > 0)
         {
-            Debug.Log($"[Room] Starting FadeWaveDisplay for Wave {currentWave}/{actualNumberOfWaves} in room '{gameObject.name}'");
+            // ...removed debug log...
             StartCoroutine(FadeWaveDisplay($"Wave {currentWave}/{actualNumberOfWaves}"));
         }
         else if (waveDisplayText != null)
         {
-            Debug.Log($"[Room] Clearing waveDisplayText in room '{gameObject.name}'");
+            // ...removed debug log...
             waveDisplayText.text = "";
             waveDisplayText.color = new Color(waveDisplayText.color.r, waveDisplayText.color.g, waveDisplayText.color.b, 0f);
         }
@@ -523,13 +523,13 @@ public class Room : MonoBehaviour
         // If auto-find failed, show helpful message
         if (grid == null || wallTilemap == null || floorTilemap == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: Could not auto-find all global tilemaps. Check names: Grid='{globalGridName}', Wall='{wallTilemapName}', Floor='{floorTilemapName}', SpawnIndicator='{spawnIndicatorTilemapName}'");
+            // ...removed debug log...
         }
         
         // Spawn indicator tilemap is optional, so just log info if missing
         if (spawnIndicatorTilemap == null)
         {
-            Debug.Log($"Room {gameObject.name}: Spawn indicator tilemap not found ('{spawnIndicatorTilemapName}') - spawn indicators will be disabled.");
+            // ...removed debug log...
         }
     }
     
@@ -538,26 +538,26 @@ public class Room : MonoBehaviour
         // Validate externally assigned components - do not create any
         if (grid == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: No Grid assigned! Please assign the global Grid component.");
+            // ...removed debug log...
             return;
         }
         
         if (wallTilemap == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: No Wall Tilemap assigned! Please assign the global wall tilemap.");
+            // ...removed debug log...
             return;
         }
         
         if (floorTilemap == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: No Floor Tilemap assigned! Please assign the global floor tilemap.");
+            // ...removed debug log...
             return;
         }
         
         // Spawn indicator tilemap is optional
         if (spawnIndicatorTilemap == null)
         {
-            Debug.Log($"Room {gameObject.name}: No Spawn Indicator Tilemap assigned - spawn indicators will be disabled.");
+            // ...removed debug log...
         }
         
         // Global tilemap components validated successfully
@@ -599,7 +599,7 @@ public class Room : MonoBehaviour
         DungeonGenerator dungeonGenerator = FindObjectOfType<DungeonGenerator>();
         if (dungeonGenerator == null)
         {
-            Debug.LogWarning($"Room {gameObject.name}: Could not find DungeonGenerator to check for boss rooms");
+            // ...removed debug log...
             return;
         }
         

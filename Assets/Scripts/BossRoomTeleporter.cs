@@ -60,13 +60,13 @@ public class BossRoomTeleporter : MonoBehaviour
         
         if (room == null)
         {
-            Debug.LogError($"BossRoomTeleporter: No Room component found on {gameObject.name}!");
+            // ...removed debug log...
             return;
         }
         
         if (room.roomType != RoomType.Boss)
         {
-            Debug.LogWarning($"BossRoomTeleporter: Room {gameObject.name} is not a boss room!");
+            // ...removed debug log...
             return;
         }
         
@@ -90,7 +90,7 @@ public class BossRoomTeleporter : MonoBehaviour
     {
         if (clearedRoom == room && spawnOnBossDefeat && !teleporterSpawned)
         {
-            Debug.Log($"BossRoomTeleporter: Boss defeated in {room.name}, spawning teleporter");
+            // ...removed debug log...
             SpawnTeleporter();
         }
     }
@@ -102,13 +102,13 @@ public class BossRoomTeleporter : MonoBehaviour
     {
         if (teleporterPrefab == null)
         {
-            Debug.LogError("BossRoomTeleporter: No teleporter prefab assigned!");
+            // ...removed debug log...
             return;
         }
         
         if (teleporterSpawned)
         {
-            Debug.LogWarning("BossRoomTeleporter: Teleporter already spawned!");
+            // ...removed debug log...
             return;
         }
         
@@ -172,11 +172,11 @@ public class BossRoomTeleporter : MonoBehaviour
                 teleporter.hudCanvas = hudCanvas;
             }
             
-            Debug.Log($"BossRoomTeleporter: Spawned {(advanceToNextLevel ? "level progression" : "standard")} teleporter at {spawnPosition}");
+            // ...removed debug log...
         }
         else
         {
-            Debug.LogError("BossRoomTeleporter: Teleporter prefab does not have Teleporter component!");
+            // ...removed debug log...
         }
         
         teleporterSpawned = true;
@@ -204,7 +204,7 @@ public class BossRoomTeleporter : MonoBehaviour
         if (existingTeleporter != null)
         {
             DestroyImmediate(existingTeleporter.gameObject);
-            Debug.Log("BossRoomTeleporter: Removed existing teleporter");
+            // ...removed debug log...
         }
     }
     

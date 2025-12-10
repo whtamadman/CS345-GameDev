@@ -39,7 +39,7 @@ public class CameraManager : MonoBehaviour
         
         if (cameraComponent == null)
         {
-            Debug.LogError("CameraManager: No Camera component found!");
+            // ...removed debug log...
             return;
         }
         
@@ -52,7 +52,7 @@ public class CameraManager : MonoBehaviour
         // Set initial mode
         ApplyCameraMode(currentMode, false);
         
-        Debug.Log($"CameraManager: Initialized in {currentMode} mode");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -62,7 +62,7 @@ public class CameraManager : MonoBehaviour
     {
         if (currentMode == CameraMode.RoomFollow) return;
         
-        Debug.Log("CameraManager: Switching to Room Follow mode");
+        // ...removed debug log...
         currentMode = CameraMode.RoomFollow;
         ApplyCameraMode(CameraMode.RoomFollow, true);
     }
@@ -74,7 +74,7 @@ public class CameraManager : MonoBehaviour
     {
         if (currentMode == CameraMode.Fixed) return;
         
-        Debug.Log("CameraManager: Switching to Fixed Position mode");
+        // ...removed debug log...
         currentMode = CameraMode.Fixed;
         ApplyCameraMode(CameraMode.Fixed, true);
     }
@@ -104,7 +104,7 @@ public class CameraManager : MonoBehaviour
         
         if (currentMode == CameraMode.Fixed) return;
         
-        Debug.Log("CameraManager: Switching to Fixed Position mode" + (snapImmediately ? " (immediate snap)" : ""));
+        // ...removed debug log...
         currentMode = CameraMode.Fixed;
         ApplyCameraMode(CameraMode.Fixed, !snapImmediately);
     }
@@ -127,7 +127,7 @@ public class CameraManager : MonoBehaviour
                     roomFollowCamera.enabled = true;
                 }
                 
-                Debug.Log("CameraManager: Room follow mode activated");
+                // ...removed debug log...
                 break;
                 
             case CameraMode.Fixed:
@@ -148,7 +148,7 @@ public class CameraManager : MonoBehaviour
                     transform.eulerAngles = fixedRotation;
                 }
                 
-                Debug.Log($"CameraManager: Fixed position mode activated at {fixedPosition}");
+                // ...removed debug log...
                 break;
         }
     }
@@ -245,7 +245,7 @@ public class CameraManager : MonoBehaviour
     {
         fixedPosition = transform.position;
         fixedRotation = transform.eulerAngles;
-        Debug.Log($"CameraManager: Set current position as fixed: {fixedPosition}");
+        // ...removed debug log...
     }
     
     void OnDrawGizmosSelected()
