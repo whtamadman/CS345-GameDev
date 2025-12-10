@@ -59,11 +59,11 @@ public class ItemRoom : Room
     
     private void SpawnItem()
     {
-        Debug.Log($"ItemRoom {gameObject.name}: SpawnItem called - itemSpawned={itemSpawned}, spawnOnRoomClear={spawnOnRoomClear}");
+        // ...removed debug log...
         
         if (itemSpawned)
         {
-            Debug.LogWarning($"ItemRoom {gameObject.name}: Item already spawned in this room! Existing item: {(currentItem != null ? currentItem.name : "null")}");
+            // ...removed debug log...
             return;
         }
         

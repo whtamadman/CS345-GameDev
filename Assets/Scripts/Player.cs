@@ -195,13 +195,11 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            Debug.Log($"Player damage blocked by invincibility at position {transform.position}");
         }
     }
 
     protected IEnumerator iFrames(float time) {
         invincibility = true;
-        Debug.Log("Invince True");
         
         // Disable collisions with enemies and projectiles during invisibility
         if (ignoreCollisionsDuringInvis)
@@ -224,7 +222,6 @@ public class Player : MonoBehaviour {
             SetPlayerPhysicsIgnore(false);
         }
         
-        Debug.Log("Invince False");
         invincibility = false;
     }
     
@@ -290,8 +287,6 @@ public class Player : MonoBehaviour {
                 }
             }
             
-            Debug.Log($"Player: {(ignore ? "Disabled" : "Enabled")} collisions with {enemies.Length} enemies");
-            
             // Ignore collision with all projectile colliders
             foreach (Projectile projectile in projectiles)
             {
@@ -306,7 +301,6 @@ public class Player : MonoBehaviour {
             }
         }
         
-        Debug.Log($"Player collision ignoring set to: {ignore}");
     }
     
     /// <summary>
@@ -318,7 +312,6 @@ public class Player : MonoBehaviour {
         if (amount > 0)
         {
             coins += Mathf.RoundToInt(amount * coinMultiplier);
-            Debug.Log($"Player received {amount} coins! Total: {coins}");
         }
     }
     
@@ -332,12 +325,10 @@ public class Player : MonoBehaviour {
         if (amount > 0 && coins >= amount)
         {
             coins -= amount;
-            Debug.Log($"Player spent {amount} coins! Remaining: {coins}");
             return true;
         }
         else
         {
-            Debug.Log($"Not enough coins! Need {amount}, have {coins}");
             return false;
         }
     }

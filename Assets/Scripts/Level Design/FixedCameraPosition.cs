@@ -43,7 +43,7 @@ public class FixedCameraPosition : MonoBehaviour
         
         if (cameraComponent == null)
         {
-            Debug.LogError("FixedCameraPosition: No Camera component found!");
+            // ...removed debug log...
             return;
         }
         
@@ -56,7 +56,7 @@ public class FixedCameraPosition : MonoBehaviour
             ApplyFixedPosition();
         }
         
-        Debug.Log($"FixedCameraPosition: Camera set to fixed position {fixedPosition} with rotation {fixedRotation}");
+        // ...removed debug log...
     }
     
     void Update()
@@ -95,7 +95,7 @@ public class FixedCameraPosition : MonoBehaviour
             cameraComponent.fieldOfView = cameraSize; // Use cameraSize as FOV for perspective
         }
         
-        Debug.Log($"FixedCameraPosition: Applied fixed position {fixedPosition}");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -146,7 +146,7 @@ public class FixedCameraPosition : MonoBehaviour
     {
         transform.position = initialPosition;
         transform.eulerAngles = initialRotation;
-        Debug.Log("FixedCameraPosition: Reset to initial transform");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -157,7 +157,7 @@ public class FixedCameraPosition : MonoBehaviour
     {
         fixedPosition = transform.position;
         fixedRotation = transform.eulerAngles;
-        Debug.Log($"FixedCameraPosition: Set current transform as fixed - Position: {fixedPosition}, Rotation: {fixedRotation}");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -185,11 +185,11 @@ public class FixedCameraPosition : MonoBehaviour
             Vector3 dungeonCenter = new Vector3(centerX, centerY, fixedPosition.z);
             SetFixedPosition(dungeonCenter);
             
-            Debug.Log($"FixedCameraPosition: Centered on dungeon at {dungeonCenter}");
+            // ...removed debug log...
         }
         else
         {
-            Debug.LogWarning("FixedCameraPosition: No DungeonGenerator found to center on");
+            // ...removed debug log...
         }
     }
     

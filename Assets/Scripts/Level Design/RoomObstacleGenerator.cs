@@ -92,13 +92,13 @@ public class RoomObstacleGenerator : MonoBehaviour
         
         if (room == null)
         {
-            Debug.LogWarning($"RoomObstacleGenerator on {gameObject.name}: No Room component found, cannot generate obstacles");
+            // ...removed debug log...
             return;
         }
         
         if (!SetupReferences())
         {
-            Debug.LogError($"RoomObstacleGenerator on {gameObject.name}: Failed to setup references");
+            // ...removed debug log...
             return;
         }
         
@@ -107,26 +107,23 @@ public class RoomObstacleGenerator : MonoBehaviour
         // Step 1: Place regular obstacles first
         if (includeObstacles)
         {
-            Debug.Log($"RoomObstacleGenerator: Starting regular obstacle placement...");
+            // ...removed debug log...
             PlaceObstacles();
-            Debug.Log($"RoomObstacleGenerator: ✓ Completed regular obstacle placement");
+            // ...removed debug log...
         }
         else
         {
-            Debug.Log($"RoomObstacleGenerator: Skipping regular obstacles (includeObstacles = false)");
+            // ...removed debug log...
         }
         
         // Step 2: Place breakable blocks in remaining valid spaces (avoiding regular obstacles)
         if (includeBreakableBlocks)
         {
-            Debug.Log($"RoomObstacleGenerator: Starting breakable block placement (avoiding existing obstacles)...");
+            // ...removed debug log...
             PlaceRandomBreakableBlocks();
-            Debug.Log($"RoomObstacleGenerator: ✓ Completed breakable block placement");
+            // ...removed debug log...
         }
-        else
-        {
-            Debug.Log($"RoomObstacleGenerator: Skipping breakable blocks (includeBreakableBlocks = false)");
-        }
+
     }
     
     /// <summary>
@@ -149,7 +146,7 @@ public class RoomObstacleGenerator : MonoBehaviour
     {
         useRandomGeneration = true;
         useFixedLayouts = false;
-        Debug.Log("Switched to random obstacle generation");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -160,7 +157,7 @@ public class RoomObstacleGenerator : MonoBehaviour
     {
         useRandomGeneration = false;
         useFixedLayouts = true;
-        Debug.Log("Switched to fixed layout patterns");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -173,7 +170,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         GameObject existingBreakable = GameObject.Find(breakableTilemapName);
         if (existingBreakable != null)
         {
-            Debug.Log($"Breakable tilemap '{breakableTilemapName}' already exists");
+            // ...removed debug log...
             return;
         }
         
@@ -181,7 +178,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         Grid sceneGrid = FindFirstObjectByType<Grid>();
         if (sceneGrid == null)
         {
-            Debug.LogError("No Grid found in scene. Cannot create breakable tilemap.");
+            // ...removed debug log...
             return;
         }
         
@@ -203,7 +200,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         // Assign reference
         breakableTilemap = tilemap;
         
-        Debug.Log($"Created breakable tilemap '{breakableTilemapName}' with trigger collision");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -218,7 +215,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         
         if (breakableTilemap == null || tileToUse == null)
         {
-            Debug.LogWarning($"RoomObstacleGenerator: Cannot place breakable blocks - missing tilemap ({breakableTilemap == null}) or tile ({tileToUse == null})");
+            // ...removed debug log...
             return;
         }
         
@@ -257,10 +254,10 @@ public class RoomObstacleGenerator : MonoBehaviour
             }
         }
         
-        Debug.Log($"RoomObstacleGenerator on {gameObject.name}: Placed {placedBreakable} breakable blocks out of {breakableCount} attempted. Breakable tilemap: {(breakableTilemap != null ? "Found" : "Missing")}, Breakable tile: {(GetBreakableTileToUse() != null ? "Assigned" : "Missing")}");
+            // ...removed debug log...
         
         // Summary message for easy visibility
-        Debug.Log($"*** BREAKABLE TILES PLACED: {placedBreakable} ***");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -274,7 +271,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         if (collisionTilemap.GetTile(tilePosition) != null) 
         {
             // Optional: uncomment for detailed debugging
-            // Debug.Log($"Position {tilePosition} blocked by collision tile");
+            // $"Position {tilePosition} blocked by collision tile");
             return false;
         }
         
@@ -282,7 +279,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         if (breakableTilemap.GetTile(tilePosition) != null) 
         {
             // Optional: uncomment for detailed debugging  
-            // Debug.Log($"Position {tilePosition} already has breakable block");
+            // $"Position {tilePosition} already has breakable block");
             return false;
         }
         
@@ -299,10 +296,7 @@ public class RoomObstacleGenerator : MonoBehaviour
         // If level-based tiles are disabled, always use fallback
         if (!useLevelBasedTiles)
         {
-            if (fallbackObstacleTile != null)
-            {
-                Debug.Log($"RoomObstacleGenerator: Using fallback obstacle tile: {fallbackObstacleTile.name}");
-            }
+
             return fallbackObstacleTile;
         }
         
@@ -317,7 +311,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             TileBase levelTile = obstaclesTilesByLevel[levelIndex];
             if (levelTile != null)
             {
-                Debug.Log($"RoomObstacleGenerator: Using Level {currentLevel} obstacle tile: {levelTile.name}");
                 return levelTile;
             }
         }
@@ -325,12 +318,10 @@ public class RoomObstacleGenerator : MonoBehaviour
         // Fallback to default tile with better logging
         if (fallbackObstacleTile != null)
         {
-            Debug.Log($"RoomObstacleGenerator: No obstacle tile configured for Level {currentLevel}, using fallback tile: {fallbackObstacleTile.name}");
             return fallbackObstacleTile;
         }
         else
         {
-            Debug.LogError($"RoomObstacleGenerator: No obstacle tile configured for Level {currentLevel} and no fallback tile assigned!");
             return null;
         }
     }
@@ -362,30 +353,13 @@ public class RoomObstacleGenerator : MonoBehaviour
                 TileBase levelTile = breakableTilesByLevel[levelIndex];
                 if (levelTile != null)
                 {
-                    Debug.Log($"RoomObstacleGenerator: Using Level {currentLevel} breakable tile: {levelTile.name}");
                     return levelTile;
                 }
             }
             
-            // Fallback to local tile with better logging
-            if (fallbackBreakableTile != null)
-            {
-                Debug.Log($"RoomObstacleGenerator: No breakable tile configured for Level {currentLevel}, using fallback tile: {fallbackBreakableTile.name}");
-            }
-            else
-            {
-                Debug.LogWarning($"RoomObstacleGenerator: No breakable tile configured for Level {currentLevel} and no fallback tile assigned!");
-            }
+
         }
-        else
-        {
-            // Level-based tiles disabled, use fallback
-            if (fallbackBreakableTile != null)
-            {
-                Debug.Log($"RoomObstacleGenerator: Using fallback breakable tile: {fallbackBreakableTile.name}");
-            }
-        }
-        
+
         // Fall back to local breakable tile
         return fallbackBreakableTile;
     }
@@ -408,12 +382,10 @@ public class RoomObstacleGenerator : MonoBehaviour
             int currentLevelIndex = dungeonGenerator.GetCurrentLevelIndex();
             int levelNumber = currentLevelIndex + 1; // Convert 0-based index to 1-based level number
             
-            Debug.Log($"RoomObstacleGenerator: DungeonGenerator level index: {currentLevelIndex}, Level number: {levelNumber}");
             return levelNumber;
         }
         
         // Default to level 1 if we can't get the current level
-        Debug.LogWarning("RoomObstacleGenerator: Could not determine current level, defaulting to Level 1");
         return 1;
     }
     
@@ -449,22 +421,11 @@ public class RoomObstacleGenerator : MonoBehaviour
     [ContextMenu("Debug Breakable Block Setup")]
     public void DebugBreakableBlockSetup()
     {
-        Debug.Log($"=== Breakable Block Debug ===");
-        Debug.Log($"includeBreakableBlocks: {includeBreakableBlocks}");
-        Debug.Log($"fallbackBreakableTile: {(fallbackBreakableTile != null ? fallbackBreakableTile.name : "NULL")}");
-        Debug.Log($"breakableTilemap: {(breakableTilemap != null ? breakableTilemap.name : "NULL")}");
-        Debug.Log($"breakableTilemapName: {breakableTilemapName}");
-        Debug.Log($"minBreakableBlocks: {minBreakableBlocks}");
-        Debug.Log($"maxBreakableBlocks: {maxBreakableBlocks}");
-        Debug.Log($"breakableBlockChance: {breakableBlockChance}");
-        
         // Try to find the tilemap in scene
         GameObject breakableObj = GameObject.Find(breakableTilemapName);
         if (breakableObj != null)
         {
-            Debug.Log($"Found '{breakableTilemapName}' GameObject in scene");
             Tilemap foundTilemap = breakableObj.GetComponent<Tilemap>();
-            Debug.Log($"Has Tilemap component: {foundTilemap != null}");
         }
         else
         {
@@ -647,7 +608,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             return;
         }
         
-        Debug.Log($"Using fixed layout: {layout.layoutName} with Level {GetCurrentLevel()} tile: {tileToUse.name}");
         
         foreach (Vector2Int relativePos in layout.obstaclePositions)
         {
@@ -703,7 +663,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             }
         }
         
-        Debug.Log($"RoomObstacleGenerator on {gameObject.name}: Placed {placedObstacles} random obstacles");
     }
     
     private bool IsValidObstaclePosition(Vector3 worldPos, int width, int height)
@@ -911,8 +870,6 @@ public class RoomObstacleGenerator : MonoBehaviour
                 layoutPreview = " ### \n#   #\n     \n#   #\n ### "
             }
         };
-        
-        Debug.Log($"Created {fixedLayouts.Length} default room layouts");
     }
     
     /// <summary>
@@ -939,7 +896,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             }
         }
         
-        Debug.Log($"Generated obstacles for {successfulGenerations} rooms out of {generators.Length} generators found");
     }
     
     /// <summary>
@@ -949,13 +905,11 @@ public class RoomObstacleGenerator : MonoBehaviour
     public static void DebugAllGenerators()
     {
         RoomObstacleGenerator[] generators = FindObjectsByType<RoomObstacleGenerator>(FindObjectsSortMode.None);
-        Debug.Log($"=== Found {generators.Length} RoomObstacleGenerator components in scene ===");
         
         for (int i = 0; i < generators.Length; i++)
         {
             RoomObstacleGenerator gen = generators[i];
             Room room = gen.GetComponent<Room>();
-            Debug.Log($"Generator {i+1}: GameObject='{gen.gameObject.name}', HasRoom={room != null}, RoomType={room?.roomType}, Position={gen.transform.position}");
         }
     }
     
@@ -969,7 +923,6 @@ public class RoomObstacleGenerator : MonoBehaviour
         if (breakableMapObj != null)
         {
             breakableTilemap = breakableMapObj.GetComponent<Tilemap>();
-            Debug.Log($"Manually assigned breakable tilemap: {breakableTilemap?.name}");
         }
         else
         {
@@ -984,14 +937,8 @@ public class RoomObstacleGenerator : MonoBehaviour
     public void DebugLevelBasedTiles()
     {
         int currentLevel = GetCurrentLevel();
-        
-        Debug.Log($"=== Level-Based Tile Debug ===");
-        Debug.Log($"Current Level: {currentLevel}");
-        Debug.Log($"Use Level-Based Obstacle Tiles: {useLevelBasedTiles}");
-        Debug.Log($"Use Level-Based Breakable Tiles: {useLevelBasedBreakableTiles}");
-        
+
         // Debug obstacle tiles
-        Debug.Log($"Obstacle Tiles by Level ({(obstaclesTilesByLevel?.Length ?? 0)} configured):");
         if (obstaclesTilesByLevel != null)
         {
             for (int i = 0; i < obstaclesTilesByLevel.Length; i++)
@@ -999,12 +946,10 @@ public class RoomObstacleGenerator : MonoBehaviour
                 int levelNum = i + 1;
                 string tileName = obstaclesTilesByLevel[i]?.name ?? "NULL";
                 string marker = (levelNum == currentLevel) ? " ← CURRENT" : "";
-                Debug.Log($"  Level {levelNum}: {tileName}{marker}");
             }
         }
         
         // Debug breakable tiles
-        Debug.Log($"Breakable Tiles by Level ({(breakableTilesByLevel?.Length ?? 0)} configured):");
         if (breakableTilesByLevel != null)
         {
             for (int i = 0; i < breakableTilesByLevel.Length; i++)
@@ -1012,18 +957,12 @@ public class RoomObstacleGenerator : MonoBehaviour
                 int levelNum = i + 1;
                 string tileName = breakableTilesByLevel[i]?.name ?? "NULL";
                 string marker = (levelNum == currentLevel) ? " ← CURRENT" : "";
-                Debug.Log($"  Level {levelNum}: {tileName}{marker}");
             }
         }
         
         // Show which tiles would be used now
         TileBase currentObstacleTile = GetObstacleTileForCurrentLevel();
         TileBase currentBreakableTile = GetBreakableTileToUse();
-        
-        Debug.Log($"Current Obstacle Tile: {currentObstacleTile?.name ?? "NULL"}");
-        Debug.Log($"Current Breakable Tile: {currentBreakableTile?.name ?? "NULL"}");
-        Debug.Log($"Fallback Obstacle Tile: {fallbackObstacleTile?.name ?? "NULL"}");
-        Debug.Log($"Fallback Breakable Tile: {fallbackBreakableTile?.name ?? "NULL"}");
     }
     
     /// <summary>
@@ -1059,7 +998,6 @@ public class RoomObstacleGenerator : MonoBehaviour
     /// <param name="level">Level number to test (1-based)</param>
     private void TestTilesForLevel(int level)
     {
-        Debug.Log($"=== Testing Tiles for Level {level} ===");
         
         int levelIndex = level - 1;
         
@@ -1074,7 +1012,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             obstacleTile = fallbackObstacleTile;
         }
         
-        Debug.Log($"Level {level} Obstacle Tile: {obstacleTile?.name ?? "NULL"}");
         
         // Test breakable tile
         TileBase breakableTile = null;
@@ -1087,7 +1024,6 @@ public class RoomObstacleGenerator : MonoBehaviour
             breakableTile = fallbackBreakableTile;
         }
         
-        Debug.Log($"Level {level} Breakable Tile: {breakableTile?.name ?? "NULL"}");
     }
     
     /// <summary>
@@ -1098,25 +1034,20 @@ public class RoomObstacleGenerator : MonoBehaviour
     {
         // This is a helper method for setting up some default values
         // In practice, you'll want to assign your actual tile assets in the inspector
-        
-        Debug.Log("Setting up default level tile arrays...");
-        
+
         if (obstaclesTilesByLevel == null || obstaclesTilesByLevel.Length == 0)
         {
             obstaclesTilesByLevel = new TileBase[3]; // Initialize for 3 levels
-            Debug.Log("Initialized obstaclesTilesByLevel array with 3 slots");
+
         }
         
         if (breakableTilesByLevel == null || breakableTilesByLevel.Length == 0)
         {
             breakableTilesByLevel = new TileBase[3]; // Initialize for 3 levels
-            Debug.Log("Initialized breakableTilesByLevel array with 3 slots");
         }
         
         useLevelBasedTiles = true;
         useLevelBasedBreakableTiles = true;
-        
-        Debug.Log("Enabled level-based tile systems. Please assign tile assets in the inspector for each level.");
-        Debug.Log("Level 1 = Index 0, Level 2 = Index 1, Level 3 = Index 2, etc.");
+
     }
 }

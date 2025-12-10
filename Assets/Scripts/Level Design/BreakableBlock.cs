@@ -43,7 +43,7 @@ public class BreakableBlock : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"BreakableBlock: Could not find tilemap named '{tilemapName}'");
+                // ...removed debug log...
             }
         }
         
@@ -99,7 +99,7 @@ public class BreakableBlock : MonoBehaviour
         // Refresh tilemap collider
         RefreshTilemapCollider();
         
-        Debug.Log($"BreakableBlock: Broke tile at {tilePosition}");
+        // ...removed debug log...
     }
     
     /// <summary>

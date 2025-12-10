@@ -126,7 +126,7 @@ public class BreakableTileManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"BreakableTileManager: Initialized {tileHealthMap.Count} breakable tiles");
+        // ...removed debug log...
     }
     
     private bool IsBreakableTile(TileBase tile)
@@ -261,7 +261,7 @@ public class BreakableTileManager : MonoBehaviour
         // Refresh colliders
         RefreshColliders();
         
-        Debug.Log($"BreakableTileManager: Broke tile at {tilePosition}");
+        // ...removed debug log...
     }
     
     /// <summary>

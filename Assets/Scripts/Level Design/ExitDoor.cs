@@ -115,7 +115,7 @@ public class ExitDoor : MonoBehaviour
         if (other.CompareTag("Player") && isLocked)
         {
             // Door is locked, player cannot pass
-            Debug.Log("Door is locked!");
+            // ...removed debug log...
             // Could play a sound effect or show UI feedback here
         }
     }

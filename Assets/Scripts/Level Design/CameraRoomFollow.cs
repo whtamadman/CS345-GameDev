@@ -25,7 +25,7 @@ public class CameraRoomFollow : MonoBehaviour
         cameraComponent = GetComponent<Camera>();
         if (cameraComponent == null)
         {
-            Debug.LogError("CameraRoomFollow requires a Camera component!");
+            // ...removed debug log...
         }
         
         // Initialize target position to current position
@@ -229,11 +229,8 @@ public class CameraRoomFollow : MonoBehaviour
     }
     
     // Debug methods
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    public void DebugSetRoomCenter(Vector3 center)
-    {
-        SetRoomCenter(center);
-    }
+    // ...removed debug method...
+
     
     private void OnDrawGizmosSelected()
     {

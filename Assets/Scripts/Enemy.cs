@@ -173,13 +173,13 @@ public class Enemy : MonoBehaviour  {
         // Static enemies don't have states, they just shoot
         if (type == EnemyType.Static)
         {
-            Debug.Log($"Static Enemy {gameObject.name} initialized (no movement)");
+            // ...removed debug log...
             targetPosition = transform.position; // Stay in place
         }
         else
         {
             currentState = State.Roam;
-            Debug.Log($"Enemy {gameObject.name} started in ROAM state");
+            // ...removed debug log...
             targetPosition = (Vector2)transform.position
                              + new Vector2(Random.Range(-roamDist, roamDist), Random.Range(-roamDist, roamDist));
         }
@@ -306,7 +306,7 @@ public class Enemy : MonoBehaviour  {
             if (!enableChasing)
             {
                 currentState = State.Roam;
-                Debug.Log($"Enemy {gameObject.name} entered ROAM state (chasing disabled)");
+                // ...removed debug log...
                 targetPosition = (Vector2)transform.position + new
                     Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
             }
@@ -314,7 +314,7 @@ public class Enemy : MonoBehaviour  {
             else if (!hasLineOfSight)
             {
                 currentState = State.Roam;
-                Debug.Log($"Enemy {gameObject.name} entered ROAM state (lost line of sight)");
+                // ...removed debug log...
                 // Set new roam target
                 targetPosition = (Vector2)transform.position + new
                     Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
@@ -339,7 +339,7 @@ public class Enemy : MonoBehaviour  {
                     currentState = State.Shoot;
                 }else if(distanceToPlayer > chaseDist*1.2f){
                     currentState = State.Roam;
-                    Debug.Log($"Enemy {gameObject.name} entered ROAM state (player too far away)");
+                    // ...removed debug log...
                 }
             }
         }else{ // Shoot state
@@ -347,7 +347,7 @@ public class Enemy : MonoBehaviour  {
             if (!hasLineOfSight)
             {
                 currentState = State.Roam;
-                Debug.Log($"Enemy {gameObject.name} entered ROAM state (lost line of sight while shooting)");
+                // ...removed debug log...
                 // Set new roam target
                 targetPosition = (Vector2)transform.position + new
                     Vector2(Random.Range(-roamDist,roamDist),Random.Range(-roamDist,roamDist));
@@ -357,7 +357,7 @@ public class Enemy : MonoBehaviour  {
                 targetPosition = player.transform.position;
                 if(distanceToPlayer > shootDist){
                     currentState = State.Chase;
-                    Debug.Log($"Enemy {gameObject.name} entered CHASE state (player moved away from shoot distance)");
+                    // ...removed debug log...
                 }
                 if(CanAttackNow()){
                     StartCoroutine(Shoot(moveDirection,shootForce));
@@ -894,7 +894,7 @@ public class Enemy : MonoBehaviour  {
             if (Player.Instance != null)
             {
                 Player.Instance.GiveGold(goldAmount);
-                Debug.Log($"Enemy {gameObject.name} dropped {goldAmount} gold!");
+                // ...removed debug log...
             }
         }
 
@@ -920,11 +920,11 @@ public class Enemy : MonoBehaviour  {
     /// </summary>
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log($"Enemy {gameObject.name}: Trigger entered by {other.gameObject.name} with tag '{other.tag}' at position {transform.position} vs other at {other.transform.position}");
+        // ...removed debug log...
         
         if (!enableContactDamage)
         {
-            Debug.Log($"Enemy {gameObject.name}: Contact damage disabled");
+            // ...removed debug log...
             return;
         }
         

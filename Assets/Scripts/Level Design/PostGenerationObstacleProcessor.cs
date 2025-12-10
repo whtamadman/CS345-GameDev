@@ -32,11 +32,11 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         if (floorManager != null)
         {
             floorManager.OnNewFloorGenerated += OnNewFloorGenerated;
-            Debug.Log("PostGenerationObstacleProcessor: Subscribed to floor generation events");
+            // ...removed debug log...
         }
         else
         {
-            Debug.LogWarning("PostGenerationObstacleProcessor: FloorManager not found! Will not auto-process obstacles on new levels.");
+            // ...removed debug log...
         }
         
         if (processOnStart)
@@ -100,7 +100,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
             addedGenerators++;
         }
         
-        Debug.Log($"PostGenerationObstacleProcessor: Added obstacle generators to {addedGenerators} rooms");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -155,7 +155,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         BreakableTileManager existing = FindFirstObjectByType<BreakableTileManager>();
         if (existing != null)
         {
-            Debug.Log("BreakableTileManager already exists in scene");
+            // ...removed debug log...
             return;
         }
         
@@ -163,7 +163,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         GameObject managerObj = new GameObject("BreakableTileManager");
         BreakableTileManager manager = managerObj.AddComponent<BreakableTileManager>();
         
-        Debug.Log("Created BreakableTileManager for breakable block system");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -176,7 +176,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         {
             // Force reinitialize tiles to detect newly placed breakable blocks
             manager.ReinitializeTiles();
-            Debug.Log("Initialized breakable tile system");
+            // ...removed debug log...
         }
     }
     
@@ -192,7 +192,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
             generator.ClearObstacles();
         }
         
-        Debug.Log($"Cleared obstacles from {generators.Length} rooms");
+        // ...removed debug log...
     }
     
     /// <summary>
@@ -216,7 +216,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
         
         if (scaledEnemies > 0)
         {
-            Debug.Log($"PostGenerationObstacleProcessor: Scaled stats for {scaledEnemies} enemies based on level {currentLevel}");
+            // ...removed debug log...
         }
     }
     
@@ -261,7 +261,7 @@ public class PostGenerationObstacleProcessor : MonoBehaviour
     /// </summary>
     private void OnNewFloorGenerated(int floorNumber)
     {
-        Debug.Log($"PostGenerationObstacleProcessor: New floor {floorNumber} generated, processing obstacles...");
+        // ...removed debug log...
         
         // Use invoke with delay to ensure dungeon generation is completely finished
         Invoke(nameof(ProcessObstacles), delayAfterGeneration);

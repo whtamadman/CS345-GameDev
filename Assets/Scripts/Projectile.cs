@@ -69,7 +69,6 @@ public class Projectile : MonoBehaviour
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             direction = (mousePos - (Vector2)player.transform.position).normalized;
             originalDirection = direction;
-            Debug.Log(originalDirection);
             angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
             transform.rotation = Quaternion.Euler(0, 0, angle);
             return;
@@ -283,7 +282,6 @@ public class Projectile : MonoBehaviour
                     // Same team, ignore collision
                     return;
                 }
-                Debug.Log("Two boomerangs from different teams collided - destroying both");
                 // Clean up both boomerang trackings
                 if (otherProjectile.shooter != null)
                 {
@@ -316,7 +314,6 @@ public class Projectile : MonoBehaviour
                         return;
                     }
                 }
-                Debug.Log("Boomerang destroyed regular projectile (different teams or null shooter)");
                 Destroy(other.gameObject);
                 return; // Boomerang continues
             }
@@ -333,7 +330,6 @@ public class Projectile : MonoBehaviour
                         return;
                     }
                 }
-                Debug.Log("Regular projectile destroyed by boomerang (different teams or null shooter)");
                 Destroy(gameObject);
                 return; // Boomerang continues
             }
@@ -348,7 +344,6 @@ public class Projectile : MonoBehaviour
             // If one is player projectile and other is enemy projectile, destroy both
             if ((thisIsPlayerProjectile && !otherIsPlayerProjectile) || (!thisIsPlayerProjectile && otherIsPlayerProjectile))
             {
-                Debug.Log("Player and enemy projectiles collided - destroying both");
                 
                 Destroy(other.gameObject);
                 Destroy(gameObject);
@@ -413,7 +408,6 @@ public class Projectile : MonoBehaviour
             if (playerComp != null)
             {
                 playerComp.takeDamage(playerDamage);
-                Debug.Log("Projectile hit player for " + playerDamage + " damage.");
                 didDamage = true;
             }
             Destroy(gameObject);
@@ -426,7 +420,6 @@ public class Projectile : MonoBehaviour
             if (playerComp != null)
             {
                 playerComp.takeDamage(playerDamage);
-                Debug.Log("Projectile hit player for " + playerDamage + " damage (fallback).");
                 Destroy(gameObject);
                 return;
             }
@@ -434,7 +427,6 @@ public class Projectile : MonoBehaviour
 
         if (other.tag == "Enemy" && shooter != null && shooter.tag == "Player") {
             other.GetComponent<Enemy>()?.TakeDamage((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier);
-            Debug.Log("Projectile hit enemy for " + ((int)Player.Instance.baseRangeDamage + (int)Player.Instance.baseRangeModifier) + " damage.");
             Destroy(gameObject);
         }
 

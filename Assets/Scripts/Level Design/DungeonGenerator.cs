@@ -125,10 +125,6 @@ public class DungeonGenerator : MonoBehaviour
     [ContextMenu("Debug Current Level")]
     public void DebugCurrentLevel()
     {
-        Debug.Log($"=== Current Level Debug Info ===");
-        Debug.Log($"Current Level Index: {currentLevelIndex} (Level {currentLevelIndex + 1})");
-        Debug.Log($"Total Levels Configured: {levels.Count}");
-        
         if (levels.Count > 0)
         {
             for (int i = 0; i < levels.Count; i++)
@@ -136,12 +132,10 @@ public class DungeonGenerator : MonoBehaviour
                 LevelData level = levels[i];
                 string marker = (i == currentLevelIndex) ? " ← CURRENT" : "";
                 int displayLevel = i + 1;
-                Debug.Log($"  Level {displayLevel} (index {i}): '{level.levelName}' - Prefab: {level.universalRoomPrefab?.name ?? "null"}{marker}");
             }
         }
         
         LevelData currentLevel = GetCurrentLevelData();
-        Debug.Log($"Selected Level: '{currentLevel.levelName}' with prefab '{currentLevel.universalRoomPrefab?.name ?? "null"}'");
     }
     
     [ContextMenu("Set to Level 1")]
@@ -195,14 +189,12 @@ public class DungeonGenerator : MonoBehaviour
                             TileBase[] emptyTiles = new TileBase[totalTiles];
                             tilemap.SetTilesBlock(bounds, emptyTiles);
                             
-                            Debug.Log($"Cleared dungeon tilemap: {tilemap.name} (bounds: {bounds}, {totalTiles} tiles)");
                             clearedCount++;
                         }
                         else
                         {
                             // Force clear using FloodFill for edge cases
                             tilemap.FloodFill(Vector3Int.zero, null);
-                            Debug.Log($"Force cleared dungeon tilemap: {tilemap.name} (empty bounds)");
                             clearedCount++;
                         }
                         
@@ -220,18 +212,15 @@ public class DungeonGenerator : MonoBehaviour
                             TileBase[] emptyTiles = new TileBase[largeBounds.size.x * largeBounds.size.y];
                             tilemap.SetTilesBlock(largeBounds, emptyTiles);
                             tilemap.CompressBounds();
-                            Debug.Log($"Fallback cleared dungeon tilemap: {tilemap.name}");
                             clearedCount++;
                         }
                         catch (System.Exception fallbackError)
                         {
-                            Debug.LogError($"Fallback clearing failed for dungeon tilemap {tilemap.name}: {fallbackError.Message}");
                         }
                     }
                 }
                 else
                 {
-                    Debug.LogWarning($"GameObject '{tilemapName}' found but no Tilemap component");
                 }
             }
             else
@@ -240,7 +229,6 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
         
-        Debug.Log($"Successfully cleared {clearedCount}/{totalTilemaps} dungeon tilemaps for clean level transition");
     }
     
     /// <summary>
@@ -260,9 +248,7 @@ public class DungeonGenerator : MonoBehaviour
         TileBase currentFloorTile = floorTileField?.GetValue(room) as TileBase;
         TileBase currentWallTile = wallTileField?.GetValue(room) as TileBase;
         TileBase currentDoorTile = doorTileField?.GetValue(room) as TileBase;
-        
-        Debug.Log($"Room {room.name} current assets: Floor={currentFloorTile?.name ?? "null"}, Wall={currentWallTile?.name ?? "null"}, Door={currentDoorTile?.name ?? "null"}");
-        
+                
         // If room doesn't have assets (or we want to override), get them from our sources
         TileBase floorTile = GetFloorTileAsset(room);
         TileBase wallTile = GetWallTileAsset(room);
@@ -289,7 +275,6 @@ public class DungeonGenerator : MonoBehaviour
         TileBase finalWallTile = wallTileField?.GetValue(room) as TileBase;
         TileBase finalDoorTile = doorTileField?.GetValue(room) as TileBase;
         
-        Debug.Log($"Room {room.name} final assets: Floor={finalFloorTile?.name ?? "null"}, Wall={finalWallTile?.name ?? "null"}, Door={finalDoorTile?.name ?? "null"}");
     }
     
     /// <summary>
@@ -302,7 +287,6 @@ public class DungeonGenerator : MonoBehaviour
         // If we have a reference tile set, use it (overrides everything)
         if (referenceFloorTile != null)
         {
-            Debug.Log($"Using reference floor tile: {referenceFloorTile.name}");
             return referenceFloorTile;
         }
             
@@ -317,7 +301,6 @@ public class DungeonGenerator : MonoBehaviour
                 TileBase prefabFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
                 if (prefabFloorTile != null)
                 {
-                    Debug.Log($"Using prefab floor tile: {prefabFloorTile.name}");
                     return prefabFloorTile;
                 }
                 else
@@ -333,7 +316,6 @@ public class DungeonGenerator : MonoBehaviour
         
         if (existingFloorTile != null)
         {
-            Debug.Log($"Using existing room floor tile: {existingFloorTile.name}");
             return existingFloorTile;
         }
         
@@ -351,7 +333,6 @@ public class DungeonGenerator : MonoBehaviour
         // If we have a reference tile set, use it (overrides everything)
         if (referenceWallTile != null)
         {
-            Debug.Log($"Using reference wall tile: {referenceWallTile.name}");
             return referenceWallTile;
         }
             
@@ -366,7 +347,6 @@ public class DungeonGenerator : MonoBehaviour
                 TileBase prefabWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
                 if (prefabWallTile != null)
                 {
-                    Debug.Log($"Using prefab wall tile: {prefabWallTile.name}");
                     return prefabWallTile;
                 }
                 else
@@ -382,7 +362,6 @@ public class DungeonGenerator : MonoBehaviour
         
         if (existingWallTile != null)
         {
-            Debug.Log($"Using existing room wall tile: {existingWallTile.name}");
             return existingWallTile;
         }
         
@@ -400,7 +379,6 @@ public class DungeonGenerator : MonoBehaviour
         // If we have a reference tile set, use it (overrides everything)
         if (referenceDoorTile != null)
         {
-            Debug.Log($"Using reference door tile: {referenceDoorTile.name}");
             return referenceDoorTile;
         }
             
@@ -415,7 +393,6 @@ public class DungeonGenerator : MonoBehaviour
                 TileBase prefabDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
                 if (prefabDoorTile != null)
                 {
-                    Debug.Log($"Using prefab door tile: {prefabDoorTile.name}");
                     return prefabDoorTile;
                 }
                 // Door tile is optional, so don't warn if it's missing
@@ -428,7 +405,6 @@ public class DungeonGenerator : MonoBehaviour
         
         if (existingDoorTile != null)
         {
-            Debug.Log($"Using existing room door tile: {existingDoorTile.name}");
             return existingDoorTile;
         }
         
@@ -475,10 +451,6 @@ public class DungeonGenerator : MonoBehaviour
             referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
         }
         
-        Debug.Log($"DungeonGenerator: Auto-extracted tile assets from '{currentLevel.levelName}' (Level {currentLevel.levelNumber}) room prefab '{currentLevel.universalRoomPrefab.name}':");
-        Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"}");
-        Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"}");
-        Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"}");
     }
     
     /// <summary>
@@ -513,36 +485,6 @@ public class DungeonGenerator : MonoBehaviour
         referenceFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
         referenceWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
         referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
-        
-        // Log tile reference changes
-        Debug.Log($"Updated tile references for Level {currentLevelIndex + 1} ('{newLevel.levelName}'):");
-        
-        if (referenceFloorTile != previousFloorTile)
-        {
-            Debug.Log($"  Floor Tile: {previousFloorTile?.name ?? "null"} → {referenceFloorTile?.name ?? "null"}");
-        }
-        else
-        {
-            Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"} (unchanged)");
-        }
-        
-        if (referenceWallTile != previousWallTile)
-        {
-            Debug.Log($"  Wall Tile: {previousWallTile?.name ?? "null"} → {referenceWallTile?.name ?? "null"}");
-        }
-        else
-        {
-            Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"} (unchanged)");
-        }
-        
-        if (referenceDoorTile != previousDoorTile)
-        {
-            Debug.Log($"  Door Tile: {previousDoorTile?.name ?? "null"} → {referenceDoorTile?.name ?? "null"}");
-        }
-        else
-        {
-            Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"} (unchanged)");
-        }
     }
     
     /// <summary>
@@ -573,11 +515,6 @@ public class DungeonGenerator : MonoBehaviour
         referenceFloorTile = floorTileField?.GetValue(prefabRoom) as TileBase;
         referenceWallTile = wallTileField?.GetValue(prefabRoom) as TileBase;
         referenceDoorTile = doorTileField?.GetValue(prefabRoom) as TileBase;
-        
-        Debug.Log($"Manually extracted tile assets from room prefab '{currentLevel.universalRoomPrefab.name}':");
-        Debug.Log($"  Floor Tile: {referenceFloorTile?.name ?? "null"}");
-        Debug.Log($"  Wall Tile: {referenceWallTile?.name ?? "null"}");
-        Debug.Log($"  Door Tile: {referenceDoorTile?.name ?? "null"}");
     }
     
     /// <summary>
@@ -606,8 +543,6 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
         }
-        
-        Debug.Log($"Configured tile assets for {configuredCount} rooms in the dungeon.");
     }
     
     /// <summary>
@@ -629,7 +564,6 @@ public class DungeonGenerator : MonoBehaviour
         var wallTileField = typeof(Room).GetField("wallTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
         var doorTileField = typeof(Room).GetField("doorTile", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
         
-        Debug.Log("=== Room Tile Asset Validation ===");
         
         for (int row = 0; row < gridRows; row++)
         {
@@ -647,7 +581,6 @@ public class DungeonGenerator : MonoBehaviour
                     if (isValid)
                     {
                         validRooms++;
-                        Debug.Log($"✓ {room.name}: Floor={floorTile.name}, Wall={wallTile.name}, Door={doorTile?.name ?? "null"}");
                     }
                     else
                     {
@@ -657,8 +590,6 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
         }
-        
-        Debug.Log($"Validation complete: {validRooms} valid rooms, {invalidRooms} invalid rooms.");
         
         if (invalidRooms > 0)
         {
@@ -673,7 +604,6 @@ public class DungeonGenerator : MonoBehaviour
         {
             currentLevelIndex++;
             int displayLevel = currentLevelIndex + 1;
-            Debug.Log($"Moving to Level {displayLevel}");
             
             // Extract new tile references from the next level's room prefab
             if (autoExtractTileAssets)
@@ -686,7 +616,6 @@ public class DungeonGenerator : MonoBehaviour
         else
         {
             int currentDisplayLevel = currentLevelIndex + 1;
-            Debug.Log($"Already at the last level (Level {currentDisplayLevel})!");
         }
     }
     
@@ -696,9 +625,7 @@ public class DungeonGenerator : MonoBehaviour
         if (currentLevelIndex > 0)
         {
             currentLevelIndex--;
-            int displayLevel = currentLevelIndex + 1;
-            Debug.Log($"Moving to Level {displayLevel}");
-            
+            int displayLevel = currentLevelIndex + 1;        
             // Extract new tile references from the previous level's room prefab
             if (autoExtractTileAssets)
             {
@@ -706,10 +633,6 @@ public class DungeonGenerator : MonoBehaviour
             }
             
             ClearAndRegenerate();
-        }
-        else
-        {
-            Debug.Log("Already at the first level (Level 1)!");
         }
     }
     
@@ -731,9 +654,6 @@ public class DungeonGenerator : MonoBehaviour
             return;
         }
         
-        Debug.Log($"=== DUNGEON LAYOUT ({gridRows}×{gridCols}) ===");
-        Debug.Log($"Room spacing: {RoomSpacingX:F1} × {RoomSpacingY:F1} world units");
-        
         for (int row = 0; row < gridRows; row++)
         {
             for (int col = 0; col < gridCols; col++)
@@ -743,7 +663,6 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     Vector3 expectedPos = new Vector3(col * RoomSpacingX, row * RoomSpacingY, 0);
                     string roomType = GetRoomType(room);
-                    Debug.Log($"[{row},{col}] {roomType}: Expected({expectedPos.x:F1},{expectedPos.y:F1}) Actual({room.transform.position.x:F1},{room.transform.position.y:F1}) Exits(N:{room.hasNorthExit} S:{room.hasSouthExit} E:{room.hasEastExit} W:{room.hasWestExit})");
                 }
             }
         }
@@ -792,8 +711,6 @@ public class DungeonGenerator : MonoBehaviour
         itemRoom = null;
         fightRooms.Clear();
         availablePositions.Clear();
-        
-        Debug.Log($"Cleared existing dungeon layout for level regeneration");
     }
     
 
@@ -817,11 +734,6 @@ public class DungeonGenerator : MonoBehaviour
                 ExtractTileReferencesForNewLevel();
             }
             
-            Debug.Log($"Set current level to Level {levelNumber}: {GetCurrentLevelData().levelName}");
-        }
-        else
-        {
-            Debug.LogError($"Invalid level number: {levelNumber}. Valid range: 1-{levels.Count}");
         }
     }
     
@@ -834,11 +746,6 @@ public class DungeonGenerator : MonoBehaviour
         if (levelIndex >= 0 && levelIndex < levels.Count)
         {
             currentLevelIndex = levelIndex;
-            Debug.Log($"Set current level to index {levelIndex}: {GetCurrentLevelData().levelName}");
-        }
-        else
-        {
-            Debug.LogError($"Invalid level index: {levelIndex}. Valid range: 0-{levels.Count - 1}");
         }
     }
     
@@ -846,7 +753,6 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (levels.Count == 0)
         {
-            Debug.LogWarning("No levels configured! Creating default level data.");
             return CreateDefaultLevelData();
         }
         
@@ -854,14 +760,11 @@ public class DungeonGenerator : MonoBehaviour
         {
             LevelData selectedLevel = levels[currentLevelIndex];
             int displayLevelNumber = currentLevelIndex + 1; // Convert to 1-based for display
-            Debug.Log($"DungeonGenerator: Using Level {displayLevelNumber} (index {currentLevelIndex}): '{selectedLevel.levelName}'");
             return selectedLevel;
         }
         
-        Debug.LogWarning($"Invalid current level index: {currentLevelIndex}. Using Level 1 (first level).");
         currentLevelIndex = 0;
         LevelData firstLevel = levels[0];
-        Debug.Log($"DungeonGenerator: Fallback to Level 1: '{firstLevel.levelName}'");
         return firstLevel;
     }
     
@@ -1093,9 +996,6 @@ public class DungeonGenerator : MonoBehaviour
     
     private void PlaceBossRoom(List<Room> allRooms)
     {
-        Debug.Log($"PlaceBossRoom: Starting with {allRooms.Count} total rooms");
-        Debug.Log($"Grid size: {gridRows}x{gridCols}");
-        
         // Find rooms at the edges that are farthest from start
         List<Room> edgeRooms = new List<Room>();
         Vector2Int startPos = startRoom.gridPos;
@@ -1104,16 +1004,12 @@ public class DungeonGenerator : MonoBehaviour
         {
             Vector2Int pos = room.gridPos;
             bool isEdge = (pos.x == 0 || pos.x == gridRows - 1 || pos.y == 0 || pos.y == gridCols - 1);
-            
-            Debug.Log($"Room at {pos}: isEdge={isEdge} (x:{pos.x}, y:{pos.y})");
-            
             if (isEdge)
             {
                 edgeRooms.Add(room);
             }
         }
         
-        Debug.Log($"Found {edgeRooms.Count} edge rooms");
         
         if (edgeRooms.Count > 0)
         {
@@ -1131,13 +1027,12 @@ public class DungeonGenerator : MonoBehaviour
                 }
             }
             
-            Debug.Log($"Farthest room selected at {farthestRoom.gridPos} with distance {maxDistance}");
-            
+
             // Create boss room - either custom prefab or convert existing room
             LevelData currentLevel = GetCurrentLevelData();
             if (currentLevel.bossRoomPrefab != null)
             {
-                Debug.Log("Using custom boss room prefab");
+
                 // Use custom boss room prefab
                 bossRoom = CreateCustomBossRoom(farthestRoom.gridPos, currentLevel.bossRoomPrefab);
                 // Remove the original room that we're replacing
@@ -1146,14 +1041,14 @@ public class DungeonGenerator : MonoBehaviour
             }
             else
             {
-                Debug.Log("Converting existing room to boss room");
+
                 // Convert existing room to boss room (default behavior)
                 bossRoom = farthestRoom;
                 bossRoom.name = "Boss Room";
                 bossRoom.SetRoomType(RoomType.Boss);
             }
             
-            Debug.Log($"Boss room created: {bossRoom.name} at {bossRoom.gridPos}");
+
             
             fightRooms.Remove(farthestRoom); // Remove from fight rooms list
             
@@ -1165,8 +1060,7 @@ public class DungeonGenerator : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No edge rooms found for boss placement!");
-            Debug.LogWarning($"Total rooms: {allRooms.Count}, Grid: {gridRows}x{gridCols}");
+
             foreach (Room room in allRooms)
             {
                 Debug.LogWarning($"Room at {room.gridPos} - not on edge");
@@ -1175,7 +1069,6 @@ public class DungeonGenerator : MonoBehaviour
             // Fallback: Use the room farthest from start (even if not on edge)
             if (allRooms.Count > 1)
             {
-                Debug.Log("Using fallback boss placement: farthest room from start");
                 Room farthestRoom = allRooms[1]; // Skip start room
                 float maxDistance = Vector2Int.Distance(startPos, farthestRoom.gridPos);
                 
@@ -1191,8 +1084,6 @@ public class DungeonGenerator : MonoBehaviour
                         }
                     }
                 }
-                
-                Debug.Log($"Fallback boss room selected at {farthestRoom.gridPos} with distance {maxDistance}");
                 
                 // Convert to boss room
                 bossRoom = farthestRoom;
@@ -1335,7 +1226,6 @@ public class DungeonGenerator : MonoBehaviour
         // This will ensure wall tiles are placed where the exit was blocked
         room.UpdateExitTiles();
         
-        Debug.Log($"Blocked {blockedDirection} exit in room {room.name} to prevent connection to boss room");
     }
     
     private void SetupBossRoomComponent()
@@ -1354,20 +1244,6 @@ public class DungeonGenerator : MonoBehaviour
         {
             // Use the ConfigureBossPrefab method from Room class
             bossRoom.ConfigureBossPrefab(currentLevel.bossPrefab);
-            
-            // Log different messages based on room type
-            if (currentLevel.bossRoomPrefab != null)
-            {
-                Debug.Log($"Custom boss room prefab '{currentLevel.bossRoomPrefab.name}' configured with boss: {currentLevel.bossPrefab.name}");
-            }
-            else
-            {
-                Debug.Log($"Default boss room layout configured with level {currentLevel.levelNumber} boss: {currentLevel.bossPrefab.name}");
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"No boss prefab assigned for level: {currentLevel.levelName}! Boss room will not spawn a boss.");
         }
     }
     
@@ -1375,7 +1251,6 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (itemRoom == null)
         {
-            Debug.LogError("Cannot setup ItemRoom component: itemRoom is null!");
             return;
         }
         
@@ -1385,7 +1260,6 @@ public class DungeonGenerator : MonoBehaviour
         {
             // Add ItemRoom component to the item room GameObject
             itemRoomComponent = itemRoom.gameObject.AddComponent<ItemRoom>();
-            Debug.Log($"Added ItemRoom component to {itemRoom.name}");
         }
         
         // Configure the item room component with current level's item prefabs
@@ -1402,7 +1276,6 @@ public class DungeonGenerator : MonoBehaviour
             ConfigureRoomItemPrefabs(itemRoom, currentLevel.itemPrefabs);
         }
         
-        Debug.Log($"Item room configured for level {currentLevel.levelNumber} ({currentLevel.levelName})");
     }
     
     private void ConfigureItemRoomPrefabs(ItemRoom itemRoomComponent, GameObject[] prefabs)
@@ -1441,7 +1314,6 @@ public class DungeonGenerator : MonoBehaviour
             itemRoomComponent.ConfigureItemPrefabs(allItemPrefabs.ToArray());
         }
         
-        Debug.Log($"Item Room configured with {allItemPrefabs.Count} total item prefab(s)");
     }
     
     /// <summary>
@@ -1481,7 +1353,6 @@ public class DungeonGenerator : MonoBehaviour
         // Configure the room with the final item list using the new Room class method
         room.ConfigureItemPrefabs(allItemPrefabs.ToArray());
         
-        Debug.Log($"Room {room.name} configured with {allItemPrefabs.Count} item prefab(s) using base Room class");
     }
     
     /// <summary>
@@ -1532,19 +1403,11 @@ public class DungeonGenerator : MonoBehaviour
     [ContextMenu("Test Item Configuration")]
     private void TestItemConfiguration()
     {
-        Debug.Log($"=== Item Prefab Configuration Test ===");
-        Debug.Log($"Common Items: {(commonItemPrefabs?.Length ?? 0)}");
-        Debug.Log($"Rare Items: {(rareItemPrefabs?.Length ?? 0)}");
-        Debug.Log($"Epic Items: {(epicItemPrefabs?.Length ?? 0)}");
-        Debug.Log($"Fallback Items: {(fallbackItemPrefabs?.Length ?? 0)}");
-        Debug.Log($"Use Weighted Selection: {useWeightedItemSelection}");
-        Debug.Log($"Rarity Weights: Common={itemRarityWeights.x}%, Rare={itemRarityWeights.y}%, Epic={itemRarityWeights.z}%");
-        
+
         // Test weighted selection
         if (useWeightedItemSelection)
         {
             var testSelection = GetWeightedItemSelection();
-            Debug.Log($"Test weighted selection returned {testSelection.Count} items");
         }
     }
 
@@ -1557,7 +1420,6 @@ public class DungeonGenerator : MonoBehaviour
         
         if (roomPrefab == null)
         {
-            Debug.LogError($"Room prefab is null for level: {currentLevel.levelName}!");
             return null;
         }
         
@@ -1594,7 +1456,6 @@ public class DungeonGenerator : MonoBehaviour
     {
         if (bossRoomPrefab == null)
         {
-            Debug.LogError("Custom boss room prefab is null!");
             return null;
         }
         
@@ -1622,8 +1483,6 @@ public class DungeonGenerator : MonoBehaviour
         
         // Configure tile assets for the boss room
         ConfigureRoomTileAssets(bossRoom);
-        
-        Debug.Log($"Created custom boss room from prefab: {bossRoomPrefab.name}");
         return bossRoom;
     }
     
@@ -1649,7 +1508,6 @@ public class DungeonGenerator : MonoBehaviour
                     east = (col + 1 < gridCols) && (roomGrid[row, col + 1] != null);
                     west = (col - 1 >= 0) && (roomGrid[row, col - 1] != null);
                     
-                    Debug.Log($"Start room at ({row},{col}) - Adjacent rooms: North: {north}, South: {south}, East: {east}, West: {west}");
                 }
                 else
                 {
@@ -1727,11 +1585,6 @@ public class DungeonGenerator : MonoBehaviour
             
             // Re-validate after fix
             HashSet<Room> reachableAfterFix = GetReachableNonBossRooms(startRoom);
-            Debug.Log($"After connectivity fix: {reachableAfterFix.Count}/{allNonBossRooms.Count} rooms reachable");
-        }
-        else
-        {
-            Debug.Log($"All {allNonBossRooms.Count} non-boss rooms are accessible from start room!");
         }
     }
     
@@ -1910,8 +1763,7 @@ public class DungeonGenerator : MonoBehaviour
                 if (adjacentRoom != null && reachableRooms.Contains(adjacentRoom))
                 {
                     // Create bidirectional connection
-                    CreateBidirectionalConnection(unreachableRoom, adjacentRoom, exitNames[i]);
-                    Debug.Log($"Connected unreachable room at ({pos.x},{pos.y}) to reachable room at ({adjacentPos.x},{adjacentPos.y}) via {exitNames[i]} exit");
+                    CreateBidirectionalConnection(unreachableRoom, adjacentRoom, exitNames[i]);            
                     return;
                 }
             }
@@ -1928,8 +1780,6 @@ public class DungeonGenerator : MonoBehaviour
             Debug.LogWarning($"Skipping connection modification for boss room: {room1?.name} <-> {room2?.name}");
             return;
         }
-        
-        Debug.Log($"Creating bidirectional connection: {room1.name} ({room1.gridPos}) <-> {room2.name} ({room2.gridPos}) via {direction}");
         
         // Add exit to room1 in the specified direction
         bool north1 = room1.hasNorthExit || direction == "north";
@@ -1948,7 +1798,6 @@ public class DungeonGenerator : MonoBehaviour
         
         room2.ConfigureExits(north2, south2, east2, west2);
         
-        Debug.Log($"Connection created: {room1.name} exits({north1},{south1},{east1},{west1}) <-> {room2.name} exits({north2},{south2},{east2},{west2})");
     }
     
     private string GetOppositeDirection(string direction)
@@ -2065,7 +1914,6 @@ public class DungeonGenerator : MonoBehaviour
         }
         
         int totalRooms = GetTotalRoomCount();
-        Debug.Log($"Connectivity check: {visited.Count}/{totalRooms} rooms reachable from start");
         
         if (visited.Count != totalRooms)
         {
