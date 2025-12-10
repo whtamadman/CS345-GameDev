@@ -103,10 +103,10 @@ public class Enemy : MonoBehaviour  {
 
     [Header("Item Drop Chance")]
     public GameObject powerUpPrefab;
-    [SerializeField] private float foodMisc = 0.06f;
-    [SerializeField] private float foodHealth = 0.17f;
-    [SerializeField] private float foodMelee = 0.09f;
-    [SerializeField] private float foodRange = 0.09f;
+    private float foodMisc = 0.05f;
+    private float foodHealth = 0.1f;
+    private float foodMelee = 0.05f;
+    private float foodRange = 0.05f;
 
     
     // Wall avoidance tracking
@@ -856,7 +856,7 @@ public class Enemy : MonoBehaviour  {
     }
 
     private void SpawnSweet() {
-        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Meat");
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Sweets");
         int randomFoodIndex;
         randomFoodIndex = Random.Range(0, food.Length);
         PowerUpEffect foodChosen = food[randomFoodIndex];
@@ -866,7 +866,7 @@ public class Enemy : MonoBehaviour  {
     }
 
     private void SpawnMeat() {
-        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Sweets");
+        PowerUpEffect[] food = Resources.LoadAll<PowerUpEffect>("PowerUps/Meat");
         int randomFoodIndex;
         randomFoodIndex = Random.Range(0, food.Length);
         PowerUpEffect foodChosen = food[randomFoodIndex];
@@ -898,13 +898,18 @@ public class Enemy : MonoBehaviour  {
             }
         }
 
-        if (dropsGold && Random.value <= foodMisc) {
-            SpawnMisc();
-        } else if (dropsGold && Random.value <= Player.Instance.itemHealthFindMultiplier*foodHealth) {
+        float roll = Random.value;
+
+        if ((roll <= Player.Instance.itemHealthFindMultiplier * foodHealth)) {
             SpawnSweet();
-        } else if (dropsGold && Random.value <= foodMelee) {
+        }
+        else if (roll <= (Player.Instance.itemHealthFindMultiplier * foodHealth + foodMisc)) {
+            SpawnMisc();
+        }
+        else if (roll <= (Player.Instance.itemHealthFindMultiplier * foodHealth + foodMisc + foodMelee)) {
             SpawnMeat();
-        } else if (dropsGold && Random.value <= foodRange) {
+        }
+        else if (roll <= (Player.Instance.itemHealthFindMultiplier * foodHealth + foodMisc + foodMelee + foodRange)) {
             SpawnFruit();
         }
         
