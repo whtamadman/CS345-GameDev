@@ -64,9 +64,9 @@ MonoBehaviour:
   projectileShootSound: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
   projectileHitSound: {fileID: 0}
   projectileWallHitSound: {fileID: 0}
-  tileBreakSound: {fileID: 0}
+  tileBreakSound: {fileID: 8300000, guid: a235d590ef2a04d1b85b61ef4c21337c, type: 3}
   teleporterSound: {fileID: 8300000, guid: 84e427d6b66ab4066b6a4dcd0ce819ee, type: 3}
   doorOpenSound: {fileID: 8300000, guid: 38b1fb7602bfdc0448dea17ef345395f, type: 3}
-  coinPickupSound: {fileID: 0}
+  coinPickupSound: {fileID: 8300000, guid: cabfae866cab347928b74b7d0ca6bfa9, type: 3}
   buttonHover: {fileID: 8300000, guid: 81652031b64c342cc8dbc59c138d77c5, type: 3}
   buttonClick: {fileID: 8300000, guid: b43d102aac6b145468dcaa94a5cccae1, type: 3}

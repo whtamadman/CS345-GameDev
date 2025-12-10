@@ -148,6 +148,10 @@ public class Enemy : MonoBehaviour  {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rigidBody = GetComponent<Rigidbody2D>();
         outOfBounds = GetComponent<OutOfBounds>();
+
+        if (this.gameObject.name.Contains("Art_Boss")) {
+            AudioManager.Instance.PlayBossMusic();
+        }
         
         // Disable OutOfBounds component for room-based gameplay (it's designed for wrap-around worlds)
         if (outOfBounds != null)
@@ -820,6 +824,9 @@ public class Enemy : MonoBehaviour  {
         if (health <= 0)
         {
             Die();
+            if (this.gameObject.name.Contains("Art_Boss")) {
+                AudioManager.Instance.PlayBackgroundMusic();
+            }
             return;
         }
 
