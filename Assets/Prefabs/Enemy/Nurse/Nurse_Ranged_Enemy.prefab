@@ -83,12 +83,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 100
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 6846065167856864151, guid: 4e107d8ed4d0d41d899255cf3909cf57, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.3653333, y: 1.9733334}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -106,7 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b26df45b3584bfb9a06ab43e1f4ead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  spawnAttackDelay: 1.5
   health: 10
+  maxHealth: 5
   projectiles:
   - {fileID: -7086934226340295845, guid: a15c196a7e5db8541a5f1db613e7cb0b, type: 3}
   opponentTag: Player
@@ -148,7 +150,29 @@ MonoBehaviour:
   wallDetectionDistance: 1.5
   stuckThreshold: 0.1
   stuckTime: 0.5
+  enableStrafing: 1
+  strafeDistance: 5
+  strafeSpeedMultiplier: 0.85
+  strafeSwitchInterval: 1.5
+  enableSeparation: 1
+  separationRadius: 1.5
+  separationForce: 2.5
+  enablePredictiveAim: 1
+  predictiveLeadTime: 0.25
+  enableRetreat: 1
+  lowHealthRetreatThreshold: 0.25
+  retreatDistance: 6
+  retreatSpeedMultiplier: 1.2
+  enableLocalPathfinding: 1
+  pathSamples: 7
+  pathSampleAngle: 15
+  pathSampleDistance: 2
+  pathRepathInterval: 0.25
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
+  foodMisc: 0.06
+  foodHealth: 0.17
+  foodMelee: 0.09
+  foodRange: 0.09
   chaseDist: 2
   roamDist: 5
   shootDist: 5
@@ -216,9 +240,9 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.21133333}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.3653333, y: 1.9733334}
+    newSize: {x: 1.3653333, y: 1.9733334}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0

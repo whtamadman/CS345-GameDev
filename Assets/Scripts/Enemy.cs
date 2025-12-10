@@ -163,7 +163,12 @@ public class Enemy : MonoBehaviour  {
             {
                 rigidBody.bodyType = RigidbodyType2D.Dynamic; // Enemies need dynamic physics to move
             }
+            // Lock rotation to Z-axis only (2D rotation) - prevent camera-facing
+            rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
+        
+        // Lock transform rotation to Z-axis only (2D) - prevent any camera-facing
+        transform.rotation = Quaternion.identity;
         
         // Static enemies don't have states, they just shoot
         if (type == EnemyType.Static)
@@ -224,11 +229,7 @@ public class Enemy : MonoBehaviour  {
             rigidBody.linearVelocity = Vector2.MoveTowards(rigidBody.linearVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
         }
         
-        // Only rotate if moving
-        if (moveDirection.magnitude > 0.01f)
-        {
-            transform.up = Vector3.Lerp(transform.up, (Vector3)moveDirection, Time.fixedDeltaTime * 5f);
-        }
+        // No rotation - enemies stay facing their original direction
     }
     void Update()
     {

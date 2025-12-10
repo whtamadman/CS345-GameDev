@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 100
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: -7321540774891146412, guid: 348d8cd40972d43b6a011e532952f1d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -108,6 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   spawnAttackDelay: 1.5
   health: 10
+  maxHealth: 5
   projectiles:
   - {fileID: 4882793194262094371, guid: 92fa1df44d5ba6c4c89a022c89a7ba4f, type: 3}
   - {fileID: -9052243024403750158, guid: 025195ce345f6c54f827e39da9a21d18, type: 3}
@@ -151,7 +152,29 @@ MonoBehaviour:
   wallDetectionDistance: 1.5
   stuckThreshold: 0.1
   stuckTime: 0.5
+  enableStrafing: 1
+  strafeDistance: 5
+  strafeSpeedMultiplier: 0.85
+  strafeSwitchInterval: 1.5
+  enableSeparation: 1
+  separationRadius: 1.5
+  separationForce: 2.5
+  enablePredictiveAim: 1
+  predictiveLeadTime: 0.25
+  enableRetreat: 1
+  lowHealthRetreatThreshold: 0.25
+  retreatDistance: 6
+  retreatSpeedMultiplier: 1.2
+  enableLocalPathfinding: 1
+  pathSamples: 7
+  pathSampleAngle: 15
+  pathSampleDistance: 2
+  pathRepathInterval: 0.25
   powerUpPrefab: {fileID: 1059502666910262663, guid: c0ee8e2dcf36fed48a132a047d6aba04, type: 3}
+  foodMisc: 0.06
+  foodHealth: 0.17
+  foodMelee: 0.09
+  foodRange: 0.09
   chaseDist: 2
   roamDist: 10
   shootDist: 5
@@ -181,7 +204,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 7
 --- !u!61 &8809092711150968885
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -219,8 +242,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.21133333}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 102.4, y: 152.2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
